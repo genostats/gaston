@@ -1,0 +1,2 @@
+#define Ktype float
+

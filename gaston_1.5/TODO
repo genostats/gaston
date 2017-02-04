@@ -1,0 +1,6 @@
+
+* dans les ai-reml-logit-* : on peut optimiser un peu en évitant de stocker W(n,n)
+  -> utiliser un vecteur W(n) avec W.asDiagonal() ...
+
+* regarder dans score_lmm.cpp si il y a des optimisations (diagonalisation...)
+
