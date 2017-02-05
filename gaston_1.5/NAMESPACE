@@ -13,7 +13,7 @@ exportClasses(bed.matrix)
 exportMethods(head,  as.matrix, "[", "%*%", dim, p, 'p<-', mu, 'mu<-', sigma, 'sigma<-', standardize, 'standardize<-', cbind, rbind)
 
 export(as.bed.matrix)
-export(GRM, reshape.GRM)
+export(GRM, DM, reshape.GRM)
 export(set.stats, set.stats.ped, set.stats.snps, set.hwe, set.genomic.sex)
 export(bed.loadings, LD, LD.plot, LD.thin)
 export(select.inds, select.snps)

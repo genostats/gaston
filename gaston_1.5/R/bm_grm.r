@@ -8,15 +8,38 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   
   if(!x@standardize_mu_sigma & !x@standardize_p) {
     if(!is.null(x@p)) x@standardize_p <- TRUE
-    else stop("Can't center/scale x for LD computation (use set.stat)\n")
+    else stop("Can't standardize x for LD computation (use set.stat)\n")
   }
 
   if(x@standardize_mu_sigma) {
     w <- ifelse(x@sigma == 0, 0, 1/x@sigma/sqrt(sum(which.snps)-1))   ### BEWARE q-1 !!!
     K <- .Call('gg_Kinship_w', PACKAGE = 'gaston', x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
   } else { 
-    K <- .Call('gg_Kinship_pw', PACKAGE = 'gaston', x@bed, x@p[which.snps], which.snps, chunk)
+    K <- .Call('gg_Kinship_pw', PACKAGE = 'gaston', x@bed, x@p[which.snps], which.snps, FALSE, chunk)
   }
+
+  if(!is.null(x@ped$id)) {
+    if(anyDuplicated(x@ped$id) == 0) 
+      rownames(K) <- colnames(K) <- x@ped$id
+  }
+
+  K
+}
+
+DM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
+  if(missing(which.snps)) which.snps <- rep(TRUE, ncol(x))
+  if(autosome.only) 
+    which.snps <- which.snps & is.autosome(x@snps$chr)
+
+  if(!is.logical(which.snps) | length(which.snps) != ncol(x))
+    stop("which.snps must be a Logical vector of length ncol(x)")
+  
+  if(x@standardize_mu_sigma)
+    warning("For Dominance Matrix, p standardization is used\n")
+  if(is.null(x@p))
+    stop("Can't standardize x for DM computation (use set.stat)\n")
+
+  K <- .Call('gg_Kinship_pw', PACKAGE = 'gaston', x@bed, x@p[which.snps], which.snps, TRUE, chunk)
 
   if(!is.null(x@ped$id)) {
     if(anyDuplicated(x@ped$id) == 0) 

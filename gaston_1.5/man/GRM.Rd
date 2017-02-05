@@ -20,13 +20,13 @@
   with \eqn{X} the standardized genotype matrix and \eqn{q} the number of SNPs
   (\code{ncol(x)}).
 
-  Note that \code{x} needs to be standardized before this computation, 
-  either by \code{standardize(x) <- "p"} or by  \code{standardize(x) <- "mu_sigma"}.
+  If \code{x} is not standardized before this computation, the function
+  will use \code{standardize(x) <- "p"} by default.
 }
 
 \value{ The GRM is a symmetric square matrix of dimension equal to the number of individuals.
 Each entry can be interpreted as an estimated kinship coefficient between individuals, although some 
-authors might disagree. }
+authors might disagree. Note in particular that some entries will be negative.}
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 

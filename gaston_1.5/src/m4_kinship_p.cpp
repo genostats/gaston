@@ -19,17 +19,18 @@ struct paraKin_p : public Worker {
   const Ktype n;                  // should be (nb_snps - 1)
   const double * p;
   const size_t sizeK;
+  const bool dominance;
 
   // output
   Ktype * K;
   
   // constructeurs
-  paraKin_p(uint8_t ** data, const size_t ncol, const size_t true_ncol, const Ktype n, const double * p) :
-          data(data), ncol(ncol), true_ncol(true_ncol), n(n), p(p), sizeK((4*true_ncol)*(4*true_ncol+1)/2) { 
+  paraKin_p(uint8_t ** data, const size_t ncol, const size_t true_ncol, const Ktype n, const double * p, const bool dominance) :
+          data(data), ncol(ncol), true_ncol(true_ncol), n(n), p(p), sizeK((4*true_ncol)*(4*true_ncol+1)/2) , dominance(dominance) { 
           K = new Ktype[sizeK];  // K is padded to a multiple of 4...
           std::fill(K, K+sizeK, 0);
         }
-  paraKin_p(paraKin_p & Q, Split) : data(Q.data), ncol(Q.ncol), true_ncol(Q.true_ncol), n(Q.n), p(Q.p), sizeK(Q.sizeK) {
+  paraKin_p(paraKin_p & Q, Split) : data(Q.data), ncol(Q.ncol), true_ncol(Q.true_ncol), n(Q.n), p(Q.p), sizeK(Q.sizeK), dominance(Q.dominance) {
           K = new Ktype[sizeK];  
           std::fill(K, K+sizeK, 0);
         }
@@ -47,16 +48,23 @@ struct paraKin_p : public Worker {
     H[3] = 0;
 
     for(size_t i = beg; i < end; i++) {
-      Ktype p_ = (Ktype) p[i]; 
+      Ktype p_ = (Ktype) p[i];   // freq de l'allele 1 (noté q le plus souvent !!)
       if(p_ == 0 || p_ == 1) continue;
-      Ktype w_ = 1/sqrt(2*p_*(1-p_)*n);
-      Ktype v0 = -2*p_*w_;
-      Ktype v1 = (1-2*p_)*w_;
-      Ktype v2 = (2-2*p_)*w_;
-
-      H[0] = v0;
-      H[1] = v1;
-      H[2] = v2;
+      Ktype v0, v1, v2;
+      if(dominance) {
+        v0 = p_/(1-p_);
+        v1 = -1;
+        v2 = (1-p_)/p_; 
+      } else {
+        Ktype w_ = 1/sqrt(2*p_*(1-p_)); 
+        v0 = -2*p_*w_;
+        v1 = (1-2*p_)*w_;
+        v2 = (2-2*p_)*w_;
+      }
+      // on divise par le nombre de SNPs
+      H[0] = v0/sqrt(n);
+      H[1] = v1/sqrt(n);
+      H[2] = v2/sqrt(n);
       
       size_t k = 0;
       for(size_t a1 = 0; a1 < 4; a1++) {
@@ -100,32 +108,8 @@ struct paraKin_p : public Worker {
 
 };
 
-
-NumericMatrix Kinship_p(XPtr<matrix4> p_A, const std::vector<double> & p, int chunk) {
-  paraKin_p X(p_A->data, p_A->ncol, p_A->true_ncol, (Ktype) (p_A->nrow - 1), &p[0]);
-  parallelReduce(0, p_A->nrow, X, chunk);
-
-  NumericMatrix Y(p_A->ncol,p_A->ncol);
-  size_t k = 0;
-  for(size_t i = 0; i < p_A->ncol; i++) {
-    for(size_t j = 0; j <= i; j++) {
-      Y(j,i) = (double) X.K[k++];
-    }
-  }
-
-  // symmetriser
-  k = 0;
-  for(size_t i = 0; i < p_A->ncol; i++) {
-    for(size_t j = 0; j <= i; j++) {
-      Y(i,j) = (double) X.K[k++]; // ou Y(j,i)
-    }
-  }
-
-  return Y;
-}
-
 //[[Rcpp::export]]
-NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, int chunk) {
+NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, bool dominance, int chunk) {
   int nb_snps = sum(snps);
 
   if(snps.length() != p_A->nrow || p.size() != nb_snps)
@@ -136,7 +120,7 @@ NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, Logic
   for(size_t i = 0; i < p_A->nrow; i++) {
     if(snps[i]) data[k++] = p_A->data[i];
   }
-  paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0]);
+  paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
   parallelReduce(0, nb_snps, X, chunk);
 
   delete [] data;
@@ -161,31 +145,16 @@ NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, Logic
 }
 
 
-RcppExport SEXP gg_Kinship_p(SEXP p_ASEXP, SEXP pSEXP, SEXP chunkSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< const std::vector<double>& >::type p(pSEXP );
-        Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP );
-        NumericMatrix __result = Kinship_p(p_A, p, chunk);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_Kinship_pw(SEXP p_ASEXP, SEXP pSEXP, SEXP snpsSEXP, SEXP chunkSEXP) {
+RcppExport SEXP gg_Kinship_pw(SEXP p_ASEXP, SEXP pSEXP, SEXP snpsSEXP, SEXP domiSEXP, SEXP chunkSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
     Rcpp::traits::input_parameter< const std::vector<double>& >::type p(pSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type snps(snpsSEXP);
+    Rcpp::traits::input_parameter< bool >::type domi(domiSEXP);
     Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP);
-    __result = Rcpp::wrap(Kinship_pw(p_A, p, snps, chunk));
+    __result = Rcpp::wrap(Kinship_pw(p_A, p, snps, domi, chunk));
     return __result;
 END_RCPP
 }
