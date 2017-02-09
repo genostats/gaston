@@ -4,7 +4,7 @@
 \title{ Linear mixed model data simulation}
 
 \description{
-  Simulate data under a linear mixed model, using the eigen decompositioon
+  Simulate data under a linear mixed model, using the eigen decomposition
   of the variance matrix.
 }
 \usage{ lmm.simu(tau, sigma2, K, eigenK = eigen(K), X, beta) }
