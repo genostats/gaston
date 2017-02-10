@@ -73,4 +73,3 @@ write.bed.matrix <- function(x, basename, bed = paste(basename, ".bed", sep=""),
   invisible(.Call('gg_write_bed_file', x@bed, bed))
 }
 
-

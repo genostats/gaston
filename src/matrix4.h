@@ -69,13 +69,15 @@ class matrix4 {
     size_t nrow, ncol;
     size_t true_ncol;
     uint8_t ** data;
-    void allocations() {
-      data = new uint8_t * [nrow];
-      for(size_t i = 0; i < nrow; i++) {
-        data[i] = new uint8_t [true_ncol];
-        // on initialise avec des 3 partout (3 -> NA)
-        // important pour accélérer certaines fonctions que la matrice soit bordée avec des NA
-        std::fill(data[i], data[i]+true_ncol, 255);
+    void allocations() {  
+      if(nrow > 0) {
+        data = new uint8_t * [nrow];
+        for(size_t i = 0; i < nrow; i++) {
+          data[i] = new uint8_t [true_ncol];
+          // on initialise avec des 3 partout (3 -> NA)
+          // important pour accélérer certaines fonctions que la matrice soit bordée avec des NA
+          std::fill(data[i], data[i]+true_ncol, 255);
+        }
       }
     }
 };
