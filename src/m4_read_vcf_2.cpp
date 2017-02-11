@@ -39,8 +39,8 @@ void set(uint8_t * data, size_t j, uint8_t val) {
 List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
  
   List L;
-  std::vector<std::string> id, ref, alt, filter, info;
-  std::vector<int> chr, pos;
+  std::vector<std::string> chr, id, ref, alt, filter, info;
+  std::vector<int> pos;
   std::vector<double> qual;
   
   XPtr<matrix4> pX(new matrix4(0, nsamples));  // avec nrow = 0 allocations() n'est pas appelé
@@ -50,8 +50,8 @@ List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
 
   int i = 0;
   while(i != max_snps) {
-    int chr_, pos_;
-    std::string id_("(no SNP read yet)"), ref_, alt_, filter_, info_;
+    int pos_ = 0;
+    std::string chr_, id_("(no SNP read yet)"), ref_, alt_, filter_, info_;
     double qual_;
 
     SEXP fres = f();
@@ -65,39 +65,39 @@ List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
     char * a = (char *) x[0];
     char * t = a;
 
-    if(str_token_tab(a,t)>0) chr_ = atoi(t);     // CHR
-    else Rf_error("VCF format error, last SNP read %s", id_.c_str());
+    if(str_token_tab(a,t)>0) chr_.assign(t);     // CHR
+    else Rf_error("VCF format error, last SNP read %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) pos_ = atoi(t);     // POS
-    else Rf_error("VCF format error, last SNP read %s", id_.c_str());
+    else Rf_error("VCF format error, last SNP read %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) id_.assign(t);      // ID
-    else Rf_error("VCF format error, last SNP read %s", id_.c_str());
+    else Rf_error("VCF format error, last SNP read %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) ref_.assign(t);     // REF
-    else Rf_error("VCF format error while reading SNP read %s", id_.c_str());
+    else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) alt_.assign(t);     // ALT
-    else Rf_error("VCF format error while reading SNP read %s", id_.c_str());
+    else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(alt_.find(',') != std::string::npos) continue;  // on ne continue que s'il y a un seul allèle alternatif
 
     if(str_token_tab(a,t)>0) qual_ = atof(t);    // QUAL
-    else Rf_error("VCF format error while reading SNP read %s", id_.c_str()); 
+    else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) filter_.assign(t);  // FILTER
-    else Rf_error("VCF format error while reading SNP read %s", id_.c_str());
+    else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) info_.assign(t);    // INFO
-    else Rf_error("VCF format error while reading SNP read %s", id_.c_str()); 
+    else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
     if(str_token_tab(a,t)>0) {                   // FORMAT
       char * b;
       if(str_token_col(t,b)>0) {
         if(strcmp(b,"GT") != 0) continue;        // doit commencer par GT.
       }
-      else Rf_error("VCF format error while reading SNP read %s", id_.c_str());
-    } else Rf_error("VCF format error while reading SNP read %s", id_.c_str());
+      else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
+    } else Rf_error("VCF format error while reading SNP %s chr = %s pos %d", id_.c_str(), chr_.c_str(), pos_);
 
 
     // maintenant qu'on sait qu'on va garder cette ligne, on fait nos push back

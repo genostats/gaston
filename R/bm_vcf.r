@@ -1,4 +1,4 @@
-read.vcf2 <- function(filename, max.snps, get.info = FALSE, verbose = getOption("gaston.verbose",TRUE)) {
+read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, verbose = getOption("gaston.verbose",TRUE)) {
   filename <- path.expand(filename)
   xx <- WhopGenome::vcf_open(filename)
   if(is.null(xx)) stop("File not found")
@@ -13,7 +13,18 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, verbose = getOption(
   
   L <- .Call("gg_read_vcf2", PACKAGE="gaston", f, length(samples), max.snps, get.info)
   WhopGenome::vcf_close(xx)
-  snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
+
+  if(convert.chr) {
+    chr <- as.numeric(L$chr)
+    chr <- ifelse(L$chr == "X"  | L$chr == "x",  options("gaston.chr.x")[1],  chr)
+    chr <- ifelse(L$chr == "Y"  | L$chr == "y",  options("gaston.chr.y")[1],  chr)
+    chr <- ifelse(L$chr == "MT" | L$chr == "mt", options("gaston.chr.mt")[1], chr)
+    if(any(is.na(chr))) 
+      warning("Some unknown chromosomes id's (try to set convert.chr = FALSE)")
+  } else 
+    chr <- L$chr
+
+  snp <- data.frame(chr = chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
   if(get.info) snp$info <-  L$info
 
