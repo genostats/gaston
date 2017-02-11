@@ -14,6 +14,9 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, 
   L <- .Call("gg_read_vcf2", PACKAGE="gaston", f, length(samples), max.snps, get.info)
   WhopGenome::vcf_close(xx)
 
+  snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
+                    quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
+  if(get.info) snp$info <-  L$info
   if(convert.chr) {
     chr <- as.numeric(L$chr)
     chr <- ifelse(L$chr == "X"  | L$chr == "x",  options("gaston.chr.x")[1],  chr)
@@ -21,12 +24,8 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, 
     chr <- ifelse(L$chr == "MT" | L$chr == "mt", options("gaston.chr.mt")[1], chr)
     if(any(is.na(chr))) 
       warning("Some unknown chromosomes id's (try to set convert.chr = FALSE)")
-    L$chr <- chr
+    snp$chr <- chr
   } 
-
-  snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
-                    quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
-  if(get.info) snp$info <-  L$info
 
   ped <- data.frame(famid = samples, id = samples, father = 0, mother = 0, sex = 0, pheno = NA, stringsAsFactors = FALSE)
   x <- new("bed.matrix", bed = L$bed, snps = snp, ped = ped,
