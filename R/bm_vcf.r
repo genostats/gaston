@@ -18,7 +18,7 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
   if(get.info) snp$info <-  L$info
   if(convert.chr) {
-    chr <- as.numeric(L$chr)
+    chr <- as.integer(L$chr)
     chr <- ifelse(L$chr == "X"  | L$chr == "x",  options("gaston.chr.x")[1],  chr)
     chr <- ifelse(L$chr == "Y"  | L$chr == "y",  options("gaston.chr.y")[1],  chr)
     chr <- ifelse(L$chr == "MT" | L$chr == "mt", options("gaston.chr.mt")[1], chr)
