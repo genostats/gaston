@@ -1,4 +1,4 @@
-read.vcf2 <- function(filename, get.info = FALSE, verbose = getOption("gaston.verbose",TRUE)) {
+read.vcf2 <- function(filename, max.snps, get.info = FALSE, verbose = getOption("gaston.verbose",TRUE)) {
   filename <- path.expand(filename)
   xx <- WhopGenome::vcf_open(filename)
   if(is.null(xx)) stop("File not found")
@@ -7,9 +7,11 @@ read.vcf2 <- function(filename, get.info = FALSE, verbose = getOption("gaston.ve
 
   f <- function() WhopGenome::vcf_readLineRaw(xx) 
 
+  if(missing(max.snps)) max.snps = -1L;
+
   if(verbose) cat("Reading diallelic variants for", length(samples), "individuals\n");
   
-  L <- .Call("gg_read_vcf2", PACKAGE="gaston", f, length(samples), get.info)
+  L <- .Call("gg_read_vcf2", PACKAGE="gaston", f, length(samples), max.snps, get.info)
   WhopGenome::vcf_close(xx)
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)

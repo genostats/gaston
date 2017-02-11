@@ -9,7 +9,9 @@ using namespace Rcpp;
  * pour ne pas avoir à gérer ça dans les fonctions)
  */
 
+#ifndef DEBUG 
 #define DEBUG false
+#endif
 
 struct D {
   D() {}

@@ -11,21 +11,27 @@ class proxy_matrix4 {
     proxy_matrix4(uint8_t * r, size_t b) : ref(r), j(b) {}
     // set value
     inline int operator=(int x) { 
-      // Rcout << "proxy set, j = " << j << ", int x = " << x << "\n";
+      #if DEBUG
+      Rcout << "proxy set, j = " << j << ", int x = " << x << "\n";
+      #endif
       uint8_t & a = ref[j/4];
       a &= ~(3 << ((j%4)*2));  // set to 00
       a |= (x << ((j%4)*2)); // set to x
       return x;
     }
     inline int operator=(proxy_matrix4 x) {
-      // Rcout << "proxy set, j = " << j << "(x is a proxy)\n";
+      #if DEBUG
+      Rcout << "proxy set, j = " << j << "(x is a proxy)\n";
+      #endif
       *this = (int) x;
       return (int) x;
     }
   
     // get value
     inline operator int() const {
-      // Rcout << "proxy (int), j = " << j << "\n";
+      #if DEBUG
+      Rcout << "proxy (int), j = " << j << "\n";
+      #endif
       return((int) ((ref[j/4] >> ((j%4)*2)) & 3));
     }
   private:  
@@ -51,13 +57,14 @@ class matrix4 {
 
     // set and get
     inline uint8_t get(size_t i, size_t j) const;
-    // void set(size_t i, size_t j, int val);
     inline void set(size_t i, size_t j, uint8_t val);
 
     // ()
     inline uint8_t operator()(size_t i, size_t j) const;
     proxy_matrix4 operator()(size_t i, size_t j) {
-      // Rcout << "cree proxy i = " << i << ", j = " << j << "\n";
+      #if DEBUG 
+      Rcout << "cree proxy i = " << i << ", j = " << j << "\n";
+      #endif
       return proxy_matrix4(data[i], j);
     }
 
@@ -70,7 +77,13 @@ class matrix4 {
     size_t true_ncol;
     uint8_t ** data;
     void allocations() {  
+      #if DEBUG
+      Rcout << "Allocations\n";
+      #endif
       if(nrow > 0) {
+        #if DEBUG
+        Rcout << nrow << " rows\n";
+        #endif
         data = new uint8_t * [nrow];
         for(size_t i = 0; i < nrow; i++) {
           data[i] = new uint8_t [true_ncol];
