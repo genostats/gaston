@@ -19,9 +19,9 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, 
   if(get.info) snp$info <-  L$info
   if(convert.chr) {
     chr <- as.integer(L$chr)
-    chr <- ifelse(L$chr == "X"  | L$chr == "x",  getOption("gaston.chr.x")[1],  chr)
-    chr <- ifelse(L$chr == "Y"  | L$chr == "y",  getOption("gaston.chr.y")[1],  chr)
-    chr <- ifelse(L$chr == "MT" | L$chr == "mt", getOption("gaston.chr.mt")[1], chr)
+    chr[L$chr == "X"  | L$chr == "x"]  <- getOption("gaston.chr.x")[1]
+    chr[L$chr == "Y"  | L$chr == "y"]  <- getOption("gaston.chr.y")[1]
+    chr[L$chr == "MT" | L$chr == "mt"] <- getOption("gaston.chr.mt")[1]
     if(any(is.na(chr))) 
       warning("Some unknown chromosomes id's (try to set convert.chr = FALSE)")
     snp$chr <- chr
