@@ -21,7 +21,7 @@ read.vcf2 <- function(filename, max.snps, get.info = FALSE, convert.chr = TRUE, 
     chr <- ifelse(L$chr == "MT" | L$chr == "mt", options("gaston.chr.mt")[1], chr)
     if(any(is.na(chr))) 
       warning("Some unknown chromosomes id's (try to set convert.chr = FALSE)")
-    L$chr <- L$chr
+    L$chr <- chr
   } 
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
