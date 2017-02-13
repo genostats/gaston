@@ -16,7 +16,7 @@
   individual is drawn (CEU = Utah residents of Northern Western European ancestry, FIN = Finnish, GBR = England and Scottland, 
   IBS = Iberian, TSI = Toscani).
 
-  Note that rs4988235, which associated with lactase persistence / lactose intolerence.
+  Note that the SNP rs4988235 is associated with lactase persistence / lactose intolerence.
 }
 \usage{ data(LCT) }
 

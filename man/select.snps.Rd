@@ -4,7 +4,7 @@
 \title{ Subsetting from a \code{\link{bed.matrix}} }
 
 \description{
-Return subset of SNPs satisfying a condition.
+Returns subset of SNPs satisfying a condition.
 }
 
 \usage{ select.snps(x, condition) }
@@ -15,8 +15,8 @@ Return subset of SNPs satisfying a condition.
 }
 
 \details{
-The conditions can involve global variables, and all variables defined
-in the data frame \code{x@snps}, that is
+The conditions can involve global variables and all variables defined
+in the data frame \code{x@snps}, in particular
 \itemize{
   \item \code{chr}, \code{id}, \code{dist}, \code{pos}, \code{A1}, \code{A2}
   \item If basic stats have been computed (see \code{\link{set.stats}}), \code{N0}, \code{N1}, \code{N2}, \code{NAs}, \code{callrate}, \code{maf}, \code{hz}, etc.

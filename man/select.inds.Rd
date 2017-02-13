@@ -4,7 +4,7 @@
 \title{ Subsetting from a \code{\link{bed.matrix}} }
 
 \description{
-Return subset of individuals satisfying a condition.
+Returns subset of individuals satisfying a condition.
 }
 \usage{ select.inds(x, condition) }
 
@@ -13,8 +13,8 @@ Return subset of individuals satisfying a condition.
   \item{condition}{ Condition used to select individuals }
 }
 \details{
-The conditions can involve global variables, and all variables defined
-in the data frame \code{x@ped}, that is
+The conditions can involve global variables and all variables defined
+in the data frame \code{x@ped}, in particular
 \itemize{
   \item \code{famid}, \code{id}, \code{father}, \code{mother}, \code{sex}, \code{pheno}
   \item If basic stats have been computed (see \code{\link{set.stats}}), 
