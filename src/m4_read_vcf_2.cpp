@@ -36,12 +36,13 @@ void set(uint8_t * data, size_t j, uint8_t val) {
 
 
 // [[Rcpp::export]]
-List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
+List read_vcf2(Function f, LogicalVector samples, int max_snps, bool get_info) {
  
   List L;
   std::vector<std::string> chr, id, ref, alt, filter, info;
   std::vector<int> pos;
   std::vector<double> qual;
+  int nsamples = sum(samples);
   
   XPtr<matrix4> pX(new matrix4(0, nsamples));  // avec nrow = 0 allocations() n'est pas appelé
 
@@ -113,11 +114,13 @@ List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
     data_ = new uint8_t [pX->true_ncol];
     std::fill(data_, data_ + pX->true_ncol, 255); // c'est important de remplir avec 3 -> NA
 
-    for(int j = 0; j < nsamples; j++) {
+    int j = 0;
+    for(int j1 = 0; j1 < samples.length(); j1++) {
       char * b;
       int g = 0;
       if(str_token_tab(a,t) == 0)
         Rf_error("VCF format error while reading SNP read %s", id_.c_str());
+      if(!samples[j1]) continue;
       int le = str_token_col(t,b);
       if(le == 3) { // deux allèles 0/0 0/1 1/1 ou 0|0 etc  
         if(*b == '1') g++;
@@ -129,6 +132,7 @@ List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
         g = 3; // set to NA
       }
       set(data_, j, g);
+      j++;
     }
 
     data.push_back(data_);
@@ -153,16 +157,16 @@ List read_vcf2(Function f, int nsamples, int max_snps, bool get_info) {
   return L;
 }
 
-RcppExport SEXP gg_read_vcf2(SEXP fSEXP, SEXP nsamplesSEXP, SEXP maxsnpSEXP, SEXP giSEXP) {
+RcppExport SEXP gg_read_vcf2(SEXP fSEXP, SEXP samplesSEXP, SEXP maxsnpSEXP, SEXP giSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< Function >::type f(fSEXP );
-        Rcpp::traits::input_parameter< int >::type nsamples(nsamplesSEXP );
+        Rcpp::traits::input_parameter< LogicalVector >::type samples(samplesSEXP);
         Rcpp::traits::input_parameter< int >::type maxsnp(maxsnpSEXP );
         Rcpp::traits::input_parameter< bool >::type gi(giSEXP );
-        List __result = read_vcf2(f, nsamples, maxsnp, gi);
+        List __result = read_vcf2(f, samples, maxsnp, gi);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
