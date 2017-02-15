@@ -29,7 +29,7 @@ The \code{.fam} and \code{.bim} files are useful for reading files with other so
 The \code{.rds} file can be read by \code{read.bed.matrix}.
 
 The \code{.bed}, \code{.fam} and \code{.bim} files follow the PLINK specifications
-(\url{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#bed}).
+(\url{http://zzz.bwh.harvard.edu/plink/binary.shtml}).
 }
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }

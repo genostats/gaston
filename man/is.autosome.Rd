@@ -17,7 +17,7 @@
 }
 
 \arguments{
-  \item{chr}{ A vector if chromosome ids }
+  \item{chr}{ A vector of chromosome ids }
 }
 
 \details{
@@ -32,7 +32,7 @@
 }
 
 \value{ 
-  A vector of logicals.
+  A logical vector.
 }
 
 \author{ Hervé Perdry }

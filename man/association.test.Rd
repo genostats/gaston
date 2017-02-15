@@ -115,7 +115,7 @@ plot(lds, -log10(t_score$p), xlab="r^2", ylab="-log(p)")
 
 # use y to simulate a binary phenotype
 y1 <- as.numeric(y > mean(y))
-t_binary <- association.test(x, y1, K = R$K, response = "binary")
+t_binary <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
 # (mini) Manhattan plot
 plot(-log10(t_binary$p), xlab="SNP index", ylab = "-log(p)")
 

@@ -29,7 +29,7 @@ If the \code{.rds} file exists, the \code{.fam} and \code{.bim} files will be
 ignored. To ignore an existing \code{.rds} file, set \code{rds = NULL}.
 
 The \code{.bed}, \code{.fam} and \code{.bim} files follow the PLINK specifications
-(\url{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#bed}).
+(\url{http://zzz.bwh.harvard.edu/plink/binary.shtml}).
 
 If the \code{.bed} file does not exist, and \code{basename} ends by \code{".bed"},
 the function will try to generate a new basename by trimming the extension out. This
