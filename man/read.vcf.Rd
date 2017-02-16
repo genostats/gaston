@@ -51,18 +51,14 @@ x1 <- read.vcf( filepath )
 x1
 
 ## Read vcf from file handle given by WhopGenome 
-# 1) open file
-handle <- WhopGenome::vcf_open(filepath)
-# 2) get list of all samples
-samples <- WhopGenome::vcf_getsamples(handle)
-# 2) select samples (here samples 1, 7 and 10)
+handle <- WhopGenome::vcf_open(filepath)      # 1) open file
+samples <- WhopGenome::vcf_getsamples(handle) # 2) get list of samples
+# 3) select samples (here samples 1, 7 and 10)
 WhopGenome::vcf_selectsamples(handle, samples[c(1,7,10)] )
-# 3) [optional] select snps (here, chr 2 from pos = 136400000 to pos = 136500000)
+# 4) [optional] select snps (here, chr 2 from pos = 136400000 to pos = 136500000)
 WhopGenome::vcf_setregion(handle, "2", 136400000, 136500000)
-# 4) call read.vcf
-x2 <- read.vcf(handle)
-# 5) close the file
-WhopGenome::vcf_close(handle)
+x2 <- read.vcf(handle)                        # 5) call read.vcf
+WhopGenome::vcf_close(handle)                 # 6) close file
 x2
 
 # we can check that this is the same as extracting a part of x1
