@@ -4,7 +4,6 @@
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
-#include "loubar.h"
 
 using namespace Rcpp;
 using namespace RcppParallel;
