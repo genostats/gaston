@@ -29,17 +29,17 @@ LD <- function(x, lim, lim2, measure = c("r2", "r", "D"), trim = TRUE) {
 
   if(missing(lim2) || all(lim2 == lim)) {  
     if(x@standardize_mu_sigma) 
-      a <- .Call('gg_LD', PACKAGE = 'gaston', x@bed, x@mu, x@sigma, lim[1]-1, lim[2]-1)
+      a <- .Call('gg_LD', PACKAGE = "gaston", x@bed, x@mu, x@sigma, lim[1]-1, lim[2]-1)
     else if(x@standardize_p) {
       warning("Moment estimates of LD using a p-standardized matrix can be outside of the range [-1,1]")
-      a <- .Call('gg_LD_p', PACKAGE = 'gaston', x@bed, x@p, lim[1]-1, lim[2]-1)
+      a <- .Call('gg_LD_p', PACKAGE = "gaston", x@bed, x@p, lim[1]-1, lim[2]-1)
     }
     rownames(a) <- colnames(a) <- x@snps$id[seq(lim[1], lim[2])]
   } else { 
     if(x@standardize_mu_sigma) 
-      a <- .Call('gg_LD_chunk', PACKAGE = 'gaston', x@bed, x@mu, x@sigma, lim[1]-1, lim[2]-1, lim2[1]-1, lim2[2]-1)
+      a <- .Call('gg_LD_chunk', PACKAGE = "gaston", x@bed, x@mu, x@sigma, lim[1]-1, lim[2]-1, lim2[1]-1, lim2[2]-1)
     else if(x@standardize_p)
-      a <- .Call('gg_LD_chunk_p', PACKAGE = 'gaston', x@bed, x@p, lim[1]-1, lim[2]-1, lim2[1]-1, lim2[2]-1)
+      a <- .Call('gg_LD_chunk_p', PACKAGE = "gaston", x@bed, x@p, lim[1]-1, lim[2]-1, lim2[1]-1, lim2[2]-1)
     rownames(a) <- x@snps$id[seq(lim[1], lim[2])]
     colnames(a) <- x@snps$id[seq(lim2[1], lim2[2])]
   }

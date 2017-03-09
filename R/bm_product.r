@@ -1,9 +1,9 @@
 setMethod("%*%", signature(x="bed.matrix",y="matrix"), 
   function(x, y) {
     if(x@standardize_mu_sigma) 
-      a <- .Call("gg_m4_loading_to_pc_ms", PACKAGE='gaston', x@bed, x@mu, x@sigma, y)
+      a <- .Call("gg_m4_loading_to_pc_ms", PACKAGE = "gaston", x@bed, x@mu, x@sigma, y)
     else if(x@standardize_p)
-      a <- .Call("gg_m4_loading_to_pc_p",  PACKAGE='gaston', x@bed, x@p, y)
+      a <- .Call("gg_m4_loading_to_pc_p",  PACKAGE = "gaston", x@bed, x@p, y)
     else
       stop("bed.matrix must be center/scaled for product")
     if(!is.null(x@ped$id)) {
@@ -18,9 +18,9 @@ setMethod("%*%", signature(x="bed.matrix",y="matrix"),
 setMethod("%*%", signature(x="matrix",y="bed.matrix"), 
   function(x, y) {
     if(y@standardize_mu_sigma)
-      a <- t(.Call("gg_m4_pc_to_loading_ms", PACKAGE='gaston', y@bed, y@mu, y@sigma, t(x)))
+      a <- t(.Call("gg_m4_pc_to_loading_ms", PACKAGE = "gaston", y@bed, y@mu, y@sigma, t(x)))
     else if(y@standardize_p)
-      a <- t(.Call("gg_m4_pc_to_loading_p",  PACKAGE='gaston', y@bed, y@p, t(x)))
+      a <- t(.Call("gg_m4_pc_to_loading_p",  PACKAGE = "gaston", y@bed, y@p, t(x)))
     else
       stop("bed.matrix must be center/scaled for product")
     if(!is.null(y@snps$id)) {
@@ -56,9 +56,9 @@ bed.loadings <- function(x, pc) {
  }
 
   if(x@standardize_mu_sigma)
-    a <- .Call("gg_m4_pc_to_loading_ms", PACKAGE='gaston', x@bed, x@mu, x@sigma, pc)
+    a <- .Call("gg_m4_pc_to_loading_ms", PACKAGE = "gaston", x@bed, x@mu, x@sigma, pc)
   else if(x@standardize_p)
-    a <- .Call("gg_m4_pc_to_loading_p",  PACKAGE='gaston', x@bed, x@p, pc)
+    a <- .Call("gg_m4_pc_to_loading_p",  PACKAGE = "gaston", x@bed, x@p, pc)
 
   a <- a/sqrt(ncol(x))
   a <- sweep(a, 2L, sqrt(colSums(a**2)), "/")

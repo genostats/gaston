@@ -17,7 +17,7 @@ setMethod("cbind", signature=c(...="bed.matrix"), definition= function(..., depa
   if(anyDuplicated(snps[, c("chr", "pos")]))
     warning("Duplicated SNPs positions")
 
-  bed <- .Call("gg_bind_snps",  PACKAGE='gaston', M)
+  bed <- .Call("gg_bind_snps",  PACKAGE = "gaston", M)
   x <- new("bed.matrix", bed = bed, snps = snps, ped = L[[1]]@ped,
            p = NULL, mu = NULL, sigma = NULL, 
            standardize_p = FALSE, standardize_mu_sigma = FALSE )
@@ -50,9 +50,9 @@ setMethod("rbind", signature=c(...="bed.matrix"), definition= function(..., depa
   if(anyDuplicated(ped[, c("famid", "id")]))
     warning("There are duplicated individuals (same family and individual id)")
 
-  a <- .Call("gg_alleles_recoding",  PACKAGE='gaston', M)
+  a <- .Call("gg_alleles_recoding",  PACKAGE = "gaston", M)
   M <- lapply(L, function(x) x@bed)
-  bed <- .Call("gg_bind_inds2",  PACKAGE='gaston', M, a$flip)
+  bed <- .Call("gg_bind_inds2",  PACKAGE = "gaston", M, a$flip)
 
   x <- new("bed.matrix", bed = bed, snps = L[[1]]@snps, ped = ped,
            p = NULL, mu = NULL, sigma = NULL,
@@ -82,20 +82,20 @@ all.eq <- function(L) {
 alleles.recoding <- function(...) {
   L <- list(...)
   M <- lapply(L, function(x) x@snps)
-  .Call("gg_alleles_recoding",  PACKAGE='gaston', M)
+  .Call("gg_alleles_recoding",  PACKAGE = "gaston", M)
 }
 
 
 # ! inplace modifications
 invert_snp_coding <- function(x, snp) {
-  .Call("gg_invert_snp_coding",  PACKAGE='gaston', x@bed, snp)
+  .Call("gg_invert_snp_coding",  PACKAGE = "gaston", x@bed, snp)
 }
 
 snp_hz_to_na <- function(x, snp) {
-  .Call("gg_snp_hz_to_na",  PACKAGE='gaston', x@bed, snp)
+  .Call("gg_snp_hz_to_na",  PACKAGE = "gaston", x@bed, snp)
 }
 
 set_snp_to_na <- function(x, snp) {
-  .Call("gg_set_snp_to_na",  PACKAGE='gaston', x@bed, snp)
+  .Call("gg_set_snp_to_na",  PACKAGE = "gaston", x@bed, snp)
 }
 

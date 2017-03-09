@@ -11,7 +11,7 @@ set.stats <- function(x, set.p = TRUE, set.mu_sigma = TRUE, verbose = getOption(
   w.f  <- x@ped$sex  == 2
   w.f[is.na(w.f)] <- FALSE   # tout ce qui n'est pas sex == 2 est pris comme un homme
 
-  st <- .Call('gg_geno_stats', PACKAGE = 'gaston', x@bed, w.x, w.y, w.mt, w.f) 
+  st <- .Call('gg_geno_stats', PACKAGE = "gaston", x@bed, w.x, w.y, w.mt, w.f) 
 
   nb.f <- sum(x@ped$sex == 2)
   nb.h <- nrow(x) - nb.f
@@ -90,7 +90,7 @@ set.stats.ped <- function(x, verbose = getOption("gaston.verbose",TRUE)) {
   w.y  <- is.chr.y(x@snps$chr)
   w.mt <- is.chr.mt(x@snps$chr)
 
-  st <- .Call('gg_geno_stats_inds', PACKAGE = 'gaston', x@bed, w.x, w.y, w.mt) 
+  st <- .Call('gg_geno_stats_inds', PACKAGE = "gaston", x@bed, w.x, w.y, w.mt) 
 
   ############ completer inds/ped
   n.a <- sum(w.a)
@@ -127,7 +127,7 @@ set.stats.snps <- function(x, set.p = TRUE, set.mu_sigma = TRUE, verbose = getOp
   w.f <- x@ped$sex  == 2
   w.f[is.na(w.f)] <- FALSE   # tout ce qui n'est pas sex == 2 est pris comme un homme
 
-  st <- .Call('gg_geno_stats_snps', PACKAGE = 'gaston', x@bed, w.x|w.y, w.f) 
+  st <- .Call('gg_geno_stats_snps', PACKAGE = "gaston", x@bed, w.x|w.y, w.f) 
 
   nb.f <- sum(x@ped$sex == 2)
   nb.h <- nrow(x) - nb.f

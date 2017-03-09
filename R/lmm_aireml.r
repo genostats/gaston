@@ -37,14 +37,14 @@ lmm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, EMsteps = 0L, EMst
     if(is.matrix(K)) {
       if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")
       if(missing(min_tau)) min_tau <- 1e-6
-      return( .Call("gg_AIREML1_nofix",  PACKAGE = 'gaston', Y, K, EMsteps, EMsteps_fail, EM_alpha, constraint, 
+      return( .Call("gg_AIREML1_nofix",  PACKAGE = "gaston", Y, K, EMsteps, EMsteps_fail, EM_alpha, constraint, 
                     min_s2, min_tau, max_iter, eps, verbose, theta, start_theta, get.P) )
     } 
     else if(is.list(K)) {
       if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
         stop("Dimensions of Y and K mismatch")
       if(missing(min_tau)) min_tau <- rep(1e-6, length(K))
-      return( .Call("gg_AIREMLn_nofix", PACKAGE = 'gaston', Y, K, EMsteps, EMsteps_fail, EM_alpha, constraint, 
+      return( .Call("gg_AIREMLn_nofix", PACKAGE = "gaston", Y, K, EMsteps, EMsteps_fail, EM_alpha, constraint, 
                     min_s2, min_tau, max_iter, eps, verbose, theta, start_theta, get.P) )
     }
   }
@@ -62,14 +62,14 @@ lmm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, EMsteps = 0L, EMst
   if(is.matrix(K)) {
     if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- 1e-6
-    return( .Call(aireml1,  PACKAGE = 'gaston', Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+    return( .Call(aireml1,  PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
                   max_iter, eps, verbose, theta, start_theta, get.P) )
   }
   else if(is.list(K)) {
     if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
       stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- rep(1e-6, length(K))
-    return( .Call(airemln, PACKAGE = 'gaston', Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+    return( .Call(airemln, PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
                   max_iter, eps, verbose, theta, start_theta, get.P) )
   }
 }

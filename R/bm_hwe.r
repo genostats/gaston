@@ -11,12 +11,12 @@ set.hwe <- function(x, method = c("chisquare", "exact"), verbose = getOption("ga
   method <- match.arg(method)
   if(method == 'chisquare') {
     if(verbose) cat("Computing HW chi-square p-values\n")
-    hwe[w.a] <- .Call('gg_hwe_chi', PACKAGE = 'gaston', x@snps$N0[w.a], x@snps$N1[w.a], x@snps$N2[w.a])
-    hwe[w.x] <- .Call('gg_hwe_chi', PACKAGE = 'gaston', x@snps$N0.f[w.x], x@snps$N1.f[w.x], x@snps$N2.f[w.x])
+    hwe[w.a] <- .Call('gg_hwe_chi', PACKAGE = "gaston", x@snps$N0[w.a], x@snps$N1[w.a], x@snps$N2[w.a])
+    hwe[w.x] <- .Call('gg_hwe_chi', PACKAGE = "gaston", x@snps$N0.f[w.x], x@snps$N1.f[w.x], x@snps$N2.f[w.x])
   } else {
     if(verbose) cat("Computing HW exact test p-values\n")
-    hwe[w.a] <- .Call('gg_hwe', PACKAGE = 'gaston', x@snps$N0[w.a], x@snps$N1[w.a], x@snps$N2[w.a])
-    hwe[w.x] <- .Call('gg_hwe', PACKAGE = 'gaston', x@snps$N0.f[w.x], x@snps$N1.f[w.x], x@snps$N2.f[w.x])
+    hwe[w.a] <- .Call('gg_hwe', PACKAGE = "gaston", x@snps$N0[w.a], x@snps$N1[w.a], x@snps$N2[w.a])
+    hwe[w.x] <- .Call('gg_hwe', PACKAGE = "gaston", x@snps$N0.f[w.x], x@snps$N1.f[w.x], x@snps$N2.f[w.x])
   }
   x@snps$hwe <- hwe
   x

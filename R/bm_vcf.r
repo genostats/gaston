@@ -27,7 +27,7 @@ read.vcf <- function(file, max.snps, get.info = FALSE, convert.chr = TRUE, verbo
 
   if(verbose) cat("Reading diallelic variants for", length(samples), "individuals\n");
   
-  L <- .Call("gg_read_vcf2", PACKAGE="gaston", f, which.samples, max.snps, get.info)
+  L <- .Call("gg_read_vcf2", PACKAGE = "gaston", f, which.samples, max.snps, get.info)
   if(!is.null(xx)) WhopGenome::vcf_close(xx)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
@@ -81,7 +81,7 @@ read.vcf.filtered <- function(file, positions, max.snps, get.info = FALSE, conve
 
   if(verbose) cat("Reading diallelic variants for", length(samples), "individuals\n");
   
-  L <- .Call("gg_read_vcf_filtered", PACKAGE="gaston", f, positions, which.samples, max.snps, get.info)
+  L <- .Call("gg_read_vcf_filtered", PACKAGE = "gaston", f, positions, which.samples, max.snps, get.info)
   if(!is.null(xx)) WhopGenome::vcf_close(xx)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 

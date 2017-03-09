@@ -13,12 +13,13 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
 			  VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i, bool start_tau, bool start_beta) {
 
   int n(y.rows()), p(x.cols()), i(0);
-  MatrixXd V(n,n), Vi(n,n), W(n,n);
+  MatrixXd V(n,n), Vi(n,n);
+  VectorXd W(n);
   MatrixXd XViX(p,p), ViX(n,p);
   VectorXd dif(p+1), beta0(p);
   VectorXd pi(n), z(n), Pz(n), KPz(n), PKPz(n);
   double tau0, log_detV, detV, d, log_d, AI, gr;
-  
+
   // X'X
   MatrixXd xtx( MatrixXd(p,p).setZero().selfadjointView<Lower>().rankUpdate( x.transpose() ));
   MatrixXd xtxi(p,p); // et son inverse
@@ -27,8 +28,7 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
   sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
   
   // initialisation beta
-  if (!start_beta)
-  {
+  if(!start_beta) {
     Vi.setZero();
     VectorXd gr_beta(p);
     gr_beta.setZero();
@@ -39,7 +39,8 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
       for(int j = 0; j < n; j++) {
         pi(j) = 1/( 1 + exp( - x.row(j).dot(beta) ) );
         Vi(j,j) = pi(j)*(1-pi(j));
-        z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j))); }  
+        z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j)));
+      }  
  
       ViX.noalias() = Vi * x;
       XViX.noalias() = x.transpose() * ViX;
@@ -47,25 +48,27 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
       P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
       Pz.noalias()   =  P.selfadjointView<Lower>() * z;
       gr_beta = x.transpose() * Pz; 
-	  for(int j = 0; j < p; j++)
+      for(int j = 0; j < p; j++)
         beta(j) += 2*beta(j)*beta(j)*gr_beta(j)/n;
-	  
-	  gr_beta_norm = gr_beta.norm();
-    } }
+      gr_beta_norm = gr_beta.norm();
+    } 
+  }
   
   if(verbose) Rcout << "[Initialization] beta = " << beta.transpose() << "\n";    
    
   // initialisation pseudo réponse
-  W.setZero();
+  // W.setZero();
   for(int j = 0; j < n; j++) {
     pi(j) = 1/( 1 + exp( - x.row(j).dot(beta) ) );
-    W(j,j) = 1/( pi(j)*(1-pi(j)) );
-    z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j))); }
+    W(j) = 1/( pi(j)*(1-pi(j)) );
+    z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j)));
+  }
   if (!start_tau) tau= z.dot(z)/(n-1)- z.sum()*z.sum()/(n-1)/n;
   if(verbose) Rcout << "[Initialization] tau = " << tau << "\n";    
 
   // first update tau
-  V.noalias() = W + tau*K;
+  // V.noalias() = W.asDiagonal() + tau*K;
+  V.noalias() = tau*K; V.diagonal().noalias() += W;
   sym_inverse(V,Vi,log_detV,detV,1e-7);
   ViX.noalias() = Vi * x;
   XViX.noalias() = x.transpose() * ViX;
@@ -81,7 +84,7 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
   // update omega &  beta
   omega.noalias() = tau*KPz;
   beta0 = beta;
-  beta.noalias() = x.transpose() * (z - omega - W*Pz);
+  beta.noalias() = x.transpose() * (z - omega - W.asDiagonal()*Pz);
   beta = xtxi * beta;
   if(verbose) Rcout << "[Iteration " << i+1 << "] beta = " << beta.transpose() << "\n";    
 	  
@@ -90,40 +93,41 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
     // update pseudo reponse
     for(int j = 0; j < n; j++) {
       pi(j) = 1/( 1 + exp( - x.row(j).dot(beta) - omega(j) ) );
-      W(j,j) = 1/( pi(j)*(1-pi(j)) );
-      z(j) = x.row(j).dot(beta) + omega(j) + (y(j)-pi(j))/(pi(j)*(1-pi(j))); }
+      W(j) = 1/( pi(j)*(1-pi(j)) );
+      z(j) = x.row(j).dot(beta) + omega(j) + (y(j)-pi(j))/(pi(j)*(1-pi(j)));
+    }
 	  
     // update P
-    V.noalias() = W + tau*K;
+    V.noalias() = tau*K; V.diagonal().noalias() += W;
     sym_inverse(V,Vi,log_detV,detV,1e-7);
     ViX.noalias() = Vi * x;
     XViX.noalias() = x.transpose() * ViX;
     sym_inverse(XViX, XViX_i, log_d, d, 1e-5);
     P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
  
-	// gradient
+    // gradient
     Pz.noalias()   =  P.selfadjointView<Lower>() * z;
     KPz.noalias()  = K * Pz; // le .selfadjointView ne compile pas avec le template !!
     gr = -0.5*(trace_of_product(K,P) - Pz.dot(KPz));
-	if(verbose) Rcout << "[Iteration " << i+1 << "] gr = " << gr << "\n";
+    if(verbose) Rcout << "[Iteration " << i+1 << "] gr = " << gr << "\n";
 	
     //update tau
     // Average Information
-	tau0 = tau;
-	PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
+    tau0 = tau;
+    PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
     AI = 0.5*PKPz.dot(KPz);
     tau += gr/AI;
     
     if(constraint && tau < min_tau) {
-        tau = min_tau;
-        if(verbose) Rcout << "[Iteration " << i+1 << "] Constraining tau\n";
+      tau = min_tau;
+      if(verbose) Rcout << "[Iteration " << i+1 << "] Constraining tau\n";
     }	
     if(verbose) Rcout << "[Iteration " << i+1 << "] tau = " << tau << "\n";    
 
     // update omega & beta
     omega.noalias() = tau*KPz;
     beta0 = beta;
-    beta.noalias() = x.transpose() * (z - omega - W*Pz);
+    beta.noalias() = x.transpose() * (z - omega - W.asDiagonal()*Pz);
     beta = xtxi * beta;    
     if(verbose) Rcout << "[Iteration " << i+1 << "] beta = " << beta.transpose() << "\n";    
       
@@ -139,7 +143,7 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
   niter = i+1;
   
   // update
-  V.noalias() = W + tau*K;
+  V.noalias() = tau*K; V.diagonal().noalias() += W;
   sym_inverse(V,Vi,log_detV,detV,1e-7);
   ViX.noalias() = Vi * x;
   XViX.noalias() = x.transpose() * ViX;
@@ -148,6 +152,6 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
   Pz.noalias()   =  P.selfadjointView<Lower>() * z;
   KPz.noalias()  = K * Pz; // le .selfadjointView ne compile pas avec le template !!
   omega.noalias() = tau*KPz;
-  beta.noalias() = x.transpose() * (z - omega - W*Pz);
+  beta.noalias() = x.transpose() * (z - omega - W.asDiagonal()*Pz);
   beta = xtxi * beta;    
 }

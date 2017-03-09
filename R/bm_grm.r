@@ -13,9 +13,9 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
 
   if(x@standardize_mu_sigma) {
     w <- ifelse(x@sigma == 0, 0, 1/x@sigma/sqrt(sum(which.snps)-1))   ### BEWARE q-1 !!!
-    K <- .Call('gg_Kinship_w', PACKAGE = 'gaston', x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
+    K <- .Call('gg_Kinship_w', PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
   } else { 
-    K <- .Call('gg_Kinship_pw', PACKAGE = 'gaston', x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    K <- .Call('gg_Kinship_pw', PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
   }
 
   if(!is.null(x@ped$id)) {
@@ -39,7 +39,7 @@ DM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   if(is.null(x@p))
     stop("Can't standardize x for DM computation (use set.stat)\n")
 
-  K <- .Call('gg_Kinship_pw', PACKAGE = 'gaston', x@bed, x@p[which.snps], which.snps, TRUE, chunk)
+  K <- .Call('gg_Kinship_pw', PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, TRUE, chunk)
 
   if(!is.null(x@ped$id)) {
     if(anyDuplicated(x@ped$id) == 0) 
