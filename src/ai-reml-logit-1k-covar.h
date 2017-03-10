@@ -1,6 +1,7 @@
 #include <RcppEigen.h>
 #include <math.h>
 #include <iostream>
+#include "matrix-varia.h"
 
 using namespace Rcpp;
 using namespace Eigen;

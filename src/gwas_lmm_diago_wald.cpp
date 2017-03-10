@@ -31,7 +31,7 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
   VectorXd omega(n-p);
   VectorXd z(n); // possible de se contenter de n-p et d'éviter les tail
 
-  // dernière colonne de r
+  // Zecteur SNPs
   VectorXd SNP(n);
 
   // declare vectors containing result
