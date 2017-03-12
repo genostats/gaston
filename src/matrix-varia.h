@@ -1,4 +1,3 @@
-// [[Rcpp::depends(RcppEigen)]]
 #ifndef MATRIXVARIA
 #define MATRIXVARIA
 #include <RcppEigen.h>
@@ -11,6 +10,13 @@ typedef Map<MatrixXd> Map_MatrixXd;
 void blocki(Eigen::MatrixXd & x, int x1, int n, Eigen::MatrixXd & y, int y1, double & log_det, double & det, double eps);
 
 inline void sym_inverse(Eigen::MatrixXd & X,Eigen::MatrixXd & Y, double & log_det, double & det, double eps) {
+  blocki(X, 0, X.rows(), Y, 0, log_det, det, eps);
+  Y.triangularView<Lower>() = Y.transpose(); // symétriser
+}
+
+void blocki(Eigen::MatrixXf & x, int x1, int n, Eigen::MatrixXf & y, int y1, float & log_det, float & det, float eps);
+
+inline void sym_inverse(Eigen::MatrixXf & X,Eigen::MatrixXf & Y, float & log_det, float & det, float eps) {
   blocki(X, 0, X.rows(), Y, 0, log_det, det, eps);
   Y.triangularView<Lower>() = Y.transpose(); // symétriser
 }

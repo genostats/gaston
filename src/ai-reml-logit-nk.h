@@ -2,7 +2,7 @@
 #include <RcppEigen.h>
 #include <math.h>
 #include <iostream>
-// #define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 
+#include "any.h"
 
 using namespace Rcpp;
 using namespace Eigen;

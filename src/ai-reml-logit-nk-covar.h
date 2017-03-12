@@ -2,6 +2,8 @@
 #include <RcppEigen.h>
 #include <math.h>
 #include <iostream>
+#include "logit.h"
+#include "matrix-varia.h"
 //#define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 
 
 using namespace Rcpp;
@@ -44,30 +46,7 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
   
   // initialisation beta
-  if (!start_beta)
-  {
-    Vi.setZero();
-    VectorXd gr_beta(p);
-    gr_beta.setZero();
-    gr_beta(0)=1;
-    double gr_beta_norm( gr_beta.norm() );
-	
-    while ( gr_beta_norm > 1e-3 ) {
-      for(int j = 0; j < n; j++) {
-        pi(j) = 1/( 1 + exp( - x.row(j).dot(beta) ) );
-        Vi(j,j) = pi(j)*(1-pi(j));
-        z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j))); }  
- 
-      ViX.noalias() = Vi * x;
-      XViX.noalias() = x.transpose() * ViX;
-      sym_inverse(XViX, XViX_i, log_d, d, 1e-5);
-      P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
-      Pz.noalias()   =  P.selfadjointView<Lower>() * z;
-      gr_beta = x.transpose() * Pz; 
-      for(int j = 0; j < p; j++)
-        beta(j) += 2*beta(j)*beta(j)*gr_beta(j)/n;	  
-      gr_beta_norm = gr_beta.norm();
-    } }
+  if (!start_beta) logistic_model(y, x, 1e-3, beta, XViX_i);
   
   if(verbose) Rcout << "[Initialization] beta = " << beta.transpose() << "\n";    
    
@@ -78,7 +57,9 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
     W(j,j) = 1/( pi(j)*(1-pi(j)) );
     z(j) = x.row(j).dot(beta) + (y(j)-pi(j))/(pi(j)*(1-pi(j))); }
   if (!start_tau) {
-    for (int j = 0; j < s; j++) tau(j) = (z.dot(z)/(n-1)- z.sum()*z.sum()/(n-1)/n)/s; }
+    for (int j = 0; j < s; j++) 
+      tau(j) = (z.dot(z)/(n-1)- z.sum()*z.sum()/(n-1)/n)/s; 
+  }
   if(verbose) Rcout << "[Initialization] tau = " << tau.transpose() << "\n";    
 
   // first update tau
@@ -91,12 +72,12 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
   Pz.noalias()   =  P.selfadjointView<Lower>() * z;
   
-   for(int j = 0; j < s; j++) {
+  for(int j = 0; j < s; j++) {
     KPz[j].noalias() = K[j] * Pz;
-	gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
-	tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
-    }
-   if(verbose) Rcout << "[Iteration " << i+1 << "] tau = " << tau.transpose() << "\n";    
+    gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
+    tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
+  }
+  if(verbose) Rcout << "[Iteration " << i+1 << "] tau = " << tau.transpose() << "\n";    
 	
   // update omega &  beta
   omega.setZero();
@@ -132,7 +113,8 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
     for(int j = 0; j < s; j++) {
       KPz[j].noalias() = K[j] * Pz;
       PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
-      gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j])); }
+      gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
+    }
 
     // updating tau (AI)
     tau0 = tau;
@@ -196,8 +178,9 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   
   omega.setZero();
   for (j=0; j<s; j++) {
-  KPz[j].noalias()  = K[j] * Pz;
-  omega.noalias() += tau(j)*KPz[j]; }
+    KPz[j].noalias()  = K[j] * Pz;
+    omega.noalias() += tau(j)*KPz[j]; 
+  }
 
   beta = x.transpose() * (z - omega - W*Pz);
   beta = xtxi * beta;

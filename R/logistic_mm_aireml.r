@@ -60,10 +60,18 @@ logistic.mm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, min_tau, t
   n <- length(Y)
   if(ncol(X) >= n) stop("Too many columns in X")
 
+  # if(missing(beta)) {
+  #  beta <- glm(Y~X-1, family=binomial)$coefficients
+  # } else { if (length(beta)!=ncol(X)) stop("Dimensions of X and beta mismatch") }
+  # start_beta <- TRUE
   if(missing(beta)) {
-    beta <- glm(Y~X-1, family=binomial)$coefficients
-  } else { if (length(beta)!=ncol(X)) stop("Dimensions of X and beta mismatch") }
-  start_beta <- TRUE
+    beta <- rep(0, ncol(X))
+    start_beta <- FALSE
+  } else { 
+    if(length(beta) != ncol(X)) 
+      stop("Dimensions of X and beta mismatch")
+    start_beta <- TRUE
+  }
 
   if(is.matrix(K)) {
     if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")

@@ -7,31 +7,27 @@
 using namespace Rcpp;
 using namespace Eigen;
 
-typedef Map<MatrixXd> Map_MatrixXd;
-
-// double
-template<typename T1, typename T2, typename T3>
-void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> & x, const Eigen::MatrixBase<T2> & K, 
-              bool constraint, double min_tau, int max_iter, double eps, bool verbose, double & tau, int & niter, MatrixXd & P,
-			  VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i, bool start_tau, bool start_beta) {
+// float [pas besoin de template, on n'aura pas de MapMatrix]
+void AIREML1_logit_f(const MatrixXf & y, const MatrixXf & x, const MatrixXf & K, 
+                     bool constraint, float min_tau, int max_iter, float eps, bool verbose, float & tau, int & niter, MatrixXf & P,
+                     VectorXf & omega, VectorXf & beta, MatrixXf & XViX_i, bool start_tau, bool start_beta) {
 
   int n(y.rows()), p(x.cols()), i(0);
-  MatrixXd V(n,n), Vi(n,n);
-  VectorXd W(n);
-  MatrixXd XViX(p,p), ViX(n,p);
-  VectorXd dif(p+1), beta0(p);
-  VectorXd pi(n), z(n), Pz(n), KPz(n), PKPz(n);
-  double tau0, log_detV, detV, d, log_d, AI, gr;
-
+  MatrixXf V(n,n), Vi(n,n);
+  VectorXf W(n);
+  MatrixXf XViX(p,p), ViX(n,p);
+  VectorXf dif(p+1), beta0(p);
+  VectorXf pi(n), z(n), Pz(n), KPz(n), PKPz(n);
+  float tau0, log_detV, detV, d, log_d, AI, gr;
   // X'X
-  MatrixXd xtx( MatrixXd(p,p).setZero().selfadjointView<Lower>().rankUpdate( x.transpose() ));
-  MatrixXd xtxi(p,p); // et son inverse
-  double det_xtx, ldet_xtx;
-  MatrixXd xtx0(xtx);
+  MatrixXf xtx( MatrixXf(p,p).setZero().selfadjointView<Lower>().rankUpdate( x.transpose() ));
+  MatrixXf xtxi(p,p); // et son inverse
+  float det_xtx, ldet_xtx;
+  MatrixXf xtx0(xtx);
   sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
   
   // initialisation beta
-  if(!start_beta) logistic_model(y, x, 1e-3, beta, XViX_i); 
+  if(!start_beta) logistic_model_f(y, x, 1e-3, beta, XViX_i); 
   
   if(verbose) Rcout << "[Initialization] beta = " << beta.transpose() << "\n";    
    
@@ -134,11 +130,3 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
   beta.noalias() = x.transpose() * (z - omega - W.asDiagonal()*Pz);
   beta = xtxi * beta;    
 }
-
-/*************************************************************************************************************/
-
-// float
-void AIREML1_logit_f(const MatrixXf & y, const MatrixXf & x, const MatrixXf & K, 
-                     bool constraint, float min_tau, int max_iter, float eps, bool verbose, float & tau, int & niter, MatrixXf & P,
-                     VectorXf & omega, VectorXf & beta, MatrixXf & XViX_i, bool start_tau, bool start_beta);
-

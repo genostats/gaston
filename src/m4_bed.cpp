@@ -1,14 +1,9 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
-#include <RcppParallel.h>
 #include <iostream>
 #include <fstream>
-#include <ctime>
 #include "matrix4.h"
-#include "loubar.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
 
 
 /*** 
