@@ -71,6 +71,12 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
   // faut pas oublier d'y mettre la matrice avec une colonne de plus !!
   A.x = &x;
   for(int i = beg; i <= end; i++) {
+     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      H2(i-beg) = NAN;
+      LRT(i-beg) = NAN;
+      continue;
+    }
+
     // remplir dernière colonne de x : récupérer SNP, multiplier par u'...
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];

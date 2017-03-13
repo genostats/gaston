@@ -3,6 +3,7 @@
 #include "matrix4.h"
 #include <ctime>
 #include <cmath>
+#include <iostream>
 #define BLOCK 20 
 
 //[[Rcpp::export]]
@@ -21,10 +22,17 @@ List GWAS_logit_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
       x(i,j) = (float) X(i,j);
 
   // declare vectors containing result
-  VectorXf BETA(end-beg+1);
-  VectorXf SDBETA(end-beg+1);
+  NumericVector BETA(end-beg+1);
+  NumericVector SDBETA(end-beg+1);
 
-  for(int i = beg; i <= end; i++) {
+  VectorXf beta(r);
+  beta.setZero();
+  for(int i = beg; i <= end; i++) { 
+    if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      BETA(i-beg) = NAN;
+      SDBETA(i-beg) = NAN;
+      continue;
+    }
     // remplir dernière colonne de x par génotype au SNP (manquant -> mu)
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t xx = pA->data[i][ii];
@@ -41,7 +49,6 @@ List GWAS_logit_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
       }
     }
 
-    VectorXf beta(r);
     MatrixXf varbeta(r,r);
     logistic_model_f(y, x, tol, beta, varbeta);
 

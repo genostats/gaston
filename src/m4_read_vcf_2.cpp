@@ -140,8 +140,10 @@ List read_vcf2(Function f, LogicalVector samples, int max_snps, bool get_info) {
   
   // et on finit la construction de la matrice
   pX->nrow = i; 
-  pX->data = new uint8_t * [i];
-  for(int j = 0; j < i; j++) pX->data[j] = data[j];
+  if(i > 0) {
+    pX->data = new uint8_t * [i];
+    for(int j = 0; j < i; j++) pX->data[j] = data[j];
+  }
 
   L["id"] = id;
   L["pos"] = pos;
@@ -278,8 +280,10 @@ List read_vcf_filtered(Function f, List POS, LogicalVector samples, int max_snps
   
   // et on finit la construction de la matrice
   pX->nrow = i; 
-  pX->data = new uint8_t * [i];
-  for(int j = 0; j < i; j++) pX->data[j] = data[j];
+  if(i > 0) {
+    pX->data = new uint8_t * [i];
+    for(int j = 0; j < i; j++) pX->data[j] = data[j];
+  }
 
   L["id"] = id;
   L["pos"] = pos;

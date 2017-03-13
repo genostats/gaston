@@ -25,6 +25,12 @@ List GWAS_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
 
   for(int i = beg; i <= end; i++) {
     Eigen::VectorXd SNP(n);
+    if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      beta(i-beg) = NAN;
+      sd_beta(i-beg) = NAN;
+      continue;
+    }
+
     // remplir SNP
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];

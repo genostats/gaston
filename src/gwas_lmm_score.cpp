@@ -13,6 +13,10 @@ List GWAS_lmm_score(XPtr<matrix4> pA, NumericVector PY, NumericMatrix P, Numeric
   double t, v;  
   
   for(int i = beg; i <= end; i++) {
+    if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      s(i-beg) = NAN;
+      continue;
+    }
     // récupérer SNP
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];
@@ -35,7 +39,7 @@ List GWAS_lmm_score(XPtr<matrix4> pA, NumericVector PY, NumericMatrix P, Numeric
   }
   
   List S;
-  S["score"]=s;
+  S["score"] = s;
 
   return S;
 }
@@ -64,6 +68,10 @@ List GWAS_lmm_score_f(XPtr<matrix4> pA, NumericVector PY, NumericMatrix P, Numer
   double t, v;  
   
   for(int i = beg; i <= end; i++) {
+    if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      s(i-beg) = NAN;
+      continue;
+    }
     // récupérer SNP
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];

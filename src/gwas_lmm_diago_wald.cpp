@@ -56,6 +56,13 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
 
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
+    if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
+      H2(i-beg) = NAN;
+      BETA(i-beg) = NAN;
+      SDBETA(i-beg) = NAN;
+      continue;
+    }
+
     // remplir dernière colonne de x : récupérer SNP, multiplier par u'...
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];
