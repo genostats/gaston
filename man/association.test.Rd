@@ -7,9 +7,8 @@
 \usage{ 
 association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
                  method = c("lm", "lmm"), response = c("quantitative", "binary"), 
-                 test = c("score", "wald", "lrt"),
-                 K, eigenK, beg = 1, end = ncol(x), p = 0,
-                 tol = .Machine$double.eps^0.25, multithreaded = FALSE, ...)
+                 test = c("score", "wald", "lrt"), K, eigenK, beg = 1, 
+                 end = ncol(x), p = 0, tol = .Machine$double.eps^0.25, ...)
 }
 
 \arguments{
@@ -26,7 +25,6 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \item{end}{ Index of the last SNP tested for association }
   \item{p}{ Number of Principal Components to include in the model with fixed effect (for \code{test = "wald"} or \code{"lrt"}) }
   \item{tol}{ Parameter for the likelihood maximization (as in \code{optimize}) }
-  \item{multithreaded}{ \code{Logical}. If \code{TRUE}, several threads are used. }
   \item{...}{ Additional parameters for \code{\link{lmm.aireml}} or \code{\link{logistic.mm.aireml}} (if \code{test = "score"}). }
 }
 
@@ -66,8 +64,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   It is possible to give a list in argument \code{K} for inclusion of several random effects in the model.
   The argument \code{p} is ignored.
 
-  Note: in the present implementation, using several threads is possible for Wald and LRT tests, but is
-  likely to be slower than using only one, hence the \code{multithreaded} parameter. This will change in the future.
+  Note: this function is not multithreaded. Wald test with Linear Mixed Models are computationally intensive, 
+  to run a GWAS with such tests consider using \code{association.test.parallel} in package \code{gaston.utils}.
 }
 
 \value{
