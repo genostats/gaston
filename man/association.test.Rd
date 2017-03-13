@@ -42,8 +42,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \eqn{X} the covariates matrix, and \eqn{PC} the matrix of the first \eqn{p} principal components.
   A Wald test is performed, independently of the value of \code{test}.
 
-  There is no test available yet for \code{method = "lm"} and \code{response = "binary"}. You can consider
-  treating the binary phenotype as quantitative.
+  If\code{method = "lm"} and \code{response = "binary"}, a similar model is used for a logistic 
+  regression (Wald test).
  
   If \code{method = "lmm"} and \code{response = "quantitative"}, the following model in considered for each SNP
   \deqn{ Y = (X|PC)\alpha + G\beta + \omega + \varepsilon }{ Y = (X|PC) alpha + G beta + omega + epsilon }
