@@ -1,4 +1,4 @@
-lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, tol = .Machine$double.eps^0.25) {
+lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, tol = .Machine$double.eps^0.25, newton = FALSE) {
   if( any(is.na(Y)) ) 
     stop('Missing data in Y.')
 
@@ -18,8 +18,12 @@ lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, tol = .Ma
 
   if(is.null(X))
     .Call('gg_fit_diago_nocovar', PACKAGE = "gaston", Y, p, Sigma, U, tol)
-  else
-    .Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, tol)
+  else {
+    if(newton) 
+      .Call('gg_fit_diago_newton', PACKAGE = "gaston", Y, X, p, Sigma, U, tol)
+    else
+      .Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, tol)
+  }
 }
 
 
