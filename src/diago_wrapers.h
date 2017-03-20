@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include <iostream>
+
 using namespace Eigen;
 using namespace Rcpp;
 typedef Map<MatrixXd> Map_MatrixXd;

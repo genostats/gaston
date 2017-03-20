@@ -1,6 +1,26 @@
 #include <Rcpp.h>
 #include "diago_newton.h"
 
+// h2*s + (1-h2) > 0
+// h2*(s-1) > -1
+// si s > 1
+// h2 > 1/(1-s) donc min_h2 = max 1/(1-s) pour s > 1
+// si s < 1 h2 < 1/(1-s) donc max_h2 = min 1/(1-s) pour s < 1
+void min_max_h2(NumericVector Sigma, double & min_h2, double & max_h2) {
+  int n = Sigma.size();
+  Rcout << "n = " << n << "\n";
+  max_h2 = std::numeric_limits<double>::infinity();
+  min_h2 = -std::numeric_limits<double>::infinity();
+  for(int i = 0; i < n; i++) {
+    double s = Sigma[i];
+    if(s > 1) 
+      min_h2 = (min_h2 > 1/(1-s))?min_h2:1/(1-s);
+    else if(s < 1)
+      max_h2 = (max_h2 < 1/(1-s))?max_h2:1/(1-s);
+  }
+  Rcout << "min = " << min_h2 << " max = " << max_h2 << "\n";
+}
+
 //[[Rcpp::export]]
 List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector Sigma, NumericMatrix U, double tol) {
   Map_MatrixXd y0(as<Map<MatrixXd> >(Y));
@@ -23,7 +43,12 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
    
     double v, h2 = 0.1;
     // likelihood maximization 
-    diago_likelihood_newton(h2, v, p, y, x, sigma, P0y, XViXi, true, true);
+    double min_h2 = 0, max_h2 = 0.99;
+    min_max_h2(Sigma, min_h2, max_h2);
+    min_h2 += 1e-4;
+    max_h2 -= 1e-4;
+  Rcout << "min = " << min_h2 << " max = " << max_h2 << "\n";
+    diago_likelihood_newton(h2, v, p, y, x, sigma, P0y, XViXi, min_h2, max_h2, tol, true);
 
     // *********** CALCUL DES BLUPS ************************
     // Attention P0y n'est que (P0y)b, les n-p dernières composantes ! (les p premières sont nulles)
@@ -43,7 +68,9 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
     beta.topRows(r) = xtxi * x.bottomRows(n-p).transpose() * z.bottomRows(n-p);
     beta.bottomRows(p) = z.topRows(p) - x.topRows(p) * beta.topRows(r);
     // ************ FIN DU CALCUL DES BLUPS ******************
+
     double s2 = (1-h2)*v, tau = h2*v;
+
     // **** Calcul décomposition de la variance
     VectorXd Ut1 = u.transpose() * VectorXd::Ones(n);
     VectorXd Xbeta = x0 * beta.topRows(r) + u.leftCols(p) * beta.bottomRows(p) ;
