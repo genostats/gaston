@@ -1,4 +1,5 @@
-lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, tol = .Machine$double.eps^0.25, newton = FALSE) {
+lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, method = c("newton", "brent"), min_h2 = 0, max_h2 = 1, 
+                      verbose = getOption("gaston.verbose", TRUE), tol = .Machine$double.eps^0.25) {
   if( any(is.na(Y)) ) 
     stop('Missing data in Y.')
 
@@ -14,15 +15,22 @@ lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, tol = .Ma
   if( length(Y)!=length(Sigma) ) 
     stop('Length of Y and number of eigenvalues differ.')
 
-  U <- eigenK$vectors
+  w <- which(Sigma < 1e-6)
+  Sigma[w] <- 1e-6
 
-  if(is.null(X))
-    .Call('gg_fit_diago_nocovar', PACKAGE = "gaston", Y, p, Sigma, U, tol)
-  else {
-    if(newton) 
-      .Call('gg_fit_diago_newton', PACKAGE = "gaston", Y, X, p, Sigma, U, tol)
+  U <- eigenK$vectors
+ 
+  method <- match.arg(method)
+  if(method == "brent") {
+    if(is.null(X))
+      return(.Call('gg_fit_diago_nocovar', PACKAGE = "gaston", Y, p, Sigma, U, tol))
     else
-      .Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, tol)
+      return(.Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, tol))
+  } else {
+    if(is.null(X))
+      stop("pppp")
+    else
+      return(.Call('gg_fit_diago_newton', PACKAGE = "gaston", Y, X, p, Sigma, U, min_h2, max_h2, tol, verbose))
   }
 }
 

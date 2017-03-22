@@ -6,26 +6,31 @@
 // si s > 1
 // h2 > 1/(1-s) donc min_h2 = max 1/(1-s) pour s > 1
 // si s < 1 h2 < 1/(1-s) donc max_h2 = min 1/(1-s) pour s < 1
+// l'utilisateur fournit une valeur a priori et on met à jour en fonction
+// de cette contrainte
+// !!! valeur 1e-6 arbitraire pour que la vraisemblance reste bien définie aux bornes...
 void min_max_h2(NumericVector Sigma, double & min_h2, double & max_h2) {
   int n = Sigma.size();
-  Rcout << "n = " << n << "\n";
-  max_h2 = std::numeric_limits<double>::infinity();
-  min_h2 = -std::numeric_limits<double>::infinity();
+  // max_h2 = std::numeric_limits<double>::infinity();
+  // min_h2 = -std::numeric_limits<double>::infinity();
   for(int i = 0; i < n; i++) {
     double s = Sigma[i];
-    if(s > 1) 
-      min_h2 = (min_h2 > 1/(1-s))?min_h2:1/(1-s);
-    else if(s < 1)
-      max_h2 = (max_h2 < 1/(1-s))?max_h2:1/(1-s);
+    if(s > 1) {
+      double u = 1/(1-s) + 1e-6;
+      min_h2 = (min_h2 > u)?min_h2:u;
+    }
+    else if(s < 1) {
+      double u = 1/(1-s) - 1e-6;
+      max_h2 = (max_h2 < u)?max_h2:u;
+    }
   }
-  Rcout << "min = " << min_h2 << " max = " << max_h2 << "\n";
 }
 
 //[[Rcpp::export]]
-List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector Sigma, NumericMatrix U, double tol) {
+List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector Sigma, NumericMatrix U, double min_h2, double max_h2, double tol, double verbose) {
   Map_MatrixXd y0(as<Map<MatrixXd> >(Y));
   Map_MatrixXd x0(as<Map<MatrixXd> >(X));
-  Map_MatrixXd sigma(as<Map<MatrixXd> >(Sigma));
+  Map<VectorXd> sigma(as<Map<VectorXd> >(Sigma));
   Map_MatrixXd u(as<Map<MatrixXd> >(U));
 
   MatrixXd x = u.transpose() * x0;
@@ -37,18 +42,21 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
 
   List R;
 
+  min_max_h2(Sigma, min_h2, max_h2);
+  if(verbose) Rcout << "Optimization in interval [" << min_h2 << ", " << max_h2 << "]" << std::endl;
+
   for(int i = 0; i < p_.length(); i++) {
     int p = p_(i);
+    if(verbose) Rcout << "Optimizing with p = " << p << "\n";
     VectorXd P0y;
    
-    double v, h2 = 0.1;
     // likelihood maximization 
-    double min_h2 = 0, max_h2 = 0.99;
-    min_max_h2(Sigma, min_h2, max_h2);
-    min_h2 += 1e-4;
-    max_h2 -= 1e-4;
-  Rcout << "min = " << min_h2 << " max = " << max_h2 << "\n";
-    diago_likelihood_newton(h2, v, p, y, x, sigma, P0y, XViXi, min_h2, max_h2, tol, true);
+    double v, h2 = min_h2;
+    diag_likelihood<MatrixXd, VectorXd, double> A(p, y, x, sigma, P0y, v, XViXi);
+    A.newton(h2, min_h2, max_h2, tol, verbose);
+    Rcout << "P0y size = " << P0y.size() << " A.P0y size = " << A.P0y.size() << "\n";
+    Rcout << "v = " << v << " A.v = " << A.v << "\n";
+    stop("lapin");
 
     // *********** CALCUL DES BLUPS ************************
     // Attention P0y n'est que (P0y)b, les n-p dernières composantes ! (les p premières sont nulles)
@@ -107,7 +115,7 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
   return R;
 }
 
-RcppExport SEXP gg_fit_diago_newton(SEXP YSEXP, SEXP XSEXP, SEXP p_SEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP tolSEXP) {
+RcppExport SEXP gg_fit_diago_newton(SEXP YSEXP, SEXP XSEXP, SEXP p_SEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP min_h2_SEXP, SEXP max_h2_SEXP, SEXP tolSEXP, SEXP verbose_SEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
@@ -117,8 +125,11 @@ BEGIN_RCPP
         Rcpp::traits::input_parameter< IntegerVector >::type p_(p_SEXP );
         Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP );
         Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP );
+        Rcpp::traits::input_parameter< double >::type min_h2(min_h2_SEXP );
+        Rcpp::traits::input_parameter< double >::type max_h2(max_h2_SEXP );
         Rcpp::traits::input_parameter< double >::type tol(tolSEXP );
-        List __result = fit_diago_newton(Y, X, p_, Sigma, U, tol);
+        Rcpp::traits::input_parameter< bool >::type verbose(verbose_SEXP );
+        List __result = fit_diago_newton(Y, X, p_, Sigma, U, min_h2, max_h2, tol, verbose);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
