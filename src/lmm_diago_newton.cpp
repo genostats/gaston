@@ -38,7 +38,6 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
 
   int n = sigma.rows();
   int r = x.cols();
-  MatrixXd XViXi(r,r);
 
   List R;
 
@@ -48,38 +47,18 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
   for(int i = 0; i < p_.length(); i++) {
     int p = p_(i);
     if(verbose) Rcout << "Optimizing with p = " << p << "\n";
-    VectorXd P0y;
    
     // likelihood maximization 
-    double v, h2 = min_h2;
-    diag_likelihood<MatrixXd, VectorXd, double> A(p, y, x, sigma, P0y, v, XViXi);
+    double h2 = min_h2;
+    diag_likelihood<MatrixXd, VectorXd, double> A(p, y, x, sigma);
     A.newton(h2, min_h2, max_h2, tol, verbose);
-    Rcout << "P0y size = " << P0y.size() << " A.P0y size = " << A.P0y.size() << "\n";
-    Rcout << "v = " << v << " A.v = " << A.v << "\n";
-    stop("lapin");
 
-    // *********** CALCUL DES BLUPS ************************
-    // Attention P0y n'est que (P0y)b, les n-p dernières composantes ! (les p premières sont nulles)
-    VectorXd sigmab = sigma.bottomRows(n-p);
-    VectorXd omega = h2 * sigmab.asDiagonal() * P0y;
+    // calcul blups transféré dans la classe diag_likelihood !...
+    VectorXd beta, omega;
+    A.blup(h2, beta, omega, false);
+    double s2 = (1-h2)*A.v, tau = h2*A.v;
 
-    VectorXd z = y;
-    z.tail(n-p) -= omega + (1-h2)*P0y;
-    // Xb' Xb
-    MatrixXd xtx( MatrixXd(r,r).setZero().selfadjointView<Lower>().rankUpdate( x.bottomRows(n-p).transpose() ));
-    MatrixXd xtx0( xtx );
-    MatrixXd xtxi(r,r); // et son inverse
-    double d, ld;
-    sym_inverse(xtx0, xtxi, d, ld, 1e-5); // détruit xtx0
-
-    VectorXd beta(r+p);
-    beta.topRows(r) = xtxi * x.bottomRows(n-p).transpose() * z.bottomRows(n-p);
-    beta.bottomRows(p) = z.topRows(p) - x.topRows(p) * beta.topRows(r);
-    // ************ FIN DU CALCUL DES BLUPS ******************
-
-    double s2 = (1-h2)*v, tau = h2*v;
-
-    // **** Calcul décomposition de la variance
+    // **** Calcul décomposition de la variance gardé ici (on a besoin de la matrice u)
     VectorXd Ut1 = u.transpose() * VectorXd::Ones(n);
     VectorXd Xbeta = x0 * beta.topRows(r) + u.leftCols(p) * beta.bottomRows(p) ;
 
@@ -88,10 +67,10 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
     psi1 -= s2*Ut1.topRows(p).squaredNorm();
     psi1 /= n*(n-1);
 
-    double psi2 = n*v*trace_of_product( xtx, XViXi ); // n*trace(U2 Xb (...) Xb' U2')
+    double psi2 = n*A.v*trace_of_product( A.xtx, A.XViX_i ); // n*trace(U2 Xb (...) Xb' U2')
     VectorXd zz = x.bottomRows(n-p).transpose() * Ut1.bottomRows(n-p);
 
-    psi2 -= v*zz.transpose() * XViXi * zz;
+    psi2 -= A.v*zz.transpose() * A.XViX_i * zz;
     psi2 /= n*(n-1);
 
     double SXbeta = Xbeta.array().sum();
@@ -102,10 +81,10 @@ List fit_diago_newton(NumericVector Y, NumericMatrix X, IntegerVector p_, Numeri
     List L;
     L["sigma2"] = s2;
     L["tau"] = tau;
-    L["Py"] = u.rightCols(n-p) * P0y/v;
+    L["Py"] = u.rightCols(n-p) * A.P0y/A.v;
     L["BLUP_omega"] = u.rightCols(n-p)*omega;
     L["BLUP_beta"] = beta;
-    L["varbeta"] = v*XViXi;
+    L["varbeta"] = A.v*A.XViX_i;
     L["Xbeta"] = Xbeta;
     L["varXbeta"] = varXbeta;
     L["p"] = p;

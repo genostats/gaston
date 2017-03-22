@@ -14,21 +14,22 @@ template<typename MATRIX, typename VECTOR, typename scalar_t>
 class diag_likelihood : public fun<scalar_t> {
   public:
     int p, n, r;
-    MATRIX Y;
-    MATRIX X;
-    MATRIX Sigma;
+    const MATRIX Y;
+    const MATRIX X;
+    const MATRIX Sigma;
     VECTOR P0y;
-    scalar_t & v;
+    scalar_t v;
     MATRIX XViX_i;
     VECTOR Deltab;
     scalar_t likelihood;
     scalar_t d, log_d;
     VECTOR V0b, V0bi;
-    MATRIX ViX, XViX;
+    MATRIX ViX, XViX, xtx;
     scalar_t yP0y;
-    diag_likelihood(int p, const MATRIX & Y, const MATRIX & X, const VECTOR & Sigma, 
-                   VECTOR & P0y, scalar_t & v, MATRIX & XViX_i) : p(p), n(Sigma.rows()), r(X.cols()), Y(Y), X(X), Sigma(Sigma), P0y(P0y), v(v), XViX_i(XViX_i) {
-      Deltab = Sigma.bottomRows(n-p) - VECTOR::Ones(n-p);
+    diag_likelihood(int p, const MATRIX & Y, const MATRIX & X, const VECTOR & Sigma) : 
+       p(p), n(Sigma.rows()), r(X.cols()), Y(Y), X(X), Sigma(Sigma) {
+         Deltab = Sigma.bottomRows(n-p) - VECTOR::Ones(n-p);
+         XViX_i = MATRIX(r,r);
     } ;
 
     void update(scalar_t h2) {
@@ -78,29 +79,31 @@ class diag_likelihood : public fun<scalar_t> {
       ddf = -trace_PDPD + (n-r-p)*( 2*y_PDPDP_y/yP0y - (y_PDP_y*y_PDP_y)/(yP0y*yP0y));
     }
 
-    void beta_blup(scalar_t h2, VECTOR & beta, VECTOR & omega) {
-      update(h2);
-      beta_blup(beta, omega);
-    }
-
     // *********** CALCUL DES BLUPS ************************
     // Attention P0y n'est que (P0y)b, les n-p dernières composantes ! (les p premières sont nulles)
-    void beta_blup(VECTOR & beta, VECTOR & omega) {
-      VECTOR Sigmab = sigma.bottomRows(n-p);
-      VECTOR omega = h2 * sigmab.asDiagonal() * P0y;
+    void blup(scalar_t h2, VECTOR & beta, VECTOR & omega, bool updateh2) {
+      if(updateh2) update(h2);
 
-      VECTOR z = y;
+      VECTOR Sigmab = Sigma.bottomRows(n-p);
+      omega = h2 * Sigmab.asDiagonal() * P0y;
+
+      VECTOR z = Y;
       z.tail(n-p) -= omega + (1-h2)*P0y;
       // Xb' Xb
-      MATRIX xtx( MATRIX(r,r).setZero().selfadjointView<Lower>().rankUpdate( x.bottomRows(n-p).transpose() ));
+      // MATRIX xtx( MATRIX(r,r).setZero().selfadjointView<Lower>().rankUpdate( X.bottomRows(n-p).transpose() ));
+      // xtx = MATRIX(r,r).setZero();
+      // xtx.selfadjointView<Lower>().rankUpdate( X.bottomRows(n-p).transpose() );
+      xtx = MATRIX(r,r).setZero();
+      SelfAdjointView<MATRIX, Lower> xtx_sa(xtx);
+      xtx_sa.rankUpdate( X.bottomRows(n-p).transpose() );  
       MATRIX xtx0( xtx );
       MATRIX xtxi(r,r); // et son inverse
       double d1, ld1;
       sym_inverse(xtx0, xtxi, d1, ld1, 1e-5); // détruit xtx0
 
-      VECTOR beta(r+p);
-      beta.topRows(r) = xtxi * x.bottomRows(n-p).transpose() * z.bottomRows(n-p);
-      beta.bottomRows(p) = z.topRows(p) - x.topRows(p) * beta.topRows(r);
+      beta = VECTOR(r+p);
+      beta.topRows(r) = xtxi * X.bottomRows(n-p).transpose() * z.bottomRows(n-p);
+      beta.bottomRows(p) = z.topRows(p) - X.topRows(p) * beta.topRows(r);
     }
 
     void newton(scalar_t & h2, const scalar_t min_h2, const scalar_t max_h2, const scalar_t eps, const bool verbose);
@@ -150,7 +153,7 @@ void diag_likelihood<MATRIX, VECTOR, scalar_t>::newton(scalar_t & h2, const scal
           continue;
         } 
         if(verbose) Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
-        h2 = Brent_fmin(old_h2, max_h2, 1e-5);
+        h2 = this->Brent_fmin(old_h2, max_h2, 1e-5);
         // pour mettre à jour P0Y etc... [est-ce bien utile ? le dernier point où est calculé f doit suffire]
         update(h2); 
         if(verbose) Rcout << "[Iteration " << i << "] Brent gives h² = " << h2 << std::endl;
@@ -164,7 +167,7 @@ void diag_likelihood<MATRIX, VECTOR, scalar_t>::newton(scalar_t & h2, const scal
           continue;
         }
         if(verbose) Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
-        Brent_fmin(min_h2, old_h2, 1e-5);
+        this->Brent_fmin(min_h2, old_h2, 1e-5);
         // pour mettre à jour P0Y etc...
         update(h2);
         if(verbose) Rcout << "[Iteration " << i << "] Brent gives h² = " << h2 << std::endl;
@@ -189,8 +192,6 @@ void diag_likelihood<MATRIX, VECTOR, scalar_t>::newton(scalar_t & h2, const scal
       tried_max = true;
     }
   }
-  Rcout << "A.P0y size " << P0y.size() << "\n";
   v = yP0y / (n-r-p);
-  Rcout << "ok then\n";
 }
 
