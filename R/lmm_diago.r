@@ -21,17 +21,12 @@ lmm.diago <- function(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, method = 
   U <- eigenK$vectors
  
   method <- match.arg(method)
-  if(method == "brent") {
-    if(is.null(X))
-      return(.Call('gg_fit_diago_nocovar', PACKAGE = "gaston", Y, p, Sigma, U, tol))
-    else
-      return(.Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, tol))
-  } else {
-    if(is.null(X))
-      stop("pppp")
-    else
-      return(.Call('gg_fit_diago_newton', PACKAGE = "gaston", Y, X, p, Sigma, U, min_h2, max_h2, tol, verbose))
-  }
+  brent <- (method == "brent") 
+  if(is.null(X))
+    return(.Call('gg_fit_diago_nocovar', PACKAGE = "gaston", Y, p, Sigma, U, min_h2, max_h2, tol, verbose, brent))
+  else
+    return(.Call('gg_fit_diago', PACKAGE = "gaston", Y, X, p, Sigma, U, min_h2, max_h2, tol, verbose, brent))
+  
 }
 
 

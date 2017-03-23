@@ -21,7 +21,6 @@ class diag_likelihood : public fun<scalar_t> {
     scalar_t v;
     MATRIX XViX_i;
     VECTOR Deltab;
-    scalar_t likelihood;
     scalar_t d, log_d;
     VECTOR V0b, V0bi;
     MATRIX ViX, XViX, xtx;
@@ -46,8 +45,14 @@ class diag_likelihood : public fun<scalar_t> {
 
     scalar_t f(scalar_t h2) {
       update(h2);
-      likelihood = -0.5*(V0b.array().log().sum() + log_d + (n-r-p)*log(yP0y) + (n-r-p)*(1-log((scalar_t)(n-r-p))) ); // avec le terme constant
-      return likelihood;
+      return -0.5*(V0b.array().log().sum() + log_d + (n-r-p)*log(yP0y) + (n-r-p)*(1-log((scalar_t)(n-r-p))) ); // avec le terme constant
+    }
+
+    scalar_t likelihood(scalar_t tau, scalar_t s2) {
+      scalar_t vv = s2 + tau;
+      scalar_t h2 = tau/vv;
+      update(h2);
+      return -0.5*(V0b.array().log().sum() + log_d + yP0y/vv + (n-r-p)*log(vv));
     }
 
     void df_ddf(scalar_t h2, scalar_t & df, scalar_t & ddf) {
@@ -75,8 +80,8 @@ class diag_likelihood : public fun<scalar_t> {
       scalar_t trace_PD = Deltab.cwiseProduct(V0bi).sum() - AB.trace();
       scalar_t trace_PDPD = Deltab.cwiseProduct(V0bi.cwiseProduct(Deltab.cwiseProduct(V0bi))).sum() - 2*trace_of_product(XViX_i, C) + trace_of_product(AB,AB);
   
-      df = trace_PD - (n-r-p)*y_PDP_y/yP0y;
-      ddf = -trace_PDPD + (n-r-p)*( 2*y_PDPDP_y/yP0y - (y_PDP_y*y_PDP_y)/(yP0y*yP0y));
+      df = -0.5*(trace_PD - (n-r-p)*y_PDP_y/yP0y);
+      ddf = -0.5*(-trace_PDPD + (n-r-p)*( 2*y_PDPDP_y/yP0y - (y_PDP_y*y_PDP_y)/(yP0y*yP0y)));
     }
 
     // *********** CALCUL DES BLUPS ************************
@@ -106,92 +111,5 @@ class diag_likelihood : public fun<scalar_t> {
       beta.bottomRows(p) = z.topRows(p) - X.topRows(p) * beta.topRows(r);
     }
 
-    void newton(scalar_t & h2, const scalar_t min_h2, const scalar_t max_h2, const scalar_t eps, const bool verbose);
 };
-
-
-
-
-template<typename MATRIX, typename VECTOR, typename scalar_t>
-void diag_likelihood<MATRIX, VECTOR, scalar_t>::newton(scalar_t & h2, const scalar_t min_h2, const scalar_t max_h2, const scalar_t eps, const bool verbose) {
-  int nb_reseeds = 0, i = 0;
-  scalar_t df = 1+2*eps; 
-
-  bool tried_max = false, tried_min = false;
-  if(h2 == min_h2) tried_min = true;
-  if(h2 == max_h2) tried_max = true;
-
-  while(std::abs(df) > 2*eps) {
-
-    scalar_t ddf;
-    df_ddf(h2, df, ddf);
-
-    if(verbose) {
-      Rcout << "[Iteration " << ++i << "] ";
-      Rcout << "h² = " << h2 << " df = " << -0.5*df << std::endl;
-    }
-
-    // si on est au bord de l'intervalle et qu'on ne tend pas à revenir dedans
-    if(h2 == min_h2 && !isnan(df) && df > 0) {
-      if(verbose) Rcout << "[Iteration " << i << "] maximum at min h² = " << h2 << std::endl;
-      break;
-    }
-    if(h2 == max_h2 && !isnan(df) && df < 0) {
-      if(verbose) Rcout << "[Iteration " << i << "] maximum at max h² = " << h2 << std::endl;
-      break;
-    }
-
-    // si la convexité est mauvaise
-    if(ddf < 0) {
-      if(verbose) Rcout << "[Iteration " << i << "] likelihood isn't concave" << std::endl;
-      scalar_t old_h2 = h2;
-      if(df < 0) {
-        if(!tried_max) {
-          h2 = max_h2; 
-          tried_max = true;
-          if(verbose) Rcout << "[Iteration " << i << "] restarting from h2 = " << h2 << std::endl;
-          continue;
-        } 
-        if(verbose) Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
-        h2 = this->Brent_fmin(old_h2, max_h2, 1e-5);
-        // pour mettre à jour P0Y etc... [est-ce bien utile ? le dernier point où est calculé f doit suffire]
-        update(h2); 
-        if(verbose) Rcout << "[Iteration " << i << "] Brent gives h² = " << h2 << std::endl;
-        break;
-      }
-      if(df > 0) { 
-        if(!tried_min) {
-          h2 = min_h2;
-          tried_min = true;
-          if(verbose) Rcout << "[Iteration " << i << "] restarting from h2 = " << h2 << std::endl;
-          continue;
-        }
-        if(verbose) Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
-        this->Brent_fmin(min_h2, old_h2, 1e-5);
-        // pour mettre à jour P0Y etc...
-        update(h2);
-        if(verbose) Rcout << "[Iteration " << i << "] Brent gives h² = " << h2 << std::endl;
-        break;
-      }
-    }
-    h2 -= df/ddf;
-
-    if(std::isnan(h2)) {
-      if(nb_reseeds++ < 5) {
-        h2 = R::runif(min_h2,max_h2);
-        if(verbose) Rcout << "[Iteration " << i << "] restarting from random value h² = " << h2 << std::endl;
-      } else {
-        if(verbose) Rcout << "[Iteration " << i << "] canceling optimization" << std::endl;
-        return;
-      }
-    } else if(h2 < min_h2) {
-      h2 = min_h2;
-      tried_min = true;
-    } else if(h2 > max_h2) {
-      h2 = max_h2;
-      tried_max = true;
-    }
-  }
-  v = yP0y / (n-r-p);
-}
 

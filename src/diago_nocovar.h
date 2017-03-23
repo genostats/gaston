@@ -21,7 +21,6 @@ double diago_likelihood(double h2, int p, const Eigen::MatrixBase<T1> & Y, const
   P0y = V0bi.asDiagonal() * Y.bottomRows(n-p);
   yP0y = P0y.dot( Y.bottomRows(n-p).col(0) );
   v = yP0y / (n-p);
-  Rcout << "h2 = " << h2 << ", v = " << v << "\n";
 
   return -0.5*(V0b.array().log().sum() + (n-p)*log(yP0y) + (n-p)*(1-log((double)(n-p))) );
 }

@@ -1,22 +1,127 @@
+#include <Rcpp.h>
 #include <iostream>
-
+#ifndef GASTON_OPTIM
+#define GASTON_OPTIM
 template<typename scalar_t>
 class fun {
     scalar_t scale;
+    scalar_t F(scalar_t x) {
+      return scale*f(x);
+    }
+    void DF_DDF(scalar_t x, scalar_t & df, scalar_t & ddf) {
+      df_ddf(x, df, ddf);
+      df *= scale; 
+      ddf *= scale;
+    }
+
   public:
     fun() : scale(1.0) {};
+
     virtual scalar_t f(scalar_t x) { 
-      std::cout << "oups";
       return 0; 
     }
+    virtual void df_ddf(scalar_t x, scalar_t & df, scalar_t & ddf) {
+      df = ddf = 0; 
+    }
+
     scalar_t Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol);
+
     scalar_t Brent_fmax(scalar_t ax, scalar_t bx, scalar_t tol) {
-      scale *= -1;
+      Rcout << "here\n";
+      scale = -1;
       scalar_t x = Brent_fmin(ax, bx, tol);
-      scale *= -1;
+      scale = 1;
       return x;
     }
+
+    void newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose);
+
+    void newton_max(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose) {
+      scale = -1;
+      newton_min(x, min_x, max_x, eps, verbose);
+      scale = 1;
+
+    }
 };
+
+
+template<typename scalar_t>
+void fun<scalar_t>::newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose) {
+  int nb_reseeds = 0, i = 0;
+  scalar_t df = 1+2*eps;
+
+  bool tried_max = false, tried_min = false;
+  if(x == min_x) tried_min = true;
+  if(x == max_x) tried_max = true;
+
+  while(std::abs(df) > 2*eps) {
+
+    scalar_t ddf;
+    DF_DDF(x, df, ddf);
+
+    if(verbose) {
+      Rcpp::Rcout << "[Iteration " << ++i << "] ";
+      Rcpp::Rcout << "Current point = " << x << " df = " << scale*df << std::endl;
+    }
+
+    // si on est au bord de l'intervalle et qu'on ne tend pas à revenir dedans
+    if(x == min_x && !isnan(df) && df > 0) {
+      if(verbose) Rcpp::Rcout << "[Iteration " << i << "] maximum at min = " << x << std::endl;
+      break;
+    }
+    if(x == max_x && !isnan(df) && df < 0) {
+      if(verbose) Rcpp::Rcout << "[Iteration " << i << "] maximum at max = " << x << std::endl;
+      break;
+    }
+
+    // si la convexité est mauvaise
+    if(ddf < 0) {
+      if(verbose) Rcpp::Rcout << "[Iteration " << i << "] likelihood isn't concave" << std::endl;
+      scalar_t old_x = x;
+      if(df < 0) {
+        if(!tried_max) {
+          x = max_x;
+          tried_max = true;
+          if(verbose) Rcpp::Rcout << "[Iteration " << i << "] restarting from " << x << std::endl;
+          continue;
+        }
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
+        x = Brent_fmin(old_x, max_x, 1e-5);
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Brent gives " << x << std::endl;
+        break;
+      }
+      if(df > 0) {
+        if(!tried_min) {
+          x = min_x;
+          tried_min = true;
+          if(verbose) Rcpp::Rcout << "[Iteration " << i << "] restarting from " << x << std::endl;
+          continue;
+        }
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Using Brent algorithm" << std::endl;
+        x = Brent_fmin(min_x, old_x, 1e-5);
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Brent gives " << x << std::endl;
+        break;
+      }
+    }
+    x -= df/ddf;
+
+    if(std::isnan(x)) {
+      if(nb_reseeds++ < 5) {
+        x = R::runif(min_x,max_x);
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] restarting from random value " << x << std::endl;
+      } else {
+        if(verbose) Rcpp::Rcout << "[Iteration " << i << "] canceling optimization" << std::endl;
+        return;
+      }
+    } else if(x < min_x) {
+      x = min_x;
+      tried_min = true;
+    } else if(x > max_x) {
+      x = max_x;
+      tried_max = true;
+    }
+  }
+}
 
 // ceci piqué dans le code de R 
 // pour utiliser optimize() depuis le code C !
@@ -42,7 +147,7 @@ scalar_t fun<scalar_t>::Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol) {
 
     d = 0.;/* -Wall */
     e = 0.;
-    fx = f(x);
+    fx = F(x);
     fv = fx;
     fw = fx;
     tol3 = tol / 3.;
@@ -61,7 +166,6 @@ scalar_t fun<scalar_t>::Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol) {
 	q = 0.;
 	r = 0.;
 	if (fabs(e) > tol1) { /* fit parabola */
-
 	    r = (x - w) * (fx - fv);
 	    q = (x - v) * (fx - fw);
 	    p = (x - v) * q - (x - w) * r;
@@ -93,8 +197,7 @@ scalar_t fun<scalar_t>::Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol) {
 	else
 	    u = x - tol1;
 
-	fu = f(u);
-
+	fu = F(u);
 	/*  update  a, b, v, w, and x */
 
 	if (fu <= fx) {
@@ -116,4 +219,4 @@ scalar_t fun<scalar_t>::Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol) {
     return x;
 }
 
-
+#endif
