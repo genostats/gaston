@@ -1,31 +1,9 @@
 #include <Rcpp.h>
 #include "diago2.h"
 #include "diago2_nocovar.h"
+#include "lmm_diago_min_max_h2.h"
 
-// h2*s + (1-h2) > 0
-// h2*(s-1) > -1
-// si s > 1
-// h2 > 1/(1-s) donc min_h2 = max 1/(1-s) pour s > 1
-// si s < 1 h2 < 1/(1-s) donc max_h2 = min 1/(1-s) pour s < 1
-// l'utilisateur fournit une valeur a priori et on met à jour en fonction
-// de cette contrainte
-// !!! valeur 1e-6 arbitraire pour que la vraisemblance reste bien définie aux bornes...
-void min_max_h2(NumericVector Sigma, double & min_h2, double & max_h2) {
-  int n = Sigma.size();
-  // max_h2 = std::numeric_limits<double>::infinity();
-  // min_h2 = -std::numeric_limits<double>::infinity();
-  for(int i = 0; i < n; i++) {
-    double s = Sigma[i];
-    if(s > 1) {
-      double u = 1/(1-s) + 1e-6;
-      min_h2 = (min_h2 > u)?min_h2:u;
-    }
-    else if(s < 1) {
-      double u = 1/(1-s) - 1e-6;
-      max_h2 = (max_h2 < u)?max_h2:u;
-    }
-  }
-}
+using namespace Rcpp;
 
 List fit_diago(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector Sigma, NumericMatrix U, double min_h2, double max_h2, double tol, double verbose, bool brent) {
   Map_MatrixXd y0(as<Map<MatrixXd> >(Y));
@@ -58,7 +36,7 @@ List fit_diago(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector
 
     // calcul blups transféré dans la classe diag_likelihood !...
     VectorXd beta, omega;
-    A.blup(h2, beta, omega, false);
+    A.blup(h2, beta, omega, false, false);
     double s2 = (1-h2)*A.v, tau = h2*A.v;
 
     // **** Calcul décomposition de la variance gardé ici (on a besoin de la matrice u)

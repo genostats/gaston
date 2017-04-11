@@ -15,7 +15,7 @@ class diag_likelihood : public fun<scalar_t> {
   public:
     int p, n, r;
     const MATRIX Y;
-    const MATRIX X;
+    MATRIX X;
     const MATRIX Sigma;
     VECTOR P0y;
     scalar_t v;
@@ -84,9 +84,11 @@ class diag_likelihood : public fun<scalar_t> {
       ddf = -0.5*(-trace_PDPD + (n-r-p)*( 2*y_PDPDP_y/yP0y - (y_PDP_y*y_PDP_y)/(yP0y*yP0y)));
     }
 
+
+
     // *********** CALCUL DES BLUPS ************************
     // Attention P0y n'est que (P0y)b, les n-p dernières composantes ! (les p premières sont nulles)
-    void blup(scalar_t h2, VECTOR & beta, VECTOR & omega, bool updateh2) {
+    void blup(scalar_t h2, VECTOR & beta, VECTOR & omega, bool updateh2, bool only_first_r) {
       if(updateh2) update(h2);
 
       VECTOR Sigmab = Sigma.bottomRows(n-p);
@@ -96,20 +98,23 @@ class diag_likelihood : public fun<scalar_t> {
       z.tail(n-p) -= omega + (1-h2)*P0y;
       // Xb' Xb
       // MATRIX xtx( MATRIX(r,r).setZero().selfadjointView<Lower>().rankUpdate( X.bottomRows(n-p).transpose() ));
-      // xtx = MATRIX(r,r).setZero();
-      // xtx.selfadjointView<Lower>().rankUpdate( X.bottomRows(n-p).transpose() );
-      xtx = MATRIX(r,r).setZero();
+       xtx = MATRIX(r,r).setZero();
       SelfAdjointView<MATRIX, Lower> xtx_sa(xtx);
       xtx_sa.rankUpdate( X.bottomRows(n-p).transpose() );  
-      MATRIX xtx0( xtx );
+      MATRIX xtx0( xtx_sa );
       MATRIX xtxi(r,r); // et son inverse
-      double d1, ld1;
+      scalar_t d1, ld1;
       sym_inverse(xtx0, xtxi, d1, ld1, 1e-5); // détruit xtx0
 
-      beta = VECTOR(r+p);
-      beta.topRows(r) = xtxi * X.bottomRows(n-p).transpose() * z.bottomRows(n-p);
-      beta.bottomRows(p) = z.topRows(p) - X.topRows(p) * beta.topRows(r);
-    }
+      if(only_first_r) {
+        beta = VECTOR(r);
+        beta = xtxi * X.bottomRows(n-p).transpose() * z.bottomRows(n-p);
+      } else {
+        beta = VECTOR(r+p);
+        beta.topRows(r) = xtxi * X.bottomRows(n-p).transpose() * z.bottomRows(n-p);
+        beta.bottomRows(p) = z.topRows(p) - X.topRows(p) * beta.topRows(r);
+     }
+   }
 
 };
 
