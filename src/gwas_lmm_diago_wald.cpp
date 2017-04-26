@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 #include "diago2.h"
 #include "matrix4.h"
-#include <ctime>
 #include <cmath>
 
 //[[Rcpp::export]]
@@ -46,12 +45,8 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
   // object for likelihood maximization
   diag_likelihood<MatrixXf, VectorXf, float> A(p, y, x, sigma);
 
-  clock_t chaviro(0);
-  clock_t begin_t = clock();
-
   float h2 = 0;
 
-  // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       H2(i-beg) = NAN;
@@ -78,39 +73,17 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
     A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    begin_t = clock();
     A.newton_max(h2, 0, 1, tol, false);
     
-    chaviro += clock() - begin_t;
-
     // CALCUL DES BLUPS 
     VectorXf beta, omega;
     A.blup(h2, beta, omega, false, true);
-/* 
-if(i < 5) Rcout << "beta = " << beta.transpose() << "\n" ;
-
-
-    VectorXf sigmab = A.Sigma.bottomRows(n-p);
-    VectorXf omega = h2 * sigmab.asDiagonal() * A.P0y;
-
-      // Xb' Xb
-      MatrixXf xtx( MatrixXf(r,r).setZero().selfadjointView<Lower>().rankUpdate( A.X.bottomRows(n-p).transpose() ));
-      MatrixXf xtx0( xtx );
-      MatrixXf xtxi(r,r); // et son inverse
-      float d, ld;
-      sym_inverse(xtx0, xtxi, d, ld, 1e-5); // détruit xtx0
-
-      VectorXf z = A.Y;
-      z.tail(n-p) -= omega + (1-h2)*A.P0y;
-      VectorXf beta = xtxi * A.X.bottomRows(n-p).transpose() * z.bottomRows(n-p);
-if(i < 5)  Rcout << "beta = " << beta.transpose() << "\n" ; */
 
     H2(i-beg) = h2;
     BETA(i-beg) = beta(r-1);
     SDBETA(i-beg) = sqrt(A.v*A.XViX_i(r-1,r-1));
   }
 
-  //cout << (float) chaviro / CLOCKS_PER_SEC << " spent in likelihood maximization\n";
   List R;
   R["h2"] = H2;
   R["beta"] = BETA;

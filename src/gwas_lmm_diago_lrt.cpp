@@ -1,82 +1,71 @@
 #include <Rcpp.h>
-#include "diago.h"
-#include "optimize.h"
+#include "diago2_full.h"
+#include "diago2_full_nocovar.h"
 #include "matrix4.h"
-#include "diago_wrapers.h"
-#include <ctime>
-#define BLOCK 20 
 
 
 //[[Rcpp::export]]
 List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMatrix X, 
                   int p, NumericVector Sigma, NumericMatrix U, int beg, int end, double tol) {
-  Map_MatrixXd y0(as<Map<MatrixXd> >(Y));
-  Map_MatrixXd x0(as<Map<MatrixXd> >(X));
-  Map_MatrixXd sigma(as<Map<MatrixXd> >(Sigma));
-  Map_MatrixXd u(as<Map<MatrixXd> >(U));
 
-  MatrixXd x = u.transpose() * x0;
-  MatrixXd y = u.transpose() * y0;
+  int n = Sigma.size();
+  int r = X.ncol();
+  if(Y.size() != n || X.nrow() != n || U.nrow() != n || U.ncol() != n)
+    stop("Dimensions mismatch");
 
-  int n = sigma.rows();
-  int r = x.cols();
-  MatrixXd XViXi(r,r);
+  // conversion en float...
+  MatrixXf y0(n, 1);
+  for(int i = 0; i < n; i++)
+    y0(i,0) = Y[i];
 
-  double v;
+  MatrixXf x0(n, r);
+  for(int j = 0; j < r; j++)
+    for(int i = 0; i < n; i++)
+      x0(i,j) = X(i,j);
 
-  // declare vectors used in the loop
-  VectorXd P0y(n-p);
-  VectorXd beta(r);
-  VectorXd sigmab(n-p);
-  VectorXd omega(n-p);
-  VectorXd z(n); // possible de se contenter de n-p et d'éviter les tail
+  VectorXf sigma(n);
+  for(int i = 0; i < n; i++)
+    sigma[i] = Sigma[i];
 
-  // dernière colonne de r
-  VectorXd SNP(n);
+  MatrixXf u(n,n);
+  for(int j = 0; j < n; j++)
+    for(int i = 0; i < n; i++)
+      u(i,j) = U(i,j);
+
+  MatrixXf x = u.transpose() * x0;
+  MatrixXf y = u.transpose() * y0;
+
+  // Zecteur SNPs
+  VectorXf SNP(n);
 
   // declare vectors containing result
-  VectorXd H2(end-beg+1);
-  VectorXd LRT(end-beg+1);
+  NumericVector H2(end-beg+1);
+  NumericVector LRT(end-beg+1);
 
-  // object for likelihood maximization
-  par_li A;
-  A.p = p; 
-  A.y = &y;
-  A.sigma = &sigma;
-  A.P0y = &P0y; 
-  A.v = &v; 
-  A.XViXi = &XViXi;
+  float h2 = 0;
+  float likelihood0;
 
-  clock_t begin_t, chaviro(0);
-
-  double h2, likelihood0;
   // on commence par le modèle null
-  if(r == 1) { // pas de covariable
-    begin_t = clock();
-    h2 = Brent_fmin(0., 1., wrap_full_li_nc, (void *) &A, tol);
-    chaviro += clock() - begin_t;
-    likelihood0 = A.likelihood;
-  } else {
-    MatrixXd x1 = x.leftCols(r-1);
-    A.x = &x1;
-    begin_t = clock();
-    h2 = Brent_fmin(0., 1., wrap_full_li, (void *) &A, tol);
-    chaviro += clock() - begin_t;
-    likelihood0 = A.likelihood;
+  if(r == 1) { Rcout << "nocovar\n"; // pas de covariable
+    // object for likelihood maximization
+    diag_full_likelihood_nocovar<MatrixXf, VectorXf, float> A(p, y, sigma);
+    A.newton_max(h2, 0, 1, tol, false);
+    likelihood0 = A.likelihood();
+  } else { Rcout << "covar\n";
+    MatrixXf x1 = x.leftCols(r-1);
+    // object for likelihood maximization
+    diag_full_likelihood<MatrixXf, VectorXf, float> A(p, y, x1, sigma);
+    A.newton_max(h2, 0, 1, tol, false);
+    likelihood0 = A.likelihood();
+  Rcout << "h2 = " << h2 << " lik = " << likelihood0 << "\n";
+  Rcout << A.V0b.array().log().sum() << "\n";
+  Rcout << A.log_d << "\n";
+  Rcout << log(A.yP0y) << "\n";
   }
+  // object for likelihood maximization
+  diag_full_likelihood<MatrixXf, VectorXf, float> A(p, y, x, sigma);
 
-  double min_h2 = (h2 < 0.1)?0.:(h2-0.1);
-  double max_h2 = (h2 > 0.9)?1.:(h2+0.1);
-
-  // faut pas oublier d'y mettre la matrice avec une colonne de plus !!
-  A.x = &x;
   for(int i = beg; i <= end; i++) {
-     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
-      H2(i-beg) = NAN;
-      LRT(i-beg) = NAN;
-      continue;
-    }
-
     // remplir dernière colonne de x : récupérer SNP, multiplier par u'...
     for(int ii = 0; ii < pA->true_ncol-1; ii++) {
       uint8_t x = pA->data[i][ii];
@@ -92,42 +81,15 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
         x >>= 2;
       }
     }
-    x.col(r-1) = u.transpose() * SNP;
+    A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    begin_t = clock();
-    h2 = Brent_fmin(min_h2, max_h2, wrap_full_li, (void *) &A, tol);
-    chaviro += clock() - begin_t;
-
-    if(h2 < min_h2 + tol && min_h2 > 0) { // au bas de l'intervalle
-      //Rcout << "-";
-      begin_t = clock();
-      h2 = Brent_fmin(0., h2+tol, wrap_full_li, (void *) &A, tol);
-      chaviro += clock() - begin_t;
-      min_h2 = h2;
-    } else if(h2 + tol > max_h2 && max_h2 < 1) { // en haut
-      //Rcout << "+";
-      begin_t = clock();
-      h2 = Brent_fmin(h2-tol, 1., wrap_full_li, (void *) &A, tol);
-      chaviro += clock() - begin_t;
-      max_h2 = h2;
-    }
+    A.newton_max(h2, 0, 1, tol, false);
 
     H2(i-beg) = h2;
-    LRT(i-beg) = 2*(A.likelihood - likelihood0);
-
-    // remettre à jour min_h2 et max_h2
-    if((i - beg + 1)%BLOCK == 0) {
-      min_h2 = H2.segment(i-beg-BLOCK+1,BLOCK).minCoeff();
-      max_h2 = H2.segment(i-beg-BLOCK+1,BLOCK).maxCoeff();
-      double delta = (max_h2 - min_h2)*0.6;
-      min_h2 = (min_h2 < delta)?0.:(min_h2-delta);
-      max_h2 = (max_h2 + delta > 1)?1.:(max_h2+delta);
-    }
-
+    LRT(i-beg) = 2*(A.likelihood() - likelihood0);
   }
 
-  //Rcout << (float) chaviro / CLOCKS_PER_SEC << " spent in likelihood maximization\n";
   List R;
   R["h2"] = H2;
   R["LRT"] = LRT;
