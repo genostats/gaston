@@ -27,18 +27,17 @@ class fun {
     scalar_t Brent_fmin(scalar_t ax, scalar_t bx, scalar_t tol);
 
     scalar_t Brent_fmax(scalar_t ax, scalar_t bx, scalar_t tol) {
-      Rcout << "here\n";
       scale = -1;
       scalar_t x = Brent_fmin(ax, bx, tol);
       scale = 1;
       return x;
     }
 
-    void newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose);
+    void newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, int max_iter, const bool verbose);
 
-    void newton_max(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose) {
+    void newton_max(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, int max_iter, const bool verbose) {
       scale = -1;
-      newton_min(x, min_x, max_x, eps, verbose);
+      newton_min(x, min_x, max_x, eps, max_iter, verbose);
       scale = 1;
 
     }
@@ -46,7 +45,7 @@ class fun {
 
 
 template<typename scalar_t>
-void fun<scalar_t>::newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, const bool verbose) {
+void fun<scalar_t>::newton_min(scalar_t & x, const scalar_t min_x, const scalar_t max_x, const scalar_t eps, int max_iter, const bool verbose) {
   int nb_reseeds = 0, i = 0;
   scalar_t df = 1+2*eps;
 
@@ -55,12 +54,18 @@ void fun<scalar_t>::newton_min(scalar_t & x, const scalar_t min_x, const scalar_
   if(x == max_x) tried_max = true;
 
   while(std::abs(df) > 2*eps) {
-
+    i++;
+    if(i > max_iter) {
+      if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Too many iterations, using Brent algorithm" << std::endl;
+      x = Brent_fmin(min_x, max_x, 1e-5);
+      if(verbose) Rcpp::Rcout << "[Iteration " << i << "] Brent gives " << x << std::endl;
+      break;
+    }
     scalar_t ddf;
     DF_DDF(x, df, ddf);
 
     if(verbose) {
-      Rcpp::Rcout << "[Iteration " << ++i << "] ";
+      Rcpp::Rcout << "[Iteration " << i << "] ";
       Rcpp::Rcout << "Current point = " << x << " df = " << scale*df << std::endl;
     }
 

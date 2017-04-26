@@ -15,7 +15,8 @@ List fit_diago(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector
   MatrixXd y = u.transpose() * y0;
 
   int n = sigma.rows();
-  int r = x.cols();
+  int r = x.cols();  
+  int max_iter = 10;
 
   List R;
 
@@ -32,7 +33,7 @@ List fit_diago(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector
     if(brent) 
       h2 = A.Brent_fmax(min_h2, max_h2, tol);
     else
-      A.newton_max(h2, min_h2, max_h2, tol, verbose);
+      A.newton_max(h2, min_h2, max_h2, tol, max_iter, verbose);
 
     // calcul blups transféré dans la classe diag_likelihood !...
     VectorXd beta, omega;
@@ -84,6 +85,7 @@ List fit_diago_nocovar(NumericVector Y, IntegerVector p_, NumericVector Sigma, N
   MatrixXd y = u.transpose() * y0;
 
   int n = sigma.rows();
+  int max_iter = 10;
   List R;
 
   min_max_h2(Sigma, min_h2, max_h2);
@@ -99,7 +101,7 @@ List fit_diago_nocovar(NumericVector Y, IntegerVector p_, NumericVector Sigma, N
     if(brent) 
       h2 = A.Brent_fmax(min_h2, max_h2, tol);
     else
-      A.newton_max(h2, min_h2, max_h2, tol, verbose);
+      A.newton_max(h2, min_h2, max_h2, tol, max_iter, verbose);
 
     // calcul blups transféré dans la classe diag_likelihood !...
     VectorXd beta, omega;

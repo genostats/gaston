@@ -10,6 +10,8 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
 
   int n = Sigma.size();
   int r = X.ncol();
+  int max_iter = 10;
+
   if(Y.size() != n || X.nrow() != n || U.nrow() != n || U.ncol() != n)
     stop("Dimensions mismatch");
 
@@ -49,13 +51,13 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
   if(r == 1) { Rcout << "nocovar\n"; // pas de covariable
     // object for likelihood maximization
     diag_full_likelihood_nocovar<MatrixXf, VectorXf, float> A(p, y, sigma);
-    A.newton_max(h2, 0, 1, tol, false);
+    A.newton_max(h2, 0, 1, tol, max_iter, false);
     likelihood0 = A.likelihood();
   } else { Rcout << "covar\n";
     MatrixXf x1 = x.leftCols(r-1);
     // object for likelihood maximization
     diag_full_likelihood<MatrixXf, VectorXf, float> A(p, y, x1, sigma);
-    A.newton_max(h2, 0, 1, tol, false);
+    A.newton_max(h2, 0, 1, tol, max_iter, false);
     likelihood0 = A.likelihood();
   Rcout << "h2 = " << h2 << " lik = " << likelihood0 << "\n";
   Rcout << A.V0b.array().log().sum() << "\n";
@@ -84,7 +86,7 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
     A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    A.newton_max(h2, 0, 1, tol, false);
+    A.newton_max(h2, 0, 1, tol, max_iter, false);
 
     H2(i-beg) = h2;
     LRT(i-beg) = 2*(A.likelihood() - likelihood0);

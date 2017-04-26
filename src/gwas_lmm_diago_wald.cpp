@@ -9,6 +9,8 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
 
   int n = Sigma.size();
   int r = X.ncol();
+  int max_iter = 10;
+
   if(Y.size() != n || X.nrow() != n || U.nrow() != n || U.ncol() != n) 
     stop("Dimensions mismatch");
     
@@ -48,6 +50,7 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
   float h2 = 0;
 
   for(int i = beg; i <= end; i++) {
+    // if(!(i%65536)) Rcout << "i = " << i << "\n";
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
       H2(i-beg) = NAN;
       BETA(i-beg) = NAN;
@@ -73,7 +76,7 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
     A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    A.newton_max(h2, 0, 1, tol, false);
+    A.newton_max(h2, 0, 1, tol, max_iter, false);
     
     // CALCUL DES BLUPS 
     VectorXf beta, omega;
