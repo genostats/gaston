@@ -1,4 +1,4 @@
-LD.thin <- function(x, threshold, max.dist = 100e3, beg = 1, end = ncol(x), which.snps,
+LD.thin <- function(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x), which.snps,
                     dist.unit = c("bases", "indices"), extract = TRUE, keep = c("left", "right", "random")) {
 
   if(missing(which.snps)) which.snps <- rep(TRUE, end-beg+1)
@@ -8,6 +8,9 @@ LD.thin <- function(x, threshold, max.dist = 100e3, beg = 1, end = ncol(x), whic
 
   if(is.null(x@mu) | is.null(x@sigma))
     stop("LD.thin needs mu and sigma to be set for LD computation (use set.stats)")
+
+  # ne pas considérer les SNPs monomorphes ou qui ont un callrate nul
+  which.snps <- which.snps & (x@snps$callrate > 0) & (x@snps$maf > 0)
 
   dist.unit <- match.arg(dist.unit)
   if(dist.unit == "indices") x@snps$pos = seq_len(ncol(x))

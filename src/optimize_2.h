@@ -70,11 +70,11 @@ void fun<scalar_t>::newton_min(scalar_t & x, const scalar_t min_x, const scalar_
     }
 
     // si on est au bord de l'intervalle et qu'on ne tend pas à revenir dedans
-    if(x == min_x && !isnan(df) && df > 0) {
+    if(x == min_x && !std::isnan(df) && df > 0) {
       if(verbose) Rcpp::Rcout << "[Iteration " << i << "] maximum at min = " << x << std::endl;
       break;
     }
-    if(x == max_x && !isnan(df) && df < 0) {
+    if(x == max_x && !std::isnan(df) && df < 0) {
       if(verbose) Rcpp::Rcout << "[Iteration " << i << "] maximum at max = " << x << std::endl;
       break;
     }
