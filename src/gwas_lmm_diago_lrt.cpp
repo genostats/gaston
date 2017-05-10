@@ -3,6 +3,11 @@
 #include "diago2_full_nocovar.h"
 #include "matrix4.h"
 
+// laisser en double ça va aussi vite (plus vite ?) et ça fait vraiment
+// une différence si il y a des covariables
+#define scalar double
+#define MATRIX MatrixXd
+#define VECTOR VectorXd
 
 //[[Rcpp::export]]
 List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMatrix X, 
@@ -16,56 +21,52 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
     stop("Dimensions mismatch");
 
   // conversion en float...
-  MatrixXf y0(n, 1);
+  MATRIX y0(n, 1);
   for(int i = 0; i < n; i++)
     y0(i,0) = Y[i];
 
-  MatrixXf x0(n, r);
+  MATRIX x0(n, r);
   for(int j = 0; j < r; j++)
     for(int i = 0; i < n; i++)
       x0(i,j) = X(i,j);
 
-  VectorXf sigma(n);
+  VECTOR sigma(n);
   for(int i = 0; i < n; i++)
     sigma[i] = Sigma[i];
 
-  MatrixXf u(n,n);
+  MATRIX u(n,n);
   for(int j = 0; j < n; j++)
     for(int i = 0; i < n; i++)
       u(i,j) = U(i,j);
 
-  MatrixXf x = u.transpose() * x0;
-  MatrixXf y = u.transpose() * y0;
+  MATRIX x = u.transpose() * x0;
+  MATRIX y = u.transpose() * y0;
 
   // Zecteur SNPs
-  VectorXf SNP(n);
+  VECTOR SNP(n);
 
   // declare vectors containing result
   NumericVector H2(end-beg+1);
   NumericVector LRT(end-beg+1);
 
-  float h2 = 0;
-  float likelihood0;
+  scalar h2 = 0;
+  scalar likelihood0;
 
   // on commence par le modèle null
-  if(r == 1) { Rcout << "nocovar\n"; // pas de covariable
+  if(r == 1) { 
     // object for likelihood maximization
-    diag_full_likelihood_nocovar<MatrixXf, VectorXf, float> A(p, y, sigma);
-    A.newton_max(h2, 0, 1, tol, max_iter, false);
+    diag_full_likelihood_nocovar<MATRIX, VECTOR, scalar> A(p, y, sigma);
+    A.newton_max(h2, 0, 0.99, tol, max_iter, false);
     likelihood0 = A.likelihood();
-  } else { Rcout << "covar\n";
-    MatrixXf x1 = x.leftCols(r-1);
+  } else { 
+    MATRIX x1 = x.leftCols(r-1);
     // object for likelihood maximization
-    diag_full_likelihood<MatrixXf, VectorXf, float> A(p, y, x1, sigma);
-    A.newton_max(h2, 0, 1, tol, max_iter, false);
+    diag_full_likelihood<MATRIX, VECTOR, scalar> A(p, y, x1, sigma);
+    A.newton_max(h2, 0, 0.99, tol, max_iter, false);
     likelihood0 = A.likelihood();
-  Rcout << "h2 = " << h2 << " lik = " << likelihood0 << "\n";
-  Rcout << A.V0b.array().log().sum() << "\n";
-  Rcout << A.log_d << "\n";
-  Rcout << log(A.yP0y) << "\n";
   }
   // object for likelihood maximization
-  diag_full_likelihood<MatrixXf, VectorXf, float> A(p, y, x, sigma);
+  diag_full_likelihood<MATRIX, VECTOR, scalar> A(p, y, x, sigma);
 
   for(int i = beg; i <= end; i++) {
     // remplir dernière colonne de x : récupérer SNP, multiplier par u'...
@@ -86,7 +87,8 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
     A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    A.newton_max(h2, 0, 1, tol, max_iter, false);
+    h2 = (h2 > 0.9)?0.9:h2;
+    A.newton_max( h2, 0, 0.99, tol, max_iter, false);
 
     H2(i-beg) = h2;
     LRT(i-beg) = 2*(A.likelihood() - likelihood0);

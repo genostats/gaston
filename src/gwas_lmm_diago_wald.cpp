@@ -3,6 +3,12 @@
 #include "matrix4.h"
 #include <cmath>
 
+// laisser en double ça va aussi vite (plus vite ?) et ça fait vraiment
+// une différence si il y a des covariables
+#define scalar double
+#define MATRIX MatrixXd
+#define VECTOR VectorXd
+
 //[[Rcpp::export]]
 List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMatrix X, 
                   int p, NumericVector Sigma, NumericMatrix U, int beg, int end, double tol) {
@@ -14,30 +20,30 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
   if(Y.size() != n || X.nrow() != n || U.nrow() != n || U.ncol() != n) 
     stop("Dimensions mismatch");
     
-  // conversion en float...
-  MatrixXf y0(n, 1);
+  // conversion en float si nécessaire... sinon copie
+  MATRIX y0(n, 1);
   for(int i = 0; i < n; i++)
     y0(i,0) = Y[i];
 
-  MatrixXf x0(n, r);
+  MATRIX x0(n, r);
   for(int j = 0; j < r; j++) 
     for(int i = 0; i < n; i++)
       x0(i,j) = X(i,j);
 
-  VectorXf sigma(n);
+  VECTOR sigma(n);
   for(int i = 0; i < n; i++) 
     sigma[i] = Sigma[i];
 
-  MatrixXf u(n,n);
+  MATRIX u(n,n);
   for(int j = 0; j < n; j++) 
     for(int i = 0; i < n; i++)
       u(i,j) = U(i,j);
 
-  MatrixXf x = u.transpose() * x0;
-  MatrixXf y = u.transpose() * y0;
+  MATRIX x = u.transpose() * x0;
+  MATRIX y = u.transpose() * y0;
 
-  // Zecteur SNPs
-  VectorXf SNP(n);
+  // Vecteur SNPs
+  VECTOR SNP(n);
 
   // declare vectors containing result
   NumericVector H2(end-beg+1);
@@ -45,9 +51,9 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
   NumericVector SDBETA(end-beg+1);
 
   // object for likelihood maximization
-  diag_likelihood<MatrixXf, VectorXf, float> A(p, y, x, sigma);
+  diag_likelihood<MATRIX, VECTOR, scalar> A(p, y, x, sigma);
 
-  float h2 = 0;
+  scalar h2 = 0;
 
   for(int i = beg; i <= end; i++) {
     // if(!(i%65536)) Rcout << "i = " << i << "\n";
@@ -76,15 +82,26 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
     A.X.col(r-1) = u.transpose() * SNP;
 
     // likelihood maximization
-    A.newton_max(h2, 0, 1, tol, max_iter, false);
+    h2 = (h2 > 0.9)?0.9:h2;
+    A.newton_max( h2, 0, 0.99, tol, max_iter, false);
     
     // CALCUL DES BLUPS 
-    VectorXf beta, omega;
+    VECTOR beta, omega;
     A.blup(h2, beta, omega, false, true);
 
-    H2(i-beg) = h2;
-    BETA(i-beg) = beta(r-1);
-    SDBETA(i-beg) = sqrt(A.v*A.XViX_i(r-1,r-1));
+// Rcout << "beta = " << beta.transpose() << "\n";
+// Rcout << "v = " << A.v << "\n";
+// Rcout << "XViX = " << A.XViX << "\n";
+// Rcout << "XViX_i = " << A.XViX_i << "\n";
+    if(A.d != 0) {
+      H2(i-beg) = h2;
+      BETA(i-beg) = beta(r-1);
+      SDBETA(i-beg) = sqrt(A.v*A.XViX_i(r-1,r-1));
+    } else {
+      H2(i-beg) = NAN;
+      BETA(i-beg) = NAN;
+      SDBETA(i-beg) = NAN;
+    }
   }
 
   List R;
