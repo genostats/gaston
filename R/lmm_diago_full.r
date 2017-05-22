@@ -1,4 +1,4 @@
-lmm.diago.full.likelihood <- function(tau, s2, h2, Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0) {
+lmm.diago.profile.likelihood <- function(tau, s2, h2, Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0) {
   if( any(is.na(Y)) ) 
     stop('Missing data in Y.')
 

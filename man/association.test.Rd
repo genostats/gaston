@@ -65,7 +65,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   The argument \code{p} is ignored.
 
   Note: this function is not multithreaded. Wald test with Linear Mixed Models are computationally intensive, 
-  to run a GWAS with such tests consider using \code{association.test.parallel} in package \code{gaston.utils}.
+  to run a GWAS with such tests consider using \code{association.test.parallel} in package \code{gaston.utils} 
+  (on github).
 }
 
 \value{
