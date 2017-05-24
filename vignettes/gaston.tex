@@ -115,8 +115,8 @@
 > x <- read.bed.matrix( system.file("extdata", "LCT.bed", package="gaston") )
 \end{Sinput}
 \begin{Soutput}
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/LCT.rds 
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/LCT.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.rds 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
 \end{Soutput}
 \begin{Sinput}
 > x
@@ -139,9 +139,9 @@ ped stats are not set (or incomplete)
 > x <- read.bed.matrix( system.file("extdata", "LCT.bed", package="gaston"), rds = NULL )
 \end{Sinput}
 \begin{Soutput}
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/LCT.fam 
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/LCT.bim 
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/LCT.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.fam 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bim 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
 ped stats and snps stats have been set. 
 'p' has been set. 
 'mu' and 'sigma' have been set.
@@ -218,7 +218,7 @@ ped stats are set
 > x@bed
 \end{Sinput}
 \begin{Soutput}
-<pointer: 0x1fecf50>
+<pointer: 0x3cebfe0>
 \end{Soutput}
 \end{Schunk}
 
@@ -809,8 +809,8 @@ HG00101  0.4646063  0.7807675  0.6173047  0.3465926
 > x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )
 \end{Sinput}
 \begin{Soutput}
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/chr2.rds 
-Reading /home/rv/R/x86_64-pc-linux-gnu-library/3.2/gaston/extdata/chr2.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/chr2.rds 
+Reading /home/rv/R/R-3.4/gaston/extdata/chr2.bed 
 \end{Soutput}
 \begin{Sinput}
 > x
@@ -894,12 +894,12 @@ need to standardize \verb!x! explicitely: is \verb!x! isn't standardized,
 \end{Sinput}
 \begin{Soutput}
                      [,1]          [,2]
-rs113106463 -0.0059549228  0.0064476384
-rs13390778  -0.0099678232 -0.0125721022
-rs75011129  -0.0001122794 -0.0001181838
-rs4637157   -0.0151318030 -0.0148076821
-rs62116661  -0.0002977574  0.0048268323
-rs10170011   0.0185198425 -0.0019553355
+rs113106463 -0.0059549223  0.0064476367
+rs13390778  -0.0099678230 -0.0125721002
+rs75011129  -0.0001122796 -0.0001181847
+rs4637157   -0.0151318029 -0.0148076806
+rs62116661  -0.0002977573  0.0048268335
+rs10170011   0.0185198428 -0.0019553365
 \end{Soutput}
 \end{Schunk}
 
@@ -921,25 +921,25 @@ to explicitely standardize \verb!x!):
 > head( (x %*% L) / sqrt(ncol(x)-1) )
 \end{Sinput}
 \begin{Soutput}
-                [,1]        [,2]
-HG00096  0.021410879 -0.12418403
-HG00097 -0.014005022 -0.07378043
-HG00099  0.001384441 -0.09708207
-HG00100  0.020319167 -0.08920824
-HG00101  0.002596092 -0.08925960
-HG00102  0.010155045 -0.08968426
+               [,1]        [,2]
+HG00096  0.02141088 -0.12418402
+HG00097 -0.01400502 -0.07378043
+HG00099  0.00138444 -0.09708207
+HG00100  0.02031917 -0.08920825
+HG00101  0.00259609 -0.08925960
+HG00102  0.01015505 -0.08968427
 \end{Soutput}
 \begin{Sinput}
 > head( PC[,1:2] )
 \end{Sinput}
 \begin{Soutput}
              [,1]        [,2]
-[1,]  0.021410886 -0.12418404
-[2,] -0.014005021 -0.07378043
-[3,]  0.001384441 -0.09708207
-[4,]  0.020319164 -0.08920824
-[5,]  0.002596096 -0.08925960
-[6,]  0.010155044 -0.08968425
+[1,]  0.021410884 -0.12418402
+[2,] -0.014005026 -0.07378043
+[3,]  0.001384437 -0.09708206
+[4,]  0.020319162 -0.08920824
+[5,]  0.002596090 -0.08925960
+[6,]  0.010155045 -0.08968427
 \end{Soutput}
 \end{Schunk}
 

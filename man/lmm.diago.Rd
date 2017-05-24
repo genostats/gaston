@@ -8,7 +8,8 @@
 }
 \usage{ lmm.diago(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, 
                   method = c("newton", "brent"), min_h2 = 0, max_h2 = 1,
-                  verbose = getOption("gaston.verbose", TRUE), tol = .Machine$double.eps^0.25) }
+                  verbose = getOption("gaston.verbose", TRUE), 
+                  tol = .Machine$double.eps^0.25) }
 
 \arguments{
   \item{Y}{ Phenotype vector }

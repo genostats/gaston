@@ -112,7 +112,6 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 
 
 checkX <- function(X, mean.y) {
-  save(X, mean.y, file = "/tmp/lapin.rda")
   X1 <- cbind(1,X)
   n <- ncol(X1)
   a <- crossprod(X1)

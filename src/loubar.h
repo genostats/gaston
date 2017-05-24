@@ -1,5 +1,7 @@
 #include <iostream>
 #include <Rcpp.h>
+#ifndef GASTONloubar
+#define GASTONloubar
 
 using namespace Rcpp;
 
@@ -227,12 +229,4 @@ NumericMatrix as_r(lou & A);
 NumericVector as_r(bar & A);
 
 
-
-
-
-
-
-
-
-
-
+#endif

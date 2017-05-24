@@ -1,9 +1,7 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <RcppEigen.h>
 #include <iostream>
-#ifndef GASTONAIREMLn
-#define GASTONAIREMLn
-//#define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 
+// #define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 
 
 using namespace Rcpp;
 using namespace Eigen;
@@ -12,19 +10,18 @@ typedef Map<MatrixXd> Map_MatrixXd;
 
 
 // AI REML avec n matrices de Kinship
-template<typename T1, typename T2, typename A, typename T3, typename T4>
-void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, const std::vector<T2,A> & K, 
-               int EMsteps, int EMsteps_fail, double EM_alpha, bool constraint, double min_s2, 
-               const Eigen::MatrixBase<T3> & min_tau, int max_iter, double eps, bool verbose, 
-               VectorXd & theta, double & logL, double & logL0, int & niter, double & gr_norm, MatrixXd & P, VectorXd & Py, 
-               VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i, double & varXbeta, bool start_theta) {
-  int n(y.rows()), p(x.cols());
+template<typename T1, typename T2, typename A, typename T3>
+void AIREMLn_nofix(const Eigen::MatrixBase<T1> & y, const std::vector<T2,A> & K, int EMsteps, int EMsteps_fail, 
+                   double EM_alpha, bool constraint, double min_s2, const Eigen::MatrixBase<T3> & min_tau, int max_iter, 
+                   double eps, bool verbose, VectorXd & theta, double & logL, double & logL0, int & niter,
+                   double & gr_norm, MatrixXd & P, VectorXd & Py, VectorXd & omega, bool start_theta) {
+  int n(y.rows());
   int s(K.size());
 
+  double var_y = y.squaredNorm()/n; // eh oui, pas d'effet fixe : Y est supposé centré !!
+
+  // if(verbose) Rcout << "var(Y) = " << var_y << "\n";
   MatrixXd V(n,n);
-  MatrixXd Vi(n,n);
-  MatrixXd XViX(p,p);
-  MatrixXd ViX(n,p);
   VectorXd PPy(n);
 
   std::vector<VectorXd> KPy, PKPy;
@@ -35,27 +32,14 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
 
   VectorXd theta0(s+1), gr(s+1), gr_cst(s+1);
   MatrixXd AI(s+1, s+1), pi_AI(s+1,s+1);
-  double log_detV, detV, old_logL, d, ld, d1, log_d1;
+  double log_detV, detV, old_logL, d, ld;
 
-  // X'X
-  MatrixXd xtx( MatrixXd(p,p).setZero().selfadjointView<Lower>().rankUpdate( x.transpose() ));
-  MatrixXd xtxi(p,p); // et son inverse
-  double det_xtx, ldet_xtx;
-  MatrixXd xtx0(xtx);
-  sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
-
-  // Calcul de log L0 et
-  // choix paramètres initiaux
-  VectorXd xty = x.transpose() * y.col(0);
-  double s2_0 = (y.col(0).dot(y.col(0)) - xty.dot( xtxi*xty ))/(n-p);
-  logL0 = -0.5*((n-p)*log(s2_0) + ldet_xtx + (n-p));
- 
+  // Choix paramètres initiaux
   if(!start_theta) {
-    theta(0) =  s2_0/(s+1); // s2
+    theta(0) =  var_y/(s+1); // s2
     for(int j = 0; j < s; j++) 
-      theta(j+1) = s2_0/(s+1)/K[j].diagonal().mean();
+      theta(j+1) = var_y/(s+1)/K[j].diagonal().mean();
   }
-  //---------------
 
   // booleens pour variables bloquées
   bool bloc_s2 = false;
@@ -71,20 +55,13 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
     V = theta(0)*MatrixXd::Identity(n,n);
     for(int j = 0; j < s; j++) V.noalias() += theta(j+1)*K[j];
 
-
-   // Calcul de Vi = inverse(V)
-    sym_inverse(V,Vi,log_detV,detV,1e-7);
-
-    // Calcul de P
-    ViX.noalias() = Vi * x;
-    XViX.noalias() = x.transpose() * ViX;
-    sym_inverse(XViX, XViX_i, log_d1, d1, 1e-5);
-    P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
+    // calcul de P = inverse(V)
+    sym_inverse(V,P,log_detV, detV,1e-7);
 
     // Py = P * y (en tenant ompte de la symmétrie de P)
     Py.noalias()   =  P.selfadjointView<Lower>() * y;
     old_logL = logL;
-    logL = -0.5*(log_detV + log_d1 + Py.dot(y.col(0)));
+    logL = -0.5*(log_detV + Py.dot(y.col(0)));
     if(verbose) Rcout << "[Iteration " << i+1 << "] log L = " << logL << "\n";
 
     // Is new value of likelihood OK ?
@@ -94,14 +71,13 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
       }
       else {
         EMsteps = EMsteps_fail;
-        if(verbose) Rcout << "[Iteration " << i+1 << "] AI algorithm failed to improve likelihood\n";
-        if(EMsteps > 0) {
-          if(verbose) Rcout << "Trying " << EMsteps << " EM steps\n";
-          // theta = theta0;
-          continue;
-        }
+        if(verbose) Rcout << "[Iteration " << i+1 << "] AI algorithm failed to improve likelihood, trying " 
+                          << EMsteps << "EM step\n";    
+        // theta = theta0;
+        continue;
       }
     }
+
 
     // gradient
 
@@ -114,15 +90,14 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
     gr(0) = -0.5*(P.trace() - Py.squaredNorm());
     for(int j = 0; j < s; j++) gr(j+1) = -0.5*(trace_of_product(K[j], P) - Py.dot(KPy[j]));
 
-
     // updating theta
     theta0 = theta;
     if(EMsteps > 0) {
-      theta +=  theta0.cwiseProduct(theta0).cwiseProduct(gr)*2*EM_alpha/n;
+      theta +=  theta0.cwiseProduct(theta0).cwiseProduct(gr)*EM_alpha*2/n; 
       if(verbose) Rcout << "[Iteration " << i+1 << "] EM update" << "\n";
       EM = true;
       EMsteps--;
-    } else {
+    } else { // AI-REML ******************************
 
       if(constraint) {
         // gradient contraint  
@@ -139,7 +114,7 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
              if(gr(0) > 0) {
                bloc_s2  = false; gr_cst(0) = gr(0);
                if(verbose) Rcout << "  Releasing constraint on sigma^2\n";
-             }
+             } 
           }
           for(int j = 0; j < s; j++) {
             if(bloc_tau[j]) {
@@ -157,9 +132,9 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
       // pour variables non bloquées
       AI.setZero();
       if(!bloc_s2) AI(0,0) = 0.5*PPy.dot(Py);
-      for(int j = 0; j < s; j++)
+      for(int j = 0; j < s; j++) 
         if(!bloc_s2 && !bloc_tau[j]) AI(j+1,0)= AI(0,j+1) = 0.5*PPy.dot(KPy[j]);
-      for(int j = 0; j < s; j++)
+      for(int j = 0; j < s; j++) 
         if(!bloc_tau[j]) AI(j+1,j+1) = 0.5*PKPy[j].dot(KPy[j]);
       for(int j1 = 1; j1 < s; j1++) {
         for(int j2 = 0; j2 < j1; j2++) {
@@ -177,7 +152,7 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
       if(constraint) {
         double lambda = 1;
         int a_bloquer = -1; // nécessaire pour pallier aux erreurs d'arrondi après le re-calcul de theta
-        if(theta(0) < min_s2) {
+        if(theta(0) < min_s2) { 
            double lambda0 = (min_s2 - theta0(0))/(theta(0)-theta0(0));
            if(lambda0 < lambda) { // forcément vrai ici...
               lambda = lambda0;
@@ -185,7 +160,7 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
            }
         }
         for(int j = 0; j < s; j++) {
-          if(theta(j+1) < min_tau(j)) {
+          if(theta(j+1) < min_tau(j)) { 
             double lambda0 = (min_tau(j) - theta0(j+1))/(theta(j+1)-theta0(j+1));
             if(lambda0 < lambda) { // forcément vrai ici...
               lambda = lambda0;
@@ -210,7 +185,7 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
 
       if(verbose) Rcout << "[Iteration " << i+1 << "] AI-REML update" << "\n";
       EM = false;
-    }
+    } // ****************************** fin AI-REML
 
     gr_norm = gr.norm();
     if(verbose) Rcout << "[Iteration " << i+1 << "] ||gradient|| = " << gr_norm << "\n";
@@ -221,31 +196,15 @@ void AIREMLn(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, c
     }
     R_CheckUserInterrupt();
   }
-  niter = i+1;
   // Rque : l'utilisateur récupère Py qui est utile dans calcul des BLUP 
   // [l'utilisateur récupère celui qui est calculé avec le Py qui correspond à theta0 !! tant pis pour lui]
   // l'utilisateur récupère aussi logL
+  logL0 = -0.5*n*(log(var_y)+1);
+  niter = i+1;
 
-  // BLUP pour omega
+  // calcul de omega (breeding value)
   omega.setZero();
   for(int j = 0; j < s; j++)
     omega.noalias() += theta(j+1)*KPy[j];
 
-  // BLUP pour beta
-  // beta = (X'X)^{-1} X'(Y - omega - sigma² Py)
-  beta = x.transpose() * (y - omega - theta(0)*Py);
-  beta = xtxi * beta;
-
-  // Calcul débiaisé de var (X \hat beta)
-  double psi = trace_of_product(xtx, XViX_i)/(n-1);
-  VectorXd gg(x.transpose()*VectorXd::Ones(n));
-  psi -= gg.dot(XViX_i*gg)/n/(n-1);
-
-  VectorXd Xbeta = x*beta;
-  double SXb = Xbeta.sum();
-  varXbeta = (Xbeta.squaredNorm() - SXb*SXb/n)/(n-1) - psi;
-
-  
 }
-#endif
-

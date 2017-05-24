@@ -7,7 +7,7 @@ importFrom("utils", "read.table", "write.table")
 importFrom("Rcpp", "evalCpp") # just to avoid << function 'enterRNGScope' not provided by package 'Rcpp' >> error
 importFrom("RcppParallel", "setThreadOptions", "defaultNumThreads")
 
-useDynLib(gaston)
+useDynLib(gaston, .registration = TRUE)
 
 exportClasses(bed.matrix)
 exportMethods(head,  as.matrix, "[", "%*%", dim, p, 'p<-', mu, 'mu<-', sigma, 'sigma<-', standardize, 'standardize<-', cbind, rbind)

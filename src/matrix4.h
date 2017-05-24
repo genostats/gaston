@@ -2,7 +2,8 @@
 #include <Rcpp.h>
 #include <stdint.h>
 #define DEBUG false
-
+#ifndef GASTONmatrix4
+#define GASTONmatrix4
 using namespace Rcpp;
 
 // matrices qui stockent de façon compacte des valeurs de 1 à 4
@@ -112,4 +113,4 @@ uint8_t matrix4::operator()(size_t i, size_t j) const {
   #endif
   return get(i,j);
 }
-
+#endif

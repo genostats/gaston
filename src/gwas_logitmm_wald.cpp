@@ -31,9 +31,6 @@ List GWAS_logitmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
   for(int i = 0; i < n; i++) x(i,r-1) = 0;
   AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
 
-  //clock_t chaviro(0);
-  // clock_t begin_t = clock();
-
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
     if( std::isnan(mu(i)) || mu(i) == 0 || mu(i) == 2 ) {
@@ -67,7 +64,6 @@ List GWAS_logitmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
 
   }
 
-  //cout << (float) chaviro / CLOCKS_PER_SEC << "\n";
   List R;
   R["tau"] = TAU;
   R["beta"] = BETA;
@@ -113,9 +109,6 @@ List GWAS_logitmm_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nu
   for(int i = 0; i < n; i++) x(i,r-1) = 0;
   AIREML1_logit_f(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
 
-  //clock_t chaviro(0);
-  // clock_t begin_t = clock();
-
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
     // remplir dernière colonne de x par génotype au SNP (manquant -> mu)
@@ -143,7 +136,6 @@ List GWAS_logitmm_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nu
 
   }
 
-  //cout << (float) chaviro / CLOCKS_PER_SEC << "\n";
   List R;
   R["tau"] = TAU;
   R["beta"] = BETA;
