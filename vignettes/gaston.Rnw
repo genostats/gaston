@@ -70,6 +70,7 @@ desc <- packageDescription("gaston")
   For better performances, we recommend to build Gaston with \verb!clang++!.
   To do so, it is sufficient to create in your home directory
   a file \verb!~/.R/Makevars! containing \verb!CXX1X = clang++! 
+  or if you use a version of R $>=$ 3.4.0, \verb!CXX11 = clang++!
 
   In this vignette, we illustrate Gaston using the included data sets \verb!AGT!, \verb!LCT!,
   and \verb!TTN! (see the corresponding manual pages for a description). 
