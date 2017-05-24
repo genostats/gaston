@@ -7,13 +7,26 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   if(beg < 1 || end > ncol(x)) stop("range too wide")
   if(is.null(x@mu)) stop("Need mu to be set in x")
   if(length(Y) != nrow(x)) stop("Dimensions of Y and x mismatch")
+  
+  X <- as.matrix(X)
   if(nrow(X) != nrow(x)) stop("Dimensions of Y and x mismatch")
+  X <- checkX(X, mean(Y))
 
   response <- match.arg(response)
   test <- match.arg(test)
+  
+  # check dimensions before anything
+  n <- nrow(x)
+  if(!missing(K)) {
+    if(n != nrow(K) | n != ncol(K)) stop("K and x dimensions don't match")
+  }
+  if(!missing(eigenK)) {
+    if(n != nrow(eigenK$vectors) | n != ncol(eigenK$vectors) | n != length(eigenK$values)) 
+      stop("eigenK and x dimensions don't match")
+  }
 
   # random effect
-  if(match.arg(method) == "lmm") { # il n'y a que ça pour le moment
+  if(match.arg(method) == "lmm") { 
 
     # if(response == "binary" & test != "score") {
     #  warning('Binary phenotype and method = "lmm" force test = "score"')
@@ -90,6 +103,25 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
       t$p <- pchisq( (t$beta/t$sd)**2, df = 1, lower.tail=FALSE)
     }
   }
+  L <- list(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
+  if(beg > 1 | end < ncol(x))  # avoid copy
+    L <- L[beg:end,] 
 
-  data.frame( c( list(chr = x@snps$chr[beg:end], pos = x@snps$pos[beg:end], id  = x@snps$id[beg:end]), t) )
+  data.frame( c( L, t) )
 }
+
+
+checkX <- function(X, mean.y) {
+  save(X, mean.y, file = "/tmp/lapin.rda")
+  X1 <- cbind(1,X)
+  n <- ncol(X1)
+  a <- crossprod(X1)
+  b <- a[ 2:n, 2:n, drop = FALSE ]
+  if( abs(det(b)) < 1e-4 ) stop("Covariate matrix is (quasi) singular")
+  if( abs(det(a)) > 1e-4 & mean.y > 1e-4) {
+    warning("An intercept column was added to the covariate matrix X")
+    return(X1)
+  }
+  return(X)
+}
+

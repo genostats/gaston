@@ -7,19 +7,24 @@
   Estimate the parameters of a linear mixed model, using the "diagonalization trick".
 }
 \usage{ lmm.diago(Y, X = matrix(1, nrow=length(Y)), eigenK, p = 0, 
-                  tol = .Machine$double.eps^0.25) }
+                  method = c("newton", "brent"), min_h2 = 0, max_h2 = 1,
+                  verbose = getOption("gaston.verbose", TRUE), tol = .Machine$double.eps^0.25) }
 
 \arguments{
   \item{Y}{ Phenotype vector }
   \item{X}{ Covariable matrix }
   \item{eigenK}{ Eigen decomposition of \eqn{K} (a positive symmetric matrix)}
   \item{p}{ Number of Principal Components included in the mixed model with fixed effect }
-  \item{tol}{ Accuracy of estimation (parameter for \code{optimize})}
+  \item{method}{ Optimization method to use }
+  \item{min_h2}{ Minimum admissible value }
+  \item{max_h2}{ Maximum admissible value }
+  \item{verbose}{ If \code{TRUE}, display information on the function actions }
+  \item{tol}{ Accuracy of estimation}
 }
 
 \details{
-  Estimate the parameters of the following linear mixed model, computing the likelihood as in \code{lmm.diago.likelihood},
-  and using the optimization algorithm of the R base function \code{optimize}:
+  Estimate the parameters of the following linear mixed model, computing the restricted likelihood as in \code{lmm.diago.likelihood},
+  and using either a Newton algorithm, or Brent algorithm as in \code{\link[stats:optimize]{optimize}}:
   \deqn{ Y = (X|PC)\beta + \omega + \varepsilon }{ Y = (X|PC) beta + omega + epsilon }
   with \eqn{ \omega \sim N(0,\tau K) }{omega ~ N(0, tau K)} and
   \eqn{ \varepsilon \sim N(0,\sigma^2 I_n) }{epsilon ~ N(0, sigma^2 I_n)}.

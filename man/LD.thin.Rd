@@ -5,7 +5,7 @@
 
 \description{ Select SNPs in LD below a given threshold. }
 \usage{
-LD.thin(x, threshold, max.dist = 100e3, beg = 1, end = ncol(x),
+LD.thin(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x),
         which.snps, dist.unit = c("bases", "indices"), extract = TRUE,
         keep = c("left", "right", "random"))
 }

@@ -1,12 +1,14 @@
 \name{lmm.diago.likelihood}
 \alias{lmm.diago.likelihood}
+\alias{lmm.diago.profile.likelihood}
 
 \title{ Likelihood of a linear mixed model }
 
 \description{
-  Compute the Restricted Likelihood of a linear mixed model, using the "diagonalization trick".
+  Compute the Restricted or the Full Likelihood of a linear mixed model, using the "diagonalization trick".
 }
-\usage{ lmm.diago.likelihood(tau, s2, h2, Y, X, eigenK, p = 0) }
+\usage{ lmm.diago.likelihood(tau, s2, h2, Y, X, eigenK, p = 0) 
+ lmm.diago.profile.likelihood(tau, s2, h2, Y, X, eigenK, p = 0) }
 
 \arguments{
   \item{tau}{ Value(s) of model parameter (see Details) }
@@ -20,22 +22,26 @@
 
 \details{
 
-  Compute the Restricted Likelihood under the linear mixed model
+  Theses function respectively compute the Restricted and the Profile Likelihood under the linear 
+  mixed model
   \deqn{ Y = (X|PC)\beta + \omega + \varepsilon }{ Y = (X|PC) beta + omega + epsilon }
   with \eqn{ \omega \sim N(0,\tau K) }{omega ~ N(0, tau K)} and 
-  \eqn{ \varepsilon \sim N(0,\sigma^2 I_n) }{epsilon ~ N(0, sigma^2 I_n)}.
+  \eqn{ \varepsilon \sim N(0,\sigma^2 I_n) }{epsilon ~ N(0, sigma^2 I_n)}. 
 
   The matrix \eqn{K} is given through its eigen decomposition, as produced by \code{eigenK = eigen(K, symmetric = TRUE)}.
   The matrix \eqn{(X|PC)} is the concatenation of the covariable matrix \eqn{X} and 
   of the first \eqn{p} eigenvectors of \eqn{K}, included in the model with fixed effects.
   
-  If both \code{tau} and \code{s2} (for \eqn{\sigma^2}{sigma^2}) are provided, the function computes the
+  If both \code{tau} and \code{s2} (for \eqn{\sigma^2}{sigma^2}) are provided, \code{lmm.diago.likelihood}
+  computes the restricted
   likelihood for these values of the parameters; if these parameters are vectors of length \eqn{> 1},
-  then a matrix of likelihood values is computed.
+  then a matrix of likelihood values is computed. The function \code{lmm.diago.profile.likelihood} 
+  computes \eqn{\beta}{beta} which maximizes the full likelihood for these values of \eqn{\tau}{tau}
+  and \eqn{\sigma^2}{sigma^2}, and computes its value.
 
-  If \code{h2} is provided, the function computes \eqn{\tau}{tau} and \eqn{\sigma^2}{s2} which
-  maximizes the likelihood under the constraint \eqn{ {\tau \over \tau + \sigma^2 } = h^2 }{tau/(tau + s2) = h2},
-  and outputs these values as well as the likelihood value at this point.
+  If \code{h2} is provided, both functions compute \eqn{\tau}{tau} and \eqn{\sigma^2}{sigma^2} which
+  maximizes the likelihood under the constraint \eqn{ {\tau \over \tau + \sigma^2 } = h^2 }{tau/(tau + sigma^2) = h^2},
+  and output these values as well as the likelihood value at this point.
 }
 
 \value{

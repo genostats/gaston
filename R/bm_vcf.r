@@ -1,34 +1,10 @@
 read.vcf <- function(file, max.snps, get.info = FALSE, convert.chr = TRUE, verbose = getOption("gaston.verbose",TRUE)) {
   xx <- NULL;
-  if(is.character(file)) {
-    filename <- path.expand(file)
-    xx <- WhopGenome::vcf_open(file)
-    if(is.null(xx)) stop("File not found")
-    samples <- WhopGenome::vcf_getsamples(xx) 
-    which.samples <- rep(TRUE, length(samples))
-    WhopGenome::vcf_selectsamples( xx, samples )
-    f <- function() WhopGenome::vcf_readLineRaw(xx) 
-  } else {
-    samples <- WhopGenome::vcf_getselectedsamples(file)
-    which.samples <- WhopGenome::vcf_getsamples(file) %in% samples
-    # vcf_readLineRawFiltered doesn't deal well with filtered lines
-    # -> we need this kludge to get filtered raw lines with the same
-    #    behavior as vcf_readLineRaw
-    f <- function() {
-      a <- WhopGenome::vcf_readLineVecFiltered(file) 
-      if(is.null(a)) 
-        FALSE
-      else
-        paste(a, collapse = "\t")
-    }
-  }
+  filename <- path.expand(file)
 
   if(missing(max.snps)) max.snps = -1L;
 
-  if(verbose) cat("Reading diallelic variants for", length(samples), "individuals\n");
-  
-  L <- .Call("gg_read_vcf2", PACKAGE = "gaston", f, which.samples, max.snps, get.info)
-  if(!is.null(xx)) WhopGenome::vcf_close(xx)
+  L <- .Call("gg_read_vcf2", PACKAGE = "gaston", filename, max.snps, get.info)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
@@ -43,7 +19,7 @@ read.vcf <- function(file, max.snps, get.info = FALSE, convert.chr = TRUE, verbo
     snp$chr <- chr
   } 
 
-  ped <- data.frame(famid = samples, id = samples, father = 0, mother = 0, sex = 0, pheno = NA, stringsAsFactors = FALSE)
+  ped <- data.frame(famid = L$samples, id = L$samples, father = 0, mother = 0, sex = 0, pheno = NA, stringsAsFactors = FALSE)
   x <- new("bed.matrix", bed = L$bed, snps = snp, ped = ped,
            p = NULL, mu = NULL, sigma = NULL, standardize_p = FALSE,
            standardize_mu_sigma = FALSE )
@@ -54,35 +30,11 @@ read.vcf <- function(file, max.snps, get.info = FALSE, convert.chr = TRUE, verbo
 
 read.vcf.filtered <- function(file, positions, max.snps, get.info = FALSE, convert.chr = TRUE, verbose = getOption("gaston.verbose",TRUE)) {
   xx <- NULL;
-  if(is.character(file)) {
-    filename <- path.expand(file)
-    xx <- WhopGenome::vcf_open(file)
-    if(is.null(xx)) stop("File not found")
-    samples <- WhopGenome::vcf_getsamples(xx) 
-    which.samples <- rep(TRUE, length(samples))
-    WhopGenome::vcf_selectsamples( xx, samples )
-    f <- function() WhopGenome::vcf_readLineRaw(xx) 
-  } else {
-    samples <- WhopGenome::vcf_getselectedsamples(file)
-    which.samples <- WhopGenome::vcf_getsamples(file) %in% samples
-    # vcf_readLineRawFiltered doesn't deal well with filtered lines
-    # -> we need this kludge to get filtered raw lines with the same
-    #    behavior as vcf_readLineRaw
-    f <- function() {
-      a <- WhopGenome::vcf_readLineVecFiltered(file) 
-      if(is.null(a)) 
-        FALSE
-      else
-        paste(a, collapse = "\t")
-    }
-  }
+ filename <- path.expand(file)
 
   if(missing(max.snps)) max.snps = -1L;
 
-  if(verbose) cat("Reading diallelic variants for", length(samples), "individuals\n");
-  
-  L <- .Call("gg_read_vcf_filtered", PACKAGE = "gaston", f, positions, which.samples, max.snps, get.info)
-  if(!is.null(xx)) WhopGenome::vcf_close(xx)
+  L <- .Call("gg_read_vcf_filtered", PACKAGE = "gaston", filename, positions, max.snps, get.info)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
@@ -97,7 +49,7 @@ read.vcf.filtered <- function(file, positions, max.snps, get.info = FALSE, conve
     snp$chr <- chr
   } 
 
-  ped <- data.frame(famid = samples, id = samples, father = 0, mother = 0, sex = 0, pheno = NA, stringsAsFactors = FALSE)
+  ped <- data.frame(famid = L$samples, id = L$samples, father = 0, mother = 0, sex = 0, pheno = NA, stringsAsFactors = FALSE)
   x <- new("bed.matrix", bed = L$bed, snps = snp, ped = ped,
            p = NULL, mu = NULL, sigma = NULL, standardize_p = FALSE,
            standardize_mu_sigma = FALSE )

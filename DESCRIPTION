@@ -10,7 +10,7 @@ Description: Manipulation of genetic data (SNPs), computation of Genetic Relatio
 License: GPL-3
 LinkingTo: Rcpp, RcppParallel, RcppEigen
 Depends: Rcpp, RcppParallel, methods
-Imports: WhopGenome (>= 0.9.4)
+Imports:
 NeedsCompilation: yes
 LazyLoad: yes
 LazyData: yes
