@@ -52,25 +52,27 @@ lmm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, EMsteps = 0L, EMst
   # sinon, X = matrice d'effets fixes
   if(nrow(X) != n) stop("Dimensions of X and Y mismatch")
   if(ncol(X) >= n) stop("Too many columns in X")
-  if(contrast) {
-      aireml1 <- "gg_AIREML1_contrast"
-      airemln <- "gg_AIREMLn_contrast"
-  } else {
-      aireml1 <- "gg_AIREML1"
-      airemln <- "gg_AIREMLn"
-  }
-  if(is.matrix(K)) {
+  if(is.matrix(K)) { # only on K
     if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- 1e-6
-    return( .Call(aireml1,  PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+    if(contrast) { 
+      return( .Call("gg_AIREML1_contrast",  PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
                   max_iter, eps, verbose, theta, start_theta, get.P) )
-  }
-  else if(is.list(K)) {
+    } else {
+      return( .Call("gg_AIREML1",  PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+                  max_iter, eps, verbose, theta, start_theta, get.P) )
+    }
+  } else if(is.list(K)) { # many K's
     if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
       stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- rep(1e-6, length(K))
-    return( .Call(airemln, PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+    if(contrast) {
+      return( .Call("gg_AIREMLn_contrast", PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
                   max_iter, eps, verbose, theta, start_theta, get.P) )
+    } else {
+      return( .Call("gg_AIREMLn", PACKAGE = "gaston", Y, X, K, EMsteps, EMsteps_fail, EM_alpha, constraint, min_s2, min_tau, 
+                  max_iter, eps, verbose, theta, start_theta, get.P) )
+    }
   }
 }
 
