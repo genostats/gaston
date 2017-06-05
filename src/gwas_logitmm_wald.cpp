@@ -21,15 +21,15 @@ List GWAS_logitmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
   VectorXd SDBETA(end-beg+1);
 
   // initial values for beta, tau
-  double tau; 
+  double tau = 0; 
   int niter;
   MatrixXd P(n,n);
   VectorXd omega(n);
   VectorXd beta(r);
   MatrixXd varbeta(r,r);
 
-  for(int i = 0; i < n; i++) x(i,r-1) = 0;
-  AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
+  //for(int i = 0; i < n; i++) x(i,r-1) = 0;
+  //AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, false, false);
 
   // Rcout << min_h2 << " < h2 < " << max_h2 << "\n";
   for(int i = beg; i <= end; i++) {
@@ -55,8 +55,9 @@ List GWAS_logitmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
       }
     }
 
-    // use last computed values as starting point...
-    AIREML1_logit(y, x, kk, true, 1e-6, 100, tol, false, tau, niter, P, omega, beta, varbeta, true, true);
+    // use last computed tau as starting point...
+    if( std::isnan(tau) ) tau = 0;
+    AIREML1_logit(y, x, kk, true, 0, 50, tol, false, tau, niter, P, omega, beta, varbeta, true, false);
 
     TAU(i-beg) = tau;
     BETA(i-beg) = beta(r-1);
