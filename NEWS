@@ -37,9 +37,14 @@
 1.4.8: Corrected bug in set.stats (stats for chr Y)
        Finally removed CompQuadForm from dependence list !
        Minor modifs in read vcf, rbind, set.genomic.sex
-       New function merge.inds
+       New function merge.inds (finalement, pas exportée)
        New functions (short cuts) is.autosome, is.chr.x, is.chr.y, is.chr.mt
 1.4.9: Modification of rbind, cbind to handle bed.matrices with different column names in @ped, @snps
        A new test in association.test
        Minor changes in GRM and LD.thin 
-
+1.5:   VCF files support
+       Computation of the Dominance Matrix (DM)
+       New functions test.snps test.inds which.snps which.inds
+       Faster optimization with the diagonalization trick
+       Auto set the #threads when loaded
+1.5.1: 
