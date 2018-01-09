@@ -1,6 +1,7 @@
 %\VignetteIndexEntry{gaston package}
 %\VignetteDepends{gaston}
 %\VignettePackage{gaston}
+%\VignetteEngine{knitr::knitr}
 
 \documentclass{article}
 %\usepackage[noae]{Sweave}
