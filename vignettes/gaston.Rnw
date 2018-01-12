@@ -6,7 +6,7 @@
 \documentclass{article}
 %\usepackage[noae]{Sweave}
 \usepackage[top=35mm, bottom=40mm, left=25mm , right=25mm]{geometry}
-\usepackage{moreverb}
+%\usepackage{moreverb}
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts}
 \usepackage{amsmath}

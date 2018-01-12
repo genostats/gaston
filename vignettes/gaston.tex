@@ -1,6 +1,7 @@
 %\VignetteIndexEntry{gaston package}
 %\VignetteDepends{gaston}
 %\VignettePackage{gaston}
+%\VignetteEngine{knitr::knitr}
 
 \documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
 %% maxwidth is the original width if it is less than linewidth
@@ -55,7 +56,7 @@
 \usepackage{alltt}
 %\usepackage[noae]{Sweave}
 \usepackage[top=35mm, bottom=40mm, left=25mm , right=25mm]{geometry}
-\usepackage{moreverb}
+%\usepackage{moreverb}
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -186,8 +187,8 @@
 \hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"LCT.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{) )}
 \end{alltt}
 \begin{verbatim}
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/LCT.rds 
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/LCT.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.rds 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{x}
@@ -212,9 +213,9 @@ ped stats are not set (or incomplete)
 \hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"LCT.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{),} \hlkwc{rds} \hlstd{=} \hlkwa{NULL} \hlstd{)}
 \end{alltt}
 \begin{verbatim}
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/LCT.fam 
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/LCT.bim 
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/LCT.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.fam 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bim 
+Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
 ped stats and snps stats have been set. 
 'p' has been set. 
 'mu' and 'sigma' have been set.
@@ -297,7 +298,7 @@ ped stats are set
 \hlstd{> }\hlstd{x}\hlopt{@}\hlkwc{bed}
 \end{alltt}
 \begin{verbatim}
-<pointer: 0x3155720>
+<pointer: 0x35f01e0>
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -934,8 +935,8 @@ HG00101  0.4646063  0.7807675  0.6173047  0.3465926
 \hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"chr2.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{) )}
 \end{alltt}
 \begin{verbatim}
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/chr2.rds 
-Reading /env/export/v_info/q_soft/ig/r-3.3.1/el6-x86_64-generic/lib64/R/library/gaston/extdata/chr2.bed 
+Reading /home/rv/R/R-3.4/gaston/extdata/chr2.rds 
+Reading /home/rv/R/R-3.4/gaston/extdata/chr2.bed 
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{x}
@@ -1033,12 +1034,12 @@ need to standardize \verb!x! explicitely: is \verb!x! isn't standardized,
 \end{alltt}
 \begin{verbatim}
                      [,1]          [,2]
-rs113106463 -0.0059549186  0.0064476297
-rs13390778  -0.0099678315 -0.0125720604
-rs75011129  -0.0001122844 -0.0001181938
-rs4637157   -0.0151318068 -0.0148076532
-rs62116661  -0.0002977538  0.0048268389
-rs10170011   0.0185198417 -0.0019553572
+rs113106463  0.0059549223  0.0064476350
+rs13390778   0.0099678227 -0.0125720968
+rs75011129   0.0001122798 -0.0001181855
+rs4637157    0.0151318030 -0.0148076787
+rs62116661   0.0002977574  0.0048268360
+rs10170011  -0.0185198430 -0.0019553339
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1065,24 +1066,24 @@ to explicitely standardize \verb!x!):
 \end{alltt}
 \begin{verbatim}
                 [,1]        [,2]
-HG00096  0.021410828 -0.12418413
-HG00097 -0.014005079 -0.07378039
-HG00099  0.001384371 -0.09708221
-HG00100  0.020319121 -0.08920831
-HG00101  0.002596044 -0.08925970
-HG00102  0.010154995 -0.08968429
+HG00096 -0.021410880 -0.12418404
+HG00097  0.014005020 -0.07378045
+HG00099 -0.001384442 -0.09708207
+HG00100 -0.020319167 -0.08920823
+HG00101 -0.002596089 -0.08925960
+HG00102 -0.010155043 -0.08968428
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlkwd{head}\hlstd{( PC[,}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{] )}
 \end{alltt}
 \begin{verbatim}
              [,1]        [,2]
-[1,]  0.021410862 -0.12418426
-[2,] -0.014005099 -0.07378045
-[3,]  0.001384333 -0.09708229
-[4,]  0.020319129 -0.08920834
-[5,]  0.002596041 -0.08925986
-[6,]  0.010155028 -0.08968439
+[1,] -0.021410883 -0.12418404
+[2,]  0.014005016 -0.07378046
+[3,] -0.001384440 -0.09708206
+[4,] -0.020319160 -0.08920821
+[5,] -0.002596079 -0.08925958
+[6,] -0.010155033 -0.08968427
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
