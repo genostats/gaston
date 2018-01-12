@@ -1,17 +1,19 @@
 %\VignetteIndexEntry{gaston package}
 %\VignetteDepends{gaston}
 %\VignettePackage{gaston}
+%\VignetteEngine{knitr::knitr}
 
 \documentclass{article}
-\usepackage[noae]{Sweave}
+%\usepackage[noae]{Sweave}
 \usepackage[top=35mm, bottom=40mm, left=25mm , right=25mm]{geometry}
-\usepackage{moreverb}
+%\usepackage{moreverb}
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{etoolbox}
 
-\setkeys{Gin}{width=0.4\textwidth}
-\SweaveOpts{echo=TRUE, eps=FALSE, pdf=TRUE}
+%\setkeys{Gin}{width=0.4\textwidth}
+%\SweaveOpts{echo=TRUE, eps=FALSE, pdf=TRUE}
 
 \raggedbottom
 \pagestyle{empty}
@@ -21,29 +23,34 @@
 \def\theequation{\arabic{equation}}
 \let\epsilon\varepsilon
 
-%\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
-%\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
-%\DefineVerbatimEnvironment{Scode}{Verbatim}{}
-\fvset{listparameters={\setlength{\topsep}{-0.5em}}}
-\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
-
+%<<echo=FALSE>>=
+%options(continue=" ", prompt = " ", SweaveHooks=list(fig.mar=function() par(mar=c(5.1,4.1,3.1,2.1))), width=90)
+%@
 <<echo=FALSE>>=
-options(continue=" ", prompt = " ", SweaveHooks=list(fig=function() par(mar=c(5.1,4.1,3.1,2.1))), width=90)
+require(knitr)
+options(width = 90, prompt="> ")
+knit_hooks$set(fig.mar=function() par(mar=c(5.1,4.1,3.1,2.1)))
+opts_chunk$set(out.width='0.4\\textwidth', fig.align='center', highlight=TRUE, comment=NA, fig.height=6, fig.width=6)
+opts_knit$set(unnamed.chunk.label='gaston')
 @
 
+%<<prompton, echo=FALSE>>=
+%options(prompt="> ", continue = " ");
+%@
 <<prompton, echo=FALSE>>=
-options(prompt="> ", continue = " ");
+opts_chunk$set(prompt=TRUE, continue = " ");
 @
 
+%<<promptoff, echo=FALSE>>=
+%options(prompt=" ", continue=" ");
+%@
 <<promptoff, echo=FALSE>>=
-options(prompt=" ", continue=" ");
+opts_chunk$set(prompt=FALSE, continue=" ");
 @
 
 <<echo=FALSE>>=
 <<prompton>>
-options(width = 90)
 @
-
 
 <<desc, include=FALSE, echo=FALSE>>=
 require(gaston)
@@ -53,6 +60,18 @@ desc <- packageDescription("gaston")
 \title{{\bfseries Gaston}\\
        {\large Version \Sexpr{desc$Version}}}
 \author{Hervé Perdry, Claire Dandine-Roulland}
+
+
+%\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+%\fvset{listparameters={\setlength{\topsep}{-0.5em}}}
+%\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+\makeatletter
+\preto{\@verbatim}{\topsep=2pt \partopsep=-10pt }
+\preto{\alltt}{\topsep=-3pt \partopsep=-10pt }
+\makeatother
+
 
 \begin{document}
 \maketitle
@@ -278,14 +297,14 @@ str(x@sigma)
   is the genotype standard error. If the Hardy-Weinberg equilibrium holds, \verb!sigma!
   should be close to \verb!sqrt(2*p(1-p))!. This is illustrated on the figure below.
 
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-<<fig=TRUE, width=10>>=
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+<<fig.mar=TRUE, fig.width=10, out.width='0.7\\textwidth'>>=
 plot(x@p, x@sigma, xlim=c(0,1))
 t <- seq(0,1,length=101);
 lines(t, sqrt(2*t*(1-t)), col="red")
 @
-\end{center}
+%\end{center}
 
   There are also function \verb!set.stats.snps! and \verb!set.stats.ped! which
   update only \verb!x@snps! and \verb!x@ped!.
@@ -506,13 +525,13 @@ eiK$values[ eiK$values < 0 ] <- 0
   the projection of the 503 individuals on the first two PCs, with colors corresponding
   to their population.
 
-\begin{center}
-<<fig=TRUE>>=
+%\begin{center}
+<<fig.mar=TRUE>>=
 PC <- sweep(eiK$vectors, 2, sqrt(eiK$values), "*")
 plot(PC[,1], PC[,2], col=x@ped$population)
 legend("bottomleft", pch = 1, legend = levels(x@ped$population), col = 1:5)
 @
-\end{center}
+%\end{center}
 
   As $K$ can be written
   \begin{equation*} 
@@ -679,15 +698,15 @@ str(fit)
   in the component \verb!BLUP_Py!. The plots below compare the true values of $\omega_1$ and
   $u_1$ with their BLUPs.
    
-\setkeys{Gin}{width=0.7\textwidth}
-\begin{center}
-<<fig=TRUE, width=12>>=
+%\setkeys{Gin}{width=0.7\textwidth}
+%\begin{center}
+<<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
 par(mfrow = c(1, 2))
 plot(Z1 %*% u1, fit$BLUP_omega); abline(0, 1, lty = 2, col = 3)
 BLUP_u1 <- fit$tau * t(Z1) %*% fit$Py
 plot(u1, BLUP_u1); abline(0, 1, lty = 2, col = 3)
 @
-\end{center}
+%\end{center}
 
   \subsubsection{Several random effects vectors}
 
@@ -705,15 +724,15 @@ str(fit2)
   the BLUP for $\omega_1 + \omega_2$. The BLUPs for each $\omega_i$ can
   be retrieved using $\widehat{\omega_i} = \tau_i K_i Py$:
 
-\begin{center}
-<<fig=TRUE, width=12>>=
+%\begin{center}
+<<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
 par(mfrow = c(1, 2))
 omega1 <- fit2$tau[1] * K1 %*% fit2$Py
 omega2 <- fit2$tau[2] * K2 %*% fit2$Py
 plot(Z1 %*% u1, omega1); abline(0, 1, lty = 2, col = 3)
 plot(Z2 %*% u2, omega2); abline(0, 1, lty = 2, col = 3)
 @
-\end{center}
+%\end{center}
 
   The BLUPs for $u_1$ and $u_2$ can as above be retrieved using $\widehat{u_i} = \tau_i Z_i' P y$.
   
@@ -749,15 +768,15 @@ str(fit.d)
   The likelihood computation with the diagonalization trick is fast enough to 
   plot the likelihood:
 
-\setkeys{Gin}{width=0.4\textwidth}
-\begin{center}
-<<fig=TRUE>>=
+%\setkeys{Gin}{width=0.4\textwidth}
+%\begin{center}
+<<fig.mar=TRUE>>=
 TAU <- seq(0.5,2.5,length=50)
 S2 <- seq(2.5,4,length=50)
 lik <- lmm.diago.likelihood(tau = TAU, s2 = S2, Y = y, X = X, eigenK = eiK1)
 lik.contour(TAU, S2, lik, heat = TRUE, xlab = "tau", ylab = "sigma^2")
 @
-\end{center}
+%\end{center}
 
 
 
@@ -811,13 +830,13 @@ h2 <- fit$tau/(fit$tau + fit$sigma)
   $h^2 = {\tau \over \tau + \sigma^2}$. It can be useful to get confidence intervals. Here,
   we simply plot it:
 
-\begin{center}
-<<fig=TRUE>>=
+%\begin{center}
+<<fig.mar=TRUE>>=
 H2 <- seq(0,1,length=51)
 lik <- lmm.diago.likelihood(h2 = H2, Y = y, eigenK = R$eigen)
 plot(H2, exp(lik$likelihood-max(lik$likelihood)), type="l", yaxt="n", ylab="likelihood")
 @
-\end{center}
+%\end{center}
 
   It is often advised to include the first few (10 or 20) Principal Components (PC) in the model as fixed effects,
   to account for a possible population stratification. The function \verb!lmm.diago! has an argument \verb!p!
@@ -882,49 +901,49 @@ y <- 2 + x %*% c(rep(0,350),0.25,rep(0,ncol(x)-351)) +
 
   The following code performs the association test with a score test and a wald test,
   and compares the resulting $p$-values:
-\begin{center}
-<<fig=TRUE>>=
+%\begin{center}
+<<fig.mar=TRUE>>=
 t_score <- association.test(x, y, K = R$K, method = "lmm")
 t_wald <- association.test(x, y, eigenK = R$eigen, method = "lmm", test = "wald")
 plot( t_score$p, t_wald$p, log = "xy", xlab = "score", ylab = "wald")
 @
-\end{center}
+%\end{center}
 
 We can display the results under the form of a (mini) Manhattan plot:
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-<<fig=TRUE, width=12>>=
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+<<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
 plot(-log10(t_score$p), xlab="SNP index", ylab = "-log(p)",
       col = c(rep(1,350),2,rep(1,ncol(x)-351)))
 @
-\end{center}
+%\end{center}
 
   We colored the point corresponding to the SNP \#351 in red. We see that there
   are other SNPs with low association $p$-values: these are the SNPs in LD with
   SNP \#351. We can confirm this by plotting the $p$-values (again on log scale) 
   as a function of the LD (measured by $r^2$):
-\begin{center}
-<<fig=TRUE>>=
+%\begin{center}
+<<fig.mar=TRUE>>=
 lds <- LD(x, 351, c(1,ncol(x)))
 plot(lds, -log10(t_score$p), xlab="r^2", ylab="-log(p)")
 @
-\end{center}
+%\end{center}
 
 \subsection{Binary phenotype}
 
 We use the quantitative phenotype previously generated to construct a binary phenotype,
 and we perform the association test with a logistic mixed model (only the score test is 
 available). The baby Manhattan plot is plotted again.
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-<<fig=TRUE, width=12>>=
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+<<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
 y1 <- as.numeric(y > mean(y))
 t_binary <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
 # (mini) Manhattan plot
 plot(-log10(t_binary$p), xlab="SNP index", ylab = "-log(p)",
       col = c(rep(1,350),2,rep(1,ncol(x)-351)))
 @
-\end{center}
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill\eject
