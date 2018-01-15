@@ -36,7 +36,7 @@ Efficient algorithms for Linear Mixed Model (AIREML, diagonalisation trick).}
   Each row corresponds to an individual, and each column to a SNP. They can
   be read from files using \code{\link{read.bed.matrix}} 
   and saved using \code{\link{write.bed.matrix}}.  The function \code{\link{read.vcf}} reads
-  VCF files; it relies on the package \code{\link[WhopGenome:WhopGenome-package]{WhopGenome}}.
+  VCF files.
 
   In first approach, a bed.matrix behaves as a "read-only" matrix containing only 
   0, 1, 2 and NAs, unless the genotypes are standardized (use \code{\link{standardize<-}}).

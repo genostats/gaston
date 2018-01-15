@@ -47,4 +47,6 @@
        New functions test.snps test.inds which.snps which.inds
        Faster optimization with the diagonalization trick
        Auto set the #threads when loaded
-1.5.1: 
+1.5.1: Improved function association.test
+       Vignette in knitr
+       New function qqplot.pvalue

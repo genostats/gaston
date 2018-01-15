@@ -1,8 +1,8 @@
 import(methods)
 
-importFrom("grDevices", "heat.colors", "dev.off", "pdf", "rgb")
-importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "rect", "segments", "strheight", "strwidth", "text")
-importFrom("stats", "pchisq", "quantile", "rnorm", "kmeans", "glm", "binomial", "pt")
+importFrom("grDevices", "heat.colors", "dev.off", "pdf", "rgb", "gray")
+importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "rect", "segments", "strheight", "strwidth", "text", "points")
+importFrom("stats", "pchisq", "quantile", "rnorm", "kmeans", "glm", "binomial", "pt", "qbeta")
 importFrom("utils", "read.table", "write.table")
 importFrom("Rcpp", "evalCpp") # just to avoid << function 'enterRNGScope' not provided by package 'Rcpp' >> error
 importFrom("RcppParallel", "setThreadOptions", "defaultNumThreads")
@@ -23,3 +23,4 @@ export(read.bed.matrix, write.bed.matrix, read.vcf)
 export(random.pm, lmm.simu, lmm.aireml, logistic.mm.aireml, lmm.diago, lmm.diago.likelihood, lmm.diago.profile.likelihood, lik.contour)
 export(association.test)
 export(score.variance.linear, score.variance.logistic, score.fixed.linear, score.fixed.logistic)
+export(qqplot.pvalues)
