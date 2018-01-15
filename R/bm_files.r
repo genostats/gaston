@@ -4,7 +4,7 @@ read.bed.matrix <- function(basename, bed = paste(basename, ".bed", sep=""), fam
 
   bed <- path.expand(bed)
   if(!file.exists(bed)) { # peut-être on a donné le .bed pour basename
-    if(grep("\\.bed$", basename)) {
+    if(length(grep("\\.bed$", basename)) > 0) {
       basename <- sub("\\.bed$", "", basename)
       bim <- paste(basename, ".bim", sep="")
       fam <- paste(basename, ".fam", sep="")

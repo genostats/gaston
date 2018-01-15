@@ -1,17 +1,69 @@
 %\VignetteIndexEntry{gaston package}
 %\VignetteDepends{gaston}
 %\VignettePackage{gaston}
+%\VignetteEngine{knitr::knitr}
 
-\documentclass{article}
-\usepackage[noae]{Sweave}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+%\usepackage[noae]{Sweave}
 \usepackage[top=35mm, bottom=40mm, left=25mm , right=25mm]{geometry}
-\usepackage{moreverb}
+%\usepackage{moreverb}
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{etoolbox}
 
-\setkeys{Gin}{width=0.4\textwidth}
-
+%\setkeys{Gin}{width=0.4\textwidth}
+%\SweaveOpts{echo=TRUE, eps=FALSE, pdf=TRUE}
 
 \raggedbottom
 \pagestyle{empty}
@@ -21,12 +73,19 @@
 \def\theequation{\arabic{equation}}
 \let\epsilon\varepsilon
 
-%\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
-%\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
-%\DefineVerbatimEnvironment{Scode}{Verbatim}{}
-\fvset{listparameters={\setlength{\topsep}{-0.5em}}}
-\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+%<<echo=FALSE>>=
+%options(continue=" ", prompt = " ", SweaveHooks=list(fig.mar=function() par(mar=c(5.1,4.1,3.1,2.1))), width=90)
+%@
 
+
+%<<prompton, echo=FALSE>>=
+%options(prompt="> ", continue = " ");
+%@
+
+
+%<<promptoff, echo=FALSE>>=
+%options(prompt=" ", continue=" ");
+%@
 
 
 
@@ -37,6 +96,17 @@
        {\large Version 1.5}}
 \author{Hervé Perdry, Claire Dandine-Roulland}
 
+
+%\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+%\fvset{listparameters={\setlength{\topsep}{-0.5em}}}
+%\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+\makeatletter
+\preto{\@verbatim}{\topsep=2pt \partopsep=-10pt }
+\preto{\alltt}{\topsep=-3pt \partopsep=-10pt }
+\makeatother
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
 
@@ -53,6 +123,7 @@
   For better performances, we recommend to build Gaston with \verb!clang++!.
   To do so, it is sufficient to create in your home directory
   a file \verb!~/.R/Makevars! containing \verb!CXX1X = clang++! 
+  or if you use a version of R $>=$ 3.4.0, \verb!CXX11 = clang++!
 
   In this vignette, we illustrate Gaston using the included data sets \verb!AGT!, \verb!LCT!,
   and \verb!TTN! (see the corresponding manual pages for a description). 
@@ -110,23 +181,25 @@
 
   Gaston includes example files that can be used for illustration:
 
-\begin{Schunk}
-\begin{Sinput}
-> x <- read.bed.matrix( system.file("extdata", "LCT.bed", package="gaston") )
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"LCT.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{) )}
+\end{alltt}
+\begin{verbatim}
 Reading /home/rv/R/R-3.4/gaston/extdata/LCT.rds 
 Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
-\end{Soutput}
-\begin{Sinput}
-> x
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{x}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 607 markers.
 snps stats are not set (or incomplete)
 ped stats are not set (or incomplete)
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
   
   The folder \verb!extdata/! contains files \verb!LCT.bed!, \verb!LCT.rds!,
   \verb!LCT.bim! and \verb!LCT.fam!. The \verb!.bed!, \verb!.bim! and \verb!.fam! files follow the
@@ -134,27 +207,29 @@ ped stats are not set (or incomplete)
   \verb!.bim! and \verb!.fam! files are ignored. You can ignore the
   \verb!.rds! file using option \verb!rds = NULL!:
 
-\begin{Schunk}
-\begin{Sinput}
-> x <- read.bed.matrix( system.file("extdata", "LCT.bed", package="gaston"), rds = NULL )
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"LCT.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{),} \hlkwc{rds} \hlstd{=} \hlkwa{NULL} \hlstd{)}
+\end{alltt}
+\begin{verbatim}
 Reading /home/rv/R/R-3.4/gaston/extdata/LCT.fam 
 Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bim 
 Reading /home/rv/R/R-3.4/gaston/extdata/LCT.bed 
 ped stats and snps stats have been set. 
 'p' has been set. 
 'mu' and 'sigma' have been set.
-\end{Soutput}
-\begin{Sinput}
-> x
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{x}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 607 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   A bed.matrix can be saved using \verb!write.bed.matrix!.  
   The default behavior is to write \verb!.bed!, \verb!.bim!, \verb!.fam! 
@@ -175,18 +250,20 @@ ped stats are set
   \verb!dist!, \verb!pos!, \verb!A1!, \verb!A2! respectively. This function is widely used in
   the examples included in manual pages.
 
-\begin{Schunk}
-\begin{Sinput}
-> data(TTN)
-> x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
-> x
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(TTN)}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(TTN.gen, TTN.fam, TTN.bim)}
+\hlstd{> }\hlstd{x}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 733 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \subsection{The insides of a bed.matrix}
 
@@ -198,29 +275,33 @@ ped stats are set
   Bed.matrices are implemented using S4 classes and methods.
   Let's have a look on the slots names of the bed.matrix \verb!x! created above using the dataset \verb!LCT!.
 
-\begin{Schunk}
-\begin{Sinput}
-> data(TTN)
-> x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
-> slotNames(x)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(TTN)}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(TTN.gen, TTN.fam, TTN.bim)}
+\hlstd{> }\hlkwd{slotNames}\hlstd{(x)}
+\end{alltt}
+\begin{verbatim}
 [1] "ped"                  "snps"                 "bed"                 
 [4] "p"                    "mu"                   "sigma"               
 [7] "standardize_p"        "standardize_mu_sigma"
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The slot \verb!x@bed! is an external pointer, which indicates where the genetic data are stored in
   memory. It will be used by the C++ functions called by Gaston. 
-\begin{Schunk}
-\begin{Sinput}
-> x@bed
-\end{Sinput}
-\begin{Soutput}
-<pointer: 0x3cebfe0>
-\end{Soutput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x}\hlopt{@}\hlkwc{bed}
+\end{alltt}
+\begin{verbatim}
+<pointer: 0x35f01e0>
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   Let's look at the contents of the slots \verb!x@ped! and \verb!x@snps!.
   The other slots will be commented later.
@@ -231,17 +312,18 @@ ped stats are set
   stats that are computed by Gaston, unless \verb!options(gaston.auto.set.stats = FALSE)!
   was set (see below section \ref{stats}).
 
-\begin{Schunk}
-\begin{Sinput}
-> dim(x@ped)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{dim}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 503  30
-\end{Soutput}
-\begin{Sinput}
-> head(x@ped)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
     famid      id father mother sex pheno  N0  N1  N2 NAs N0.x N1.x N2.x NAs.x N0.y N1.y
 1 HG00096 HG00096      0      0   0    NA 128  82 523   0    0    0    0     0    0    0
 2 HG00097 HG00097      0      0   0    NA 109  81 543   0    0    0    0     0    0    0
@@ -263,8 +345,9 @@ ped stats are set
 4         NaN   NaN
 5         NaN   NaN
 6         NaN   NaN
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The slot \verb!x@snps! gives informations on the SNPs. Its first 6
   columns corresponds to the contents of a \verb!.bim! file. The other
@@ -274,17 +357,18 @@ ped stats are set
   columns will be absent (see below section \ref{stats}).
 
 \pagebreak
-\begin{Schunk}
-\begin{Sinput}
-> dim(x@snps)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{dim}\hlstd{(x}\hlopt{@}\hlkwc{snps}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 733  17
-\end{Soutput}
-\begin{Sinput}
-> head(x@snps)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{snps}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
   chr         id dist       pos A1 A2 N0  N1  N2 NAs N0.f N1.f N2.f NAs.f callrate
 1   2  rs7571247    0 179200322  C  T  5  88 410   0   NA   NA   NA    NA        1
 2   2  rs3813253    0 179200714  G  A 24 187 292   0   NA   NA   NA    NA        1
@@ -299,8 +383,9 @@ ped stats are set
 4 0.05666004 0.1053678
 5 0.05666004 0.1053678
 6 0.05765408 0.1073559
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \subsection{Basic statistics included in a bed.matrix}\label{stats}
 
@@ -311,14 +396,15 @@ ped stats are set
 
 
   We illustrate here the effect of this option:
-\begin{Schunk}
-\begin{Sinput}
-> options(gaston.auto.set.stats = FALSE)
-> data(TTN)
-> x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
-> head(x@ped)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{options}\hlstd{(}\hlkwc{gaston.auto.set.stats} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{> }\hlkwd{data}\hlstd{(TTN)}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(TTN.gen, TTN.fam, TTN.bim)}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
     famid      id father mother sex pheno
 1 HG00096 HG00096      0      0   0    NA
 2 HG00097 HG00097      0      0   0    NA
@@ -326,11 +412,11 @@ ped stats are set
 4 HG00100 HG00100      0      0   0    NA
 5 HG00101 HG00101      0      0   0    NA
 6 HG00102 HG00102      0      0   0    NA
-\end{Soutput}
-\begin{Sinput}
-> head(x@snps)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{snps}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
   chr         id dist       pos A1 A2
 1   2  rs7571247    0 179200322  C  T
 2   2  rs3813253    0 179200714  G  A
@@ -338,26 +424,28 @@ ped stats are set
 4   2 rs16866263    0 179201048  T  G
 5   2 rs77946091    0 179201380  A  G
 6   2 rs77711640    0 179201557  A  G
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The reader is invited to compare with what we obtained in the previous section of this document.
 
   The function \verb!set.stats! can be called to add the missing descriptive statistics to the \verb!ped! 
   and \verb!snps! slots:
-\begin{Schunk}
-\begin{Sinput}
-> x <- set.stats(x)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{set.stats}\hlstd{(x)}
+\end{alltt}
+\begin{verbatim}
 ped stats and snps stats have been set. 
 'p' has been set. 
 'mu' and 'sigma' have been set.
-\end{Soutput}
-\begin{Sinput}
-> head(x@ped)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
     famid      id father mother sex pheno  N0  N1  N2 NAs N0.x N1.x N2.x NAs.x N0.y N1.y
 1 HG00096 HG00096      0      0   0    NA 128  82 523   0    0    0    0     0    0    0
 2 HG00097 HG00097      0      0   0    NA 109  81 543   0    0    0    0     0    0    0
@@ -379,8 +467,9 @@ ped stats and snps stats have been set.
 4         NaN   NaN
 5         NaN   NaN
 6         NaN   NaN
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 The columns \verb!N0!, \verb!N1!, \verb!N2! and \verb!NAs! give for each individual the number of
 autosomal SNPs with a genotype equal to 0, 1, 2 and missing, respectively. The homologous columns
@@ -391,11 +480,12 @@ The columns \verb!callrate!, \verb!callrate.x!, \verb!callrate.y!, \verb!callrat
 give the individual callrate for autosomal, X, Y, mitochondrial SNPs, and similarly,
 \verb!hz!, \verb!hz.x!, \verb!hz.y!, \verb!hz.mt! give the individual heterozygosity.
 
-\begin{Schunk}
-\begin{Sinput}
-> head(x@snps)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{snps}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
   chr         id dist       pos A1 A2 N0  N1  N2 NAs N0.f N1.f N2.f NAs.f callrate
 1   2  rs7571247    0 179200322  C  T  5  88 410   0   NA   NA   NA    NA        1
 2   2  rs3813253    0 179200714  G  A 24 187 292   0   NA   NA   NA    NA        1
@@ -410,8 +500,9 @@ give the individual callrate for autosomal, X, Y, mitochondrial SNPs, and simila
 4 0.05666004 0.1053678
 5 0.05666004 0.1053678
 6 0.05765408 0.1073559
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The columns \verb!N0!, \verb!N1!, \verb!N2! and \verb!NAs! contain the number
   of genotypes 0, 1, 2 and \verb!NA! for each SNP. For W linked SNPs only, the 
@@ -424,42 +515,52 @@ give the individual callrate for autosomal, X, Y, mitochondrial SNPs, and simila
   is computed only on women.
 
   The default is too also also update the slots \verb!x@p!, \verb!x@mu! and \verb!x@sigma!:
-\begin{Schunk}
-\begin{Sinput}
-> str(x@p)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{str}\hlstd{(x}\hlopt{@}\hlkwc{p}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
  num [1:733] 0.903 0.766 0.84 0.943 0.943 ...
-\end{Soutput}
-\begin{Sinput}
-> str(x@mu)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{str}\hlstd{(x}\hlopt{@}\hlkwc{mu}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
  num [1:733] 1.81 1.53 1.68 1.89 1.89 ...
-\end{Soutput}
-\begin{Sinput}
-> str(x@sigma)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{str}\hlstd{(x}\hlopt{@}\hlkwc{sigma}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
  num [1:733] 0.421 0.587 0.512 0.33 0.33 ...
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
   \verb!p! contains the alternate allele frequency; \verb!mu! is equal to \verb!2*p!
   and is the expected value of the genotype (coded in 0, 1, 2); and \verb!sigma!
   is the genotype standard error. If the Hardy-Weinberg equilibrium holds, \verb!sigma!
   should be close to \verb!sqrt(2*p(1-p))!. This is illustrated on the figure below.
 
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-\begin{Schunk}
-\begin{Sinput}
-> plot(x@p, x@sigma, xlim=c(0,1))
-> t <- seq(0,1,length=101);
-> lines(t, sqrt(2*t*(1-t)), col="red")
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-017}
-\end{center}
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{plot}\hlstd{(x}\hlopt{@}\hlkwc{p}\hlstd{, x}\hlopt{@}\hlkwc{sigma}\hlstd{,} \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{))}
+\hlstd{> }\hlstd{t} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{length}\hlstd{=}\hlnum{101}\hlstd{);}
+\hlstd{> }\hlkwd{lines}\hlstd{(t,} \hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{t}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{t)),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.7\textwidth]{figure/unnamed-chunk-14-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   There are also function \verb!set.stats.snps! and \verb!set.stats.ped! which
   update only \verb!x@snps! and \verb!x@ped!.
@@ -473,48 +574,50 @@ give the individual callrate for autosomal, X, Y, mitochondrial SNPs, and simila
   allowing to update only some slots. The following code illustrates this (remember that here 
   \verb!gaston.auto.set.stats = FALSE!) :
 
-\begin{Schunk}
-\begin{Sinput}
-> head(x@p)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{p}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.9025845 0.7664016 0.8399602 0.9433400 0.9433400 0.9423459
-\end{Soutput}
-\begin{Sinput}
-> y <- x[1:30,]
-> head(y@p)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlstd{x[}\hlnum{1}\hlopt{:}\hlnum{30}\hlstd{,]}
+\hlstd{> }\hlkwd{head}\hlstd{(y}\hlopt{@}\hlkwc{p}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.9025845 0.7664016 0.8399602 0.9433400 0.9433400 0.9423459
-\end{Soutput}
-\begin{Sinput}
-> y <- set.stats(y, set.p = FALSE)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlkwd{set.stats}\hlstd{(y,} \hlkwc{set.p} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 ped stats and snps stats have been set. 
 'mu' and 'sigma' have been set.
-\end{Soutput}
-\begin{Sinput}
-> head(y@p)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(y}\hlopt{@}\hlkwc{p}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.9025845 0.7664016 0.8399602 0.9433400 0.9433400 0.9423459
-\end{Soutput}
-\begin{Sinput}
-> y <- set.stats(y)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlkwd{set.stats}\hlstd{(y)}
+\end{alltt}
+\begin{verbatim}
 ped stats and snps stats have been set. 
 'p' has been set. 
 'mu' and 'sigma' have been set.
-\end{Soutput}
-\begin{Sinput}
-> head(y@p)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(y}\hlopt{@}\hlkwc{p}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.8833333 0.8000000 0.8166667 0.9833333 0.9833333 0.9833333
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   Hardy-Weinberg Equilibrium can be tested for all SNPs simply by \verb!x <- set.hwe(x)!. 
   This command adds to the data frame \verb!x@snps! a column \verb!hwe!, containing the
@@ -527,11 +630,13 @@ ped stats and snps stats have been set.
   \verb!.bim! and \verb!.fam! files.
 
   For the remaining of this vignette, we restore the default behaviour:
-\begin{Schunk}
-\begin{Sinput}
-> options(gaston.auto.set.stats = TRUE)
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{options}\hlstd{(}\hlkwc{gaston.auto.set.stats} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \pagebreak
 \subsection{Subsetting bed.matrices}
@@ -540,60 +645,66 @@ ped stats and snps stats have been set.
   \verb!x[1:100,]! to extract the first 100 individuals, or \verb!x[1:100,10:19]!
   to extract the SNPs 10 to 19 for these 100 individuals:
 
-\begin{Schunk}
-\begin{Sinput}
-> x[1:100,]
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x[}\hlnum{1}\hlopt{:}\hlnum{100}\hlstd{,]}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 100 individuals and 733 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\begin{Sinput}
-> x[1:100,10:19]
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{x[}\hlnum{1}\hlopt{:}\hlnum{100}\hlstd{,}\hlnum{10}\hlopt{:}\hlnum{19}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 100 individuals and 10 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The use of logical vectors for subsetting is allowed too. The following code extracts 
   the SNPs with minor allele frequency $> 0.1$:
 
-\begin{Schunk}
-\begin{Sinput}
-> x[,x@snps$maf > 0.1]
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x[,x}\hlopt{@}\hlkwc{snps}\hlopt{$}\hlstd{maf} \hlopt{>} \hlnum{0.1}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 501 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   For this kind of selection, Gaston provides the functions \verb!select.inds! and 
   \verb!select.snps!, which have a nicer syntax. Hereafter 
   we use the same condition on the minor allele frequency, and we introduce also 
   a condition on the Hardy-Weinberg Equilibrium $p$-value:
 
-\begin{Schunk}
-\begin{Sinput}
-> x <- set.hwe(x)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{set.hwe}\hlstd{(x)}
+\end{alltt}
+\begin{verbatim}
 Computing HW chi-square p-values
-\end{Soutput}
-\begin{Sinput}
-> select.snps(x, maf > 0.1 & hwe > 1e-3)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{select.snps}\hlstd{(x, maf} \hlopt{>} \hlnum{0.1} \hlopt{&} \hlstd{hwe} \hlopt{>} \hlnum{1e-3}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 497 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
   The conditions in \verb!select.snps! can use any of the variables defined in the data frame \verb!x@snps!,
   as well as variables defined in the user session. 
 
@@ -624,54 +735,58 @@ ped stats are set
   bed.matrices. \verb!cbind! checks that individuals famids and ids are identical ; all remaining
   columns are taken from the first argument, without further control.
 
-\begin{Schunk}
-\begin{Sinput}
-> data(AGT)
-> x1 <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
-> x1
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(AGT)}
+\hlstd{> }\hlstd{x1} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(AGT.gen, AGT.fam, AGT.bim)}
+\hlstd{> }\hlstd{x1}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 361 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\begin{Sinput}
-> data(LCT)
-> x2 <- as.bed.matrix(LCT.gen, LCT.fam, LCT.bim)
-> x2
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(LCT)}
+\hlstd{> }\hlstd{x2} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(LCT.gen, LCT.fam, LCT.bim)}
+\hlstd{> }\hlstd{x2}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 607 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\begin{Sinput}
-> x <- cbind(x1,x2)
-> x
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{cbind}\hlstd{(x1,x2)}
+\hlstd{> }\hlstd{x}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 968 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   \verb!rbind! similarly checks whether the SNP ids are identical, and also if the reference
   alleles are identical. If needed, it will perform reference allele inversions (changing a SNP
   A/G to G/A) or allele strand flips (changing A/G to T/C) or both.
 
-\begin{Schunk}
-\begin{Sinput}
-> x3 <- x[1:10, ]
-> x4 <- x[-(1:10), ]
-> rbind(x3,x4)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x3} \hlkwb{<-} \hlstd{x[}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{, ]}
+\hlstd{> }\hlstd{x4} \hlkwb{<-} \hlstd{x[}\hlopt{-}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{), ]}
+\hlstd{> }\hlkwd{rbind}\hlstd{(x3,x4)}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 968 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -687,81 +802,89 @@ X_{ij} - \mu_j \over \sigma_j
   Equilibrium, that is $\sqrt{2p_j(1-p_j)}$.
 
   Consider the TTN data set. The unscaled matrix contains 0,1,2 values:
-\begin{Schunk}
-\begin{Sinput}
-> x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
-> X <- as.matrix(x)
-> X[1:5,1:4]
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(TTN.gen, TTN.fam, TTN.bim)}
+\hlstd{> }\hlstd{X} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(x)}
+\hlstd{> }\hlstd{X[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
         rs7571247 rs3813253 rs6760059 rs16866263
 HG00096         2         2         2          2
 HG00097         2         2         2          2
 HG00099         1         2         2          2
 HG00100         2         0         0          2
 HG00101         2         2         2          2
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   To scale it using the standard error, use \verb!standardize(x) <- "mu_sigma"! (or \verb!standardize(x) <- "mu"!,
   as the function uses \verb!match.arg!):
-\begin{Schunk}
-\begin{Sinput}
-> standardize(x) <- "mu"
-> as.matrix(x)[1:5, 1:4] 
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{standardize}\hlstd{(x)} \hlkwb{<-} \hlstr{"mu"}
+\hlstd{> }\hlkwd{as.matrix}\hlstd{(x)[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,} \hlnum{1}\hlopt{:}\hlnum{4}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
          rs7571247  rs3813253  rs6760059 rs16866263
 HG00096  0.4629595  0.7953656  0.6254622  0.3437939
 HG00097  0.4629595  0.7953656  0.6254622  0.3437939
 HG00099 -1.9132512  0.7953656  0.6254622  0.3437939
 HG00100  0.4629595 -2.6094762 -3.2827052  0.3437939
 HG00101  0.4629595  0.7953656  0.6254622  0.3437939
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The result is similar to what would be obtained from the base function \verb!scale!:
-\begin{Schunk}
-\begin{Sinput}
-> scale(X)[1:5,1:4]
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{scale}\hlstd{(X)[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
          rs7571247  rs3813253  rs6760059 rs16866263
 HG00096  0.4629595  0.7953656  0.6254622  0.3437939
 HG00097  0.4629595  0.7953656  0.6254622  0.3437939
 HG00099 -1.9132512  0.7953656  0.6254622  0.3437939
 HG00100  0.4629595 -2.6094762 -3.2827052  0.3437939
 HG00101  0.4629595  0.7953656  0.6254622  0.3437939
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   To use $\sqrt{2p_j(1-p_j)}$ instead of the standard error, use \verb!standardize(x) <- "p"!; a similar
   result can again be obtained from \verb!scale!, with the right options:
-\begin{Schunk}
-\begin{Sinput}
-> standardize(x) <- "p"
-> as.matrix(x)[1:5, 1:4] 
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{standardize}\hlstd{(x)} \hlkwb{<-} \hlstr{"p"}
+\hlstd{> }\hlkwd{as.matrix}\hlstd{(x)[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,} \hlnum{1}\hlopt{:}\hlnum{4}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
          rs7571247  rs3813253  rs6760059 rs16866263
 HG00096  0.4646063  0.7807675  0.6173047  0.3465926
 HG00097  0.4646063  0.7807675  0.6173047  0.3465926
 HG00099 -1.9200567  0.7807675  0.6173047  0.3465926
 HG00100  0.4646063 -2.5615820 -3.2398911  0.3465926
 HG00101  0.4646063  0.7807675  0.6173047  0.3465926
-\end{Soutput}
-\begin{Sinput}
-> scale(X, scale = sqrt(2*x@p*(1-x@p)))[1:5,1:4]
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{scale}\hlstd{(X,} \hlkwc{scale} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{x}\hlopt{@}\hlkwc{p}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{x}\hlopt{@}\hlkwc{p}\hlstd{)))[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{,}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
          rs7571247  rs3813253  rs6760059 rs16866263
 HG00096  0.4646063  0.7807675  0.6173047  0.3465926
 HG00097  0.4646063  0.7807675  0.6173047  0.3465926
 HG00099 -1.9200567  0.7807675  0.6173047  0.3465926
 HG00100  0.4646063 -2.5615820 -3.2398911  0.3465926
 HG00101  0.4646063  0.7807675  0.6173047  0.3465926
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   To go back to the 0,1,2-coded genotypes, use \verb!standardize(x) <- "none"!.
 
@@ -774,11 +897,13 @@ HG00101  0.4646063  0.7807675  0.6173047  0.3465926
 
   This feature can be used e.g. to simulate quantitative phenotypes with a genetic component. The following
   code simulates a phenotype with an effect of the SNP \#350:
-\begin{Schunk}
-\begin{Sinput}
-> y <- x %*% c(rep(0,350),0.25,rep(0,ncol(x)-351)) + rnorm(nrow(x), sd = 1)
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlstd{x} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{350}\hlstd{),}\hlnum{0.25}\hlstd{,}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlkwd{ncol}\hlstd{(x)}\hlopt{-}\hlnum{351}\hlstd{))} \hlopt{+} \hlkwd{rnorm}\hlstd{(}\hlkwd{nrow}\hlstd{(x),} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \pagebreak
 \subsection{Genetic Relationship Matrix and Principal Component Analysis}
@@ -804,26 +929,27 @@ HG00101  0.4646063  0.7807675  0.6173047  0.3465926
   which is a factor with levels \verb!CEU!, \verb!FIN!, \verb!GBR!, \verb!IBS! and \verb!TSI!.
 
   We can load this data set as follows:
-\begin{Schunk}
-\begin{Sinput}
-> x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{read.bed.matrix}\hlstd{(} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlstr{"chr2.bed"}\hlstd{,} \hlkwc{package}\hlstd{=}\hlstr{"gaston"}\hlstd{) )}
+\end{alltt}
+\begin{verbatim}
 Reading /home/rv/R/R-3.4/gaston/extdata/chr2.rds 
 Reading /home/rv/R/R-3.4/gaston/extdata/chr2.bed 
-\end{Soutput}
-\begin{Sinput}
-> x
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{x}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 10025 markers.
 snps stats are not set (or incomplete)
 ped stats are not set (or incomplete)
-\end{Soutput}
-\begin{Sinput}
-> head(x@ped)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
     famid      id father mother sex pheno population
 1 HG00096 HG00096      0      0   0    -9        GBR
 2 HG00097 HG00097      0      0   0    -9        GBR
@@ -831,44 +957,57 @@ ped stats are not set (or incomplete)
 4 HG00100 HG00100      0      0   0    -9        GBR
 5 HG00101 HG00101      0      0   0    -9        GBR
 6 HG00102 HG00102      0      0   0    -9        GBR
-\end{Soutput}
-\begin{Sinput}
-> table(x@ped$population)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{table}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlopt{$}\hlstd{population)}
+\end{alltt}
+\begin{verbatim}
+
 CEU FIN GBR IBS TSI 
  99  99  91 107 107 
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
 We compute the Genetic Relationship Matrix, and its eigen decomposition (we don't
 need to standardize \verb!x! explicitely: is \verb!x! isn't standardized, 
 \verb!GRM! will use \verb!standardize(x) = "p"!):
-\begin{Schunk}
-\begin{Sinput}
-> K <- GRM(x)
-> eiK <- eigen(K)
-> # deal with a small negative eigen value
-> eiK$values[ eiK$values < 0 ] <- 0
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{K} \hlkwb{<-} \hlkwd{GRM}\hlstd{(x)}
+\hlstd{> }
+\hlstd{> }\hlstd{eiK} \hlkwb{<-} \hlkwd{eigen}\hlstd{(K)}
+\hlstd{> }\hlcom{# deal with a small negative eigen value}
+\hlstd{> }\hlstd{eiK}\hlopt{$}\hlstd{values[ eiK}\hlopt{$}\hlstd{values} \hlopt{<} \hlnum{0} \hlstd{]} \hlkwb{<-} \hlnum{0}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   The eigenvectors are normalized. The Principal Components (PC) can be computed by 
   multiplying them by the square root of the associated eigenvalues. Here we plot
   the projection of the 503 individuals on the first two PCs, with colors corresponding
   to their population.
 
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> PC <- sweep(eiK$vectors, 2, sqrt(eiK$values), "*")
-> plot(PC[,1], PC[,2], col=x@ped$population)
-> legend("bottomleft", pch = 1, legend = levels(x@ped$population), col = 1:5)
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-032}
-\end{center}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{PC} \hlkwb{<-} \hlkwd{sweep}\hlstd{(eiK}\hlopt{$}\hlstd{vectors,} \hlnum{2}\hlstd{,} \hlkwd{sqrt}\hlstd{(eiK}\hlopt{$}\hlstd{values),} \hlstr{"*"}\hlstd{)}
+\hlstd{> }\hlkwd{plot}\hlstd{(PC[,}\hlnum{1}\hlstd{], PC[,}\hlnum{2}\hlstd{],} \hlkwc{col}\hlstd{=x}\hlopt{@}\hlkwc{ped}\hlopt{$}\hlstd{population)}
+\hlstd{> }\hlkwd{legend}\hlstd{(}\hlstr{"bottomleft"}\hlstd{,} \hlkwc{pch} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{legend} \hlstd{=} \hlkwd{levels}\hlstd{(x}\hlopt{@}\hlkwc{ped}\hlopt{$}\hlstd{population),} \hlkwc{col} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{5}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.4\textwidth]{figure/unnamed-chunk-29-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   As $K$ can be written
   \begin{equation*} 
@@ -880,68 +1019,74 @@ need to standardize \verb!x! explicitely: is \verb!x! isn't standardized,
   $u = {1 \over \sqrt{q-1}} X_s v$.
 
   They can be retrieved with the function \verb!bed.loadings!:
-\begin{Schunk}
-\begin{Sinput}
-> # one can use PC[,1:2] instead of eiK$vectors[,1:2] as well
-> L <- bed.loadings(x, eiK$vectors[,1:2])
-> dim(L)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlcom{# one can use PC[,1:2] instead of eiK$vectors[,1:2] as well}
+\hlstd{> }\hlstd{L} \hlkwb{<-} \hlkwd{bed.loadings}\hlstd{(x, eiK}\hlopt{$}\hlstd{vectors[,}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{])}
+\hlstd{> }\hlkwd{dim}\hlstd{(L)}
+\end{alltt}
+\begin{verbatim}
 [1] 10025     2
-\end{Soutput}
-\begin{Sinput}
-> head(L)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{(L)}
+\end{alltt}
+\begin{verbatim}
                      [,1]          [,2]
-rs113106463 -0.0059549223  0.0064476367
-rs13390778  -0.0099678230 -0.0125721002
-rs75011129  -0.0001122796 -0.0001181847
-rs4637157   -0.0151318029 -0.0148076806
-rs62116661  -0.0002977573  0.0048268335
-rs10170011   0.0185198428 -0.0019553365
-\end{Soutput}
-\end{Schunk}
+rs113106463  0.0059549223  0.0064476350
+rs13390778   0.0099678227 -0.0125720968
+rs75011129   0.0001122798 -0.0001181855
+rs4637157    0.0151318030 -0.0148076787
+rs62116661   0.0002977574  0.0048268360
+rs10170011  -0.0185198430 -0.0019553339
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 We verify that the loadings have unit norm:
-\begin{Schunk}
-\begin{Sinput}
-> colSums(L**2)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{colSums}\hlstd{(L}\hlopt{**}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 1 1
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 And that the PCs are retrieved by right multiplying $X_s$ by the loadings (here we need 
 to explicitely standardize \verb!x!):
-\begin{Schunk}
-\begin{Sinput}
-> standardize(x) <- 'p'
-> head( (x %*% L) / sqrt(ncol(x)-1) )
-\end{Sinput}
-\begin{Soutput}
-               [,1]        [,2]
-HG00096  0.02141088 -0.12418402
-HG00097 -0.01400502 -0.07378043
-HG00099  0.00138444 -0.09708207
-HG00100  0.02031917 -0.08920825
-HG00101  0.00259609 -0.08925960
-HG00102  0.01015505 -0.08968427
-\end{Soutput}
-\begin{Sinput}
-> head( PC[,1:2] )
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{standardize}\hlstd{(x)} \hlkwb{<-} \hlstr{'p'}
+\hlstd{> }\hlkwd{head}\hlstd{( (x} \hlopt{%*%} \hlstd{L)} \hlopt{/} \hlkwd{sqrt}\hlstd{(}\hlkwd{ncol}\hlstd{(x)}\hlopt{-}\hlnum{1}\hlstd{) )}
+\end{alltt}
+\begin{verbatim}
+                [,1]        [,2]
+HG00096 -0.021410880 -0.12418404
+HG00097  0.014005020 -0.07378045
+HG00099 -0.001384442 -0.09708207
+HG00100 -0.020319167 -0.08920823
+HG00101 -0.002596089 -0.08925960
+HG00102 -0.010155043 -0.08968428
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{head}\hlstd{( PC[,}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{] )}
+\end{alltt}
+\begin{verbatim}
              [,1]        [,2]
-[1,]  0.021410884 -0.12418402
-[2,] -0.014005026 -0.07378043
-[3,]  0.001384437 -0.09708206
-[4,]  0.020319162 -0.08920824
-[5,]  0.002596090 -0.08925960
-[6,]  0.010155045 -0.08968427
-\end{Soutput}
-\end{Schunk}
+[1,] -0.021410883 -0.12418404
+[2,]  0.014005016 -0.07378046
+[3,] -0.001384440 -0.09708206
+[4,] -0.020319160 -0.08920821
+[5,] -0.002596079 -0.08925958
+[6,] -0.010155033 -0.08968427
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
 \vfill\eject
@@ -960,20 +1105,24 @@ HG00102  0.01015505 -0.08968427
 
 \begin{center}
 \setkeys{Gin}{width=\textwidth}
-\begin{Schunk}
-\begin{Sinput}
-> data(AGT)
-> x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
-> ld.x <- LD(x, c(1,ncol(x)))
-> LD.plot(ld.x, snp.positions = x@snps$pos, write.ld = NULL, 
-         max.dist = 20e3, write.snp.id = FALSE, draw.chr = FALSE, 
-         pdf = "LD_AGT.pdf")
-\end{Sinput}
-\begin{Soutput}
-null device 
-          1 
-\end{Soutput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(AGT)}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(AGT.gen, AGT.fam, AGT.bim)}
+\hlstd{> }
+\hlstd{> }\hlstd{ld.x} \hlkwb{<-} \hlkwd{LD}\hlstd{(x,} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlkwd{ncol}\hlstd{(x)))}
+\hlstd{> }
+\hlstd{> }\hlkwd{LD.plot}\hlstd{(ld.x,} \hlkwc{snp.positions} \hlstd{= x}\hlopt{@}\hlkwc{snps}\hlopt{$}\hlstd{pos,} \hlkwc{write.ld} \hlstd{=} \hlkwa{NULL}\hlstd{,}
+\hlstd{+ }        \hlkwc{max.dist} \hlstd{=} \hlnum{20e3}\hlstd{,} \hlkwc{write.snp.id} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{draw.chr} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+\hlstd{+ }        \hlkwc{pdf} \hlstd{=} \hlstr{"LD_AGT.pdf"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+pdf 
+  2 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 \includegraphics[width=\textwidth]{LD_AGT.pdf}
 \end{center}
 
@@ -982,31 +1131,35 @@ null device
   (it is often recommended to perform this operation before computing the GRM). We illustrate
   this function on the AGT data set:
 
-\begin{Schunk}
-\begin{Sinput}
-> y <- LD.thin(x, threshold = 0.4, max.dist = 500e3)
-> y
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlkwd{LD.thin}\hlstd{(x,} \hlkwc{threshold} \hlstd{=} \hlnum{0.4}\hlstd{,} \hlkwc{max.dist} \hlstd{=} \hlnum{500e3}\hlstd{)}
+\hlstd{> }\hlstd{y}
+\end{alltt}
+\begin{verbatim}
 A bed.matrix with 503 individuals and 48 markers.
 snps stats are set
 ped stats are set
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 The argument \verb!max.dist = 500e3! is to specify that the LD won't be computed for
 SNPs more than 500 kb appart. We verify that there is no SNP pair with LD $r^2 > 0.4$
 (note that the LD matrix has ones on the diagonal):
 
-\begin{Schunk}
-\begin{Sinput}
-> ld.y <- LD( y, lim = c(1, ncol(y)) )
-> sum( ld.y > 0.4 )
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{ld.y} \hlkwb{<-} \hlkwd{LD}\hlstd{( y,} \hlkwc{lim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{ncol}\hlstd{(y)) )}
+\hlstd{> }\hlkwd{sum}\hlstd{( ld.y} \hlopt{>} \hlnum{0.4} \hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [1] 48
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill\eject
@@ -1041,38 +1194,44 @@ SNPs more than 500 kb appart. We verify that there is no SNP pair with LD $r^2 >
 
   We will use the above notations. First generate some (random) design matrices:
  
-\begin{Schunk}
-\begin{Sinput}
-> set.seed(1)
-> n <- 100
-> q1 <- 20
-> Z1 <- matrix( rnorm(n*q1), nrow = n )
-> X <- cbind(1, 5*runif(n))
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+\hlstd{> }\hlstd{n} \hlkwb{<-} \hlnum{100}
+\hlstd{> }\hlstd{q1} \hlkwb{<-} \hlnum{20}
+\hlstd{> }\hlstd{Z1} \hlkwb{<-} \hlkwd{matrix}\hlstd{(} \hlkwd{rnorm}\hlstd{(n}\hlopt{*}\hlstd{q1),} \hlkwc{nrow} \hlstd{= n )}
+\hlstd{> }\hlstd{X} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{5}\hlopt{*}\hlkwd{runif}\hlstd{(n))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
  
   Then the vector of random effects $u_1$ and a vector $y$ under the model $Y = X (1,2)' + Z u_1 + \varepsilon$
   with $u_1 \sim \N(0, 2 I_{q_1})$ and $\varepsilon \sim\N(0, 3 I_n)$:
 
-\begin{Schunk}
-\begin{Sinput}
-> u1 <- rnorm(q1, sd = sqrt(2))
-> y <- X %*% c(1,2) + Z1 %*% u1 + rnorm(n, sd = sqrt(3))
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{u1} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(q1,} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{2}\hlstd{))}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlstd{X} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)} \hlopt{+} \hlstd{Z1} \hlopt{%*%} \hlstd{u1} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   To illustrate the case where there are several random effects vectors, we generate an 
   other matrix $Z_2$, the corresponding vector of random effects $u_2$, and a vector $y_2$ 
   under the model $Y = X (1,2)' + Z u_1 + Z_2 u_2 + \varepsilon$.
 
-\begin{Schunk}
-\begin{Sinput}
-> q2 <- 10
-> Z2 <- matrix( rnorm(n*q2), nrow = n ) 
-> u2 <- rnorm(q2, sd = 1)
-> y2 <- X %*% c(1,2) + Z1 %*% u1 + Z2 %*% u2 + rnorm(n, sd = sqrt(3))
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{q2} \hlkwb{<-} \hlnum{10}
+\hlstd{> }\hlstd{Z2} \hlkwb{<-} \hlkwd{matrix}\hlstd{(} \hlkwd{rnorm}\hlstd{(n}\hlopt{*}\hlstd{q2),} \hlkwc{nrow} \hlstd{= n )}
+\hlstd{> }\hlstd{u2} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(q2,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{> }\hlstd{y2} \hlkwb{<-} \hlstd{X} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{)} \hlopt{+} \hlstd{Z1} \hlopt{%*%} \hlstd{u1} \hlopt{+} \hlstd{Z2} \hlopt{%*%} \hlstd{u2} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{=} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   \subsection{Model fitting with the AIREML algorithm}
 
@@ -1084,13 +1243,14 @@ SNPs more than 500 kb appart. We verify that there is no SNP pair with LD $r^2 >
   As  \verb!lmm.aireml! uses the second form of the linear mixed model,
   and we give it the matrix $K_1 = Z_1 Z_1'$.
 
-\begin{Schunk}
-\begin{Sinput}
-> K1 <- tcrossprod(Z1)
-> fit <- lmm.aireml(y, X, K = K1, verbose = FALSE)
-> str(fit)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{K1} \hlkwb{<-} \hlkwd{tcrossprod}\hlstd{(Z1)}
+\hlstd{> }\hlstd{fit} \hlkwb{<-} \hlkwd{lmm.aireml}\hlstd{(y, X,} \hlkwc{K} \hlstd{= K1,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{> }\hlkwd{str}\hlstd{(fit)}
+\end{alltt}
+\begin{verbatim}
 List of 11
  $ sigma2    : num 3.37
  $ tau       : num 1.65
@@ -1103,8 +1263,9 @@ List of 11
  $ BLUP_beta : num [1:2] 1.4 1.79
  $ varbeta   : num [1:2, 1:2] 0.1398 -0.0403 -0.0403 0.0167
  $ varXbeta  : num 7.61
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The result is a list giving all kind of information. Here we see that $\tau$ is 
   estimated to $1.65$ and $\sigma^2$ to $3.37$. 
@@ -1116,31 +1277,40 @@ List of 11
   in the component \verb!BLUP_Py!. The plots below compare the true values of $\omega_1$ and
   $u_1$ with their BLUPs.
    
-\setkeys{Gin}{width=0.7\textwidth}
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> par(mfrow = c(1, 2))
-> plot(Z1 %*% u1, fit$BLUP_omega); abline(0, 1, lty = 2, col = 3)
-> BLUP_u1 <- fit$tau * t(Z1) %*% fit$Py
-> plot(u1, BLUP_u1); abline(0, 1, lty = 2, col = 3)
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-043}
-\end{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
+\hlstd{> }\hlkwd{plot}\hlstd{(Z1} \hlopt{%*%} \hlstd{u1, fit}\hlopt{$}\hlstd{BLUP_omega);} \hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlnum{3}\hlstd{)}
+\hlstd{> }\hlstd{BLUP_u1} \hlkwb{<-} \hlstd{fit}\hlopt{$}\hlstd{tau} \hlopt{*} \hlkwd{t}\hlstd{(Z1)} \hlopt{%*%} \hlstd{fit}\hlopt{$}\hlstd{Py}
+\hlstd{> }\hlkwd{plot}\hlstd{(u1, BLUP_u1);} \hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.7\textwidth]{figure/unnamed-chunk-40-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   \subsubsection{Several random effects vectors}
 
   It is sufficient to give to \verb!lmm.aireml! a list with the two matrices
   $K_1$ and $K_2$:
 
-\begin{Schunk}
-\begin{Sinput}
-> K2 <- tcrossprod(Z2)
-> fit2 <- lmm.aireml(y2, X, K = list(K1, K2), verbose = FALSE)
-> str(fit2)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{K2} \hlkwb{<-} \hlkwd{tcrossprod}\hlstd{(Z2)}
+\hlstd{> }\hlstd{fit2} \hlkwb{<-} \hlkwd{lmm.aireml}\hlstd{(y2, X,} \hlkwc{K} \hlstd{=} \hlkwd{list}\hlstd{(K1, K2),} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{> }\hlkwd{str}\hlstd{(fit2)}
+\end{alltt}
+\begin{verbatim}
 List of 10
  $ sigma2    : num 3.04
  $ tau       : num [1:2] 1.81 0.821
@@ -1152,26 +1322,35 @@ List of 10
  $ BLUP_omega: num [1:100] 0.342 -15.406 6.239 4.559 4.361 ...
  $ BLUP_beta : num [1:2] 1.1 1.98
  $ varXbeta  : num 9.33
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   The component \verb!tau! now holds the two values $\tau_1$ and $\tau_2$.
   Note that there is only one \verb!BLUP_omega! vector. It corresponds to
   the BLUP for $\omega_1 + \omega_2$. The BLUPs for each $\omega_i$ can
   be retrieved using $\widehat{\omega_i} = \tau_i K_i Py$:
 
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> par(mfrow = c(1, 2))
-> omega1 <- fit2$tau[1] * K1 %*% fit2$Py
-> omega2 <- fit2$tau[2] * K2 %*% fit2$Py
-> plot(Z1 %*% u1, omega1); abline(0, 1, lty = 2, col = 3)
-> plot(Z2 %*% u2, omega2); abline(0, 1, lty = 2, col = 3)
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-045}
-\end{center}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
+\hlstd{> }\hlstd{omega1} \hlkwb{<-} \hlstd{fit2}\hlopt{$}\hlstd{tau[}\hlnum{1}\hlstd{]} \hlopt{*} \hlstd{K1} \hlopt{%*%} \hlstd{fit2}\hlopt{$}\hlstd{Py}
+\hlstd{> }\hlstd{omega2} \hlkwb{<-} \hlstd{fit2}\hlopt{$}\hlstd{tau[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{K2} \hlopt{%*%} \hlstd{fit2}\hlopt{$}\hlstd{Py}
+\hlstd{> }\hlkwd{plot}\hlstd{(Z1} \hlopt{%*%} \hlstd{u1, omega1);} \hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlnum{3}\hlstd{)}
+\hlstd{> }\hlkwd{plot}\hlstd{(Z2} \hlopt{%*%} \hlstd{u2, omega2);} \hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.7\textwidth]{figure/unnamed-chunk-42-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   The BLUPs for $u_1$ and $u_2$ can as above be retrieved using $\widehat{u_i} = \tau_i Z_i' P y$.
   
@@ -1196,12 +1375,13 @@ List of 10
 
   We fit the first model again:
  
-\begin{Schunk}
-\begin{Sinput}
-> eiK1 <- eigen(K1)
-> fit.d <- lmm.diago(y, X, eiK1)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{eiK1} \hlkwb{<-} \hlkwd{eigen}\hlstd{(K1)}
+\hlstd{> }\hlstd{fit.d} \hlkwb{<-} \hlkwd{lmm.diago}\hlstd{(y, X, eiK1)}
+\end{alltt}
+\begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 0
 [Iteration 1] Current point = 0 df = 4301.78
@@ -1216,11 +1396,11 @@ Optimizing with p = 0
 [Iteration 10] Current point = 0.337786 df = 0.0676512
 [Iteration 11] Too many iterations, using Brent algorithm
 [Iteration 11] Brent gives 0.338232
-\end{Soutput}
-\begin{Sinput}
-> str(fit.d)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlkwd{str}\hlstd{(fit.d)}
+\end{alltt}
+\begin{verbatim}
 List of 9
  $ sigma2    : num 3.23
  $ tau       : num 1.65
@@ -1231,26 +1411,35 @@ List of 9
  $ Xbeta     : num [1:100] 3.09 5.93 1.65 5.85 9.89 ...
  $ varXbeta  : num 7.51
  $ p         : int 0
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
   You can check that the result is similar to the result obtained earlier with 
   \verb!lmm.aireml!.
 
   The likelihood computation with the diagonalization trick is fast enough to 
   plot the likelihood:
 
-\setkeys{Gin}{width=0.4\textwidth}
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> TAU <- seq(0.5,2.5,length=50)
-> S2 <- seq(2.5,4,length=50)
-> lik <- lmm.diago.likelihood(tau = TAU, s2 = S2, Y = y, X = X, eigenK = eiK1)
-> lik.contour(TAU, S2, lik, heat = TRUE, xlab = "tau", ylab = "sigma^2")
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-047}
-\end{center}
+%\setkeys{Gin}{width=0.4\textwidth}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{TAU} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0.5}\hlstd{,}\hlnum{2.5}\hlstd{,}\hlkwc{length}\hlstd{=}\hlnum{50}\hlstd{)}
+\hlstd{> }\hlstd{S2} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{2.5}\hlstd{,}\hlnum{4}\hlstd{,}\hlkwc{length}\hlstd{=}\hlnum{50}\hlstd{)}
+\hlstd{> }\hlstd{lik} \hlkwb{<-} \hlkwd{lmm.diago.likelihood}\hlstd{(}\hlkwc{tau} \hlstd{= TAU,} \hlkwc{s2} \hlstd{= S2,} \hlkwc{Y} \hlstd{= y,} \hlkwc{X} \hlstd{= X,} \hlkwc{eigenK} \hlstd{= eiK1)}
+\hlstd{> }\hlkwd{lik.contour}\hlstd{(TAU, S2, lik,} \hlkwc{heat} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"tau"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"sigma^2"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.4\textwidth]{figure/unnamed-chunk-44-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
 
 
@@ -1281,22 +1470,25 @@ List of 9
   It uses the eigen decomposition of $K$. Hereafter we use $\tau = 1$, $\sigma^2 = 2$,
   hence a $33.3\%$ heritability.
 
-\begin{Schunk}
-\begin{Sinput}
-> set.seed(1)
-> n <- 2000
-> R <- random.pm(n)
-> y <- 2 + lmm.simu(tau = 1, sigma2 = 2, eigenK = R$eigen)$y
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+\hlstd{> }\hlstd{n} \hlkwb{<-} \hlnum{2000}
+\hlstd{> }\hlstd{R} \hlkwb{<-} \hlkwd{random.pm}\hlstd{(n)}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlnum{2} \hlopt{+} \hlkwd{lmm.simu}\hlstd{(}\hlkwc{tau} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{sigma2} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen)}\hlopt{$}\hlstd{y}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   We can use \verb!lmm.diago! to estimates the parameters of the model.
 
-\begin{Schunk}
-\begin{Sinput}
-> fit <- lmm.diago(y, eigenK = R$eigen)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{fit} \hlkwb{<-} \hlkwd{lmm.diago}\hlstd{(y,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen)}
+\end{alltt}
+\begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 0
 [Iteration 1] Current point = 0 df = 64.413
@@ -1305,8 +1497,10 @@ Optimizing with p = 0
 [Iteration 4] Current point = 0.475146 df = 0.46511
 [Iteration 5] Current point = 0.482424 df = 0.00283126
 [Iteration 6] Current point = 0.482469 df = 1.05346e-07
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
 
   We have $\widehat\tau = 1.439$ and $\widehat{\sigma^2} = 1.54$,
   hence $h^2$ is estimated to $48.2\%$.
@@ -1315,34 +1509,45 @@ Optimizing with p = 0
   $h^2 = {\tau \over \tau + \sigma^2}$. It can be useful to get confidence intervals. Here,
   we simply plot it:
 
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> H2 <- seq(0,1,length=51)
-> lik <- lmm.diago.likelihood(h2 = H2, Y = y, eigenK = R$eigen)
-> plot(H2, exp(lik$likelihood-max(lik$likelihood)), type="l", yaxt="n", ylab="likelihood")
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-051}
-\end{center}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{H2} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{length}\hlstd{=}\hlnum{51}\hlstd{)}
+\hlstd{> }\hlstd{lik} \hlkwb{<-} \hlkwd{lmm.diago.likelihood}\hlstd{(}\hlkwc{h2} \hlstd{= H2,} \hlkwc{Y} \hlstd{= y,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen)}
+\hlstd{> }\hlkwd{plot}\hlstd{(H2,} \hlkwd{exp}\hlstd{(lik}\hlopt{$}\hlstd{likelihood}\hlopt{-}\hlkwd{max}\hlstd{(lik}\hlopt{$}\hlstd{likelihood)),} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,} \hlkwc{yaxt}\hlstd{=}\hlstr{"n"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"likelihood"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.4\textwidth]{figure/unnamed-chunk-48-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   It is often advised to include the first few (10 or 20) Principal Components (PC) in the model as fixed effects,
   to account for a possible population stratification. The function \verb!lmm.diago! has an argument \verb!p!
   for the number of PCs to incoporate in the model with fixed effects. We simulate a trait with a large effect of
   the two first PCs:
-\begin{Schunk}
-\begin{Sinput}
-> PC <- sweep(R$eigen$vectors, 2, sqrt(R$eigen$values), "*")
-> y1 <- 2 + PC[,1:2] %*% c(5,5) + lmm.simu(tau = 1, sigma2 = 2, eigenK = R$eigen)$y
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{PC} \hlkwb{<-} \hlkwd{sweep}\hlstd{(R}\hlopt{$}\hlstd{eigen}\hlopt{$}\hlstd{vectors,} \hlnum{2}\hlstd{,} \hlkwd{sqrt}\hlstd{(R}\hlopt{$}\hlstd{eigen}\hlopt{$}\hlstd{values),} \hlstr{"*"}\hlstd{)}
+\hlstd{> }\hlstd{y1} \hlkwb{<-} \hlnum{2} \hlopt{+} \hlstd{PC[,}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{]} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{)} \hlopt{+} \hlkwd{lmm.simu}\hlstd{(}\hlkwc{tau} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{sigma2} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen)}\hlopt{$}\hlstd{y}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   Here are the heritability estimates with $p = 0$ (the default) and $p = 10$.
-\begin{Schunk}
-\begin{Sinput}
-> fit0 <- lmm.diago(y1, eigenK = R$eigen)
-\end{Sinput}
-\begin{Soutput}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{fit0} \hlkwb{<-} \hlkwd{lmm.diago}\hlstd{(y1,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen)}
+\end{alltt}
+\begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 0
 [Iteration 1] Current point = 0 df = 275.603
@@ -1352,17 +1557,17 @@ Optimizing with p = 0
 [Iteration 5] Current point = 0.58536 df = 2.6002
 [Iteration 6] Current point = 0.614618 df = 0.0830966
 [Iteration 7] Current point = 0.615616 df = 8.80129e-05
-\end{Soutput}
-\begin{Sinput}
-> fit0$tau/(fit0$tau+fit0$sigma2)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{fit0}\hlopt{$}\hlstd{tau}\hlopt{/}\hlstd{(fit0}\hlopt{$}\hlstd{tau}\hlopt{+}\hlstd{fit0}\hlopt{$}\hlstd{sigma2)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.6156168
-\end{Soutput}
-\begin{Sinput}
-> fit10 <- lmm.diago(y1, eigenK = R$eigen, p = 10)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{fit10} \hlkwb{<-} \hlkwd{lmm.diago}\hlstd{(y1,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen,} \hlkwc{p} \hlstd{=} \hlnum{10}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 10
 [Iteration 1] Current point = 0 df = 24.586
@@ -1370,14 +1575,15 @@ Optimizing with p = 10
 [Iteration 3] Current point = 0.308349 df = 0.358557
 [Iteration 4] Current point = 0.314477 df = 0.00156928
 [Iteration 5] Current point = 0.314504 df = 3.01487e-08
-\end{Soutput}
-\begin{Sinput}
-> fit10$tau/(fit10$tau+fit10$sigma2)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{fit10}\hlopt{$}\hlstd{tau}\hlopt{/}\hlstd{(fit10}\hlopt{$}\hlstd{tau}\hlopt{+}\hlstd{fit10}\hlopt{$}\hlstd{sigma2)}
+\end{alltt}
+\begin{verbatim}
 [1] 0.3145042
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
   As expected, the estimate is inflated when no PCs are incorporated in the model.
  
@@ -1405,38 +1611,45 @@ Stay tuned!
   or a Likelihood Ratio Test.
 
   We illustrate this function on a simple example, built on the AGT data set:
-\begin{Schunk}
-\begin{Sinput}
-> data(AGT)
-> x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
-> standardize(x) <- 'mu'
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{data}\hlstd{(AGT)}
+\hlstd{> }\hlstd{x} \hlkwb{<-} \hlkwd{as.bed.matrix}\hlstd{(AGT.gen, AGT.fam, AGT.bim)}
+\hlstd{> }\hlkwd{standardize}\hlstd{(x)} \hlkwb{<-} \hlstr{'mu'}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   As the whole genome is not available, we generate a random positive matrix to play the role of the GRM:
-\begin{Schunk}
-\begin{Sinput}
-> set.seed(1)
-> R <- random.pm(nrow(x))
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+\hlstd{> }\hlstd{R} \hlkwb{<-} \hlkwd{random.pm}\hlstd{(}\hlkwd{nrow}\hlstd{(x))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   And we simulate a phenotype with an effect of the SNP \#351, and a polygenic component:
-\begin{Schunk}
-\begin{Sinput}
-> y <- 2 + x %*% c(rep(0,350),0.25,rep(0,ncol(x)-351)) +
-      lmm.simu(tau = 0.3, sigma2 = 1, eigenK=R$eigen)$y
-\end{Sinput}
-\end{Schunk}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{y} \hlkwb{<-} \hlnum{2} \hlopt{+} \hlstd{x} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{350}\hlstd{),}\hlnum{0.25}\hlstd{,}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,}\hlkwd{ncol}\hlstd{(x)}\hlopt{-}\hlnum{351}\hlstd{))} \hlopt{+}
+\hlstd{+ }     \hlkwd{lmm.simu}\hlstd{(}\hlkwc{tau} \hlstd{=} \hlnum{0.3}\hlstd{,} \hlkwc{sigma2} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{eigenK}\hlstd{=R}\hlopt{$}\hlstd{eigen)}\hlopt{$}\hlstd{y}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
   The following code performs the association test with a score test and a wald test,
   and compares the resulting $p$-values:
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> t_score <- association.test(x, y, K = R$K, method = "lmm")
-\end{Sinput}
-\begin{Soutput}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{t_score} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y,} \hlkwc{K} \hlstd{= R}\hlopt{$}\hlstd{K,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [Iteration 1] theta = 0.657707 0.657707
 [Iteration 1] log L = -323.651
 [Iteration 1] AI-REML update
@@ -1461,54 +1674,78 @@ Stay tuned!
 [Iteration 6] log L = -322.575
 [Iteration 6] AI-REML update
 [Iteration 6] ||gradient|| = 7.32907e-06
-\end{Soutput}
-\begin{Sinput}
-> t_wald <- association.test(x, y, eigenK = R$eigen, method = "lmm", test = "wald")
-> plot( t_score$p, t_wald$p, log = "xy", xlab = "score", ylab = "wald")
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-057}
-\end{center}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlstd{t_wald} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{,} \hlkwc{test} \hlstd{=} \hlstr{"wald"}\hlstd{)}
+\hlstd{> }\hlkwd{plot}\hlstd{( t_score}\hlopt{$}\hlstd{p, t_wald}\hlopt{$}\hlstd{p,} \hlkwc{log} \hlstd{=} \hlstr{"xy"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"score"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"wald"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.4\textwidth]{figure/unnamed-chunk-54-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
 We can display the results under the form of a (mini) Manhattan plot:
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-\begin{Schunk}
-\begin{Sinput}
-> plot(-log10(t_score$p), xlab="SNP index", ylab = "-log(p)",
-       col = c(rep(1,350),2,rep(1,ncol(x)-351)))
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-058}
-\end{center}
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{plot}\hlstd{(}\hlopt{-}\hlkwd{log10}\hlstd{(t_score}\hlopt{$}\hlstd{p),} \hlkwc{xlab}\hlstd{=}\hlstr{"SNP index"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"-log(p)"}\hlstd{,}
+\hlstd{+ }      \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{350}\hlstd{),}\hlnum{2}\hlstd{,}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlkwd{ncol}\hlstd{(x)}\hlopt{-}\hlnum{351}\hlstd{)))}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.7\textwidth]{figure/unnamed-chunk-55-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
   We colored the point corresponding to the SNP \#351 in red. We see that there
   are other SNPs with low association $p$-values: these are the SNPs in LD with
   SNP \#351. We can confirm this by plotting the $p$-values (again on log scale) 
   as a function of the LD (measured by $r^2$):
-\begin{center}
-\begin{Schunk}
-\begin{Sinput}
-> lds <- LD(x, 351, c(1,ncol(x)))
-> plot(lds, -log10(t_score$p), xlab="r^2", ylab="-log(p)")
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-059}
-\end{center}
+%\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{lds} \hlkwb{<-} \hlkwd{LD}\hlstd{(x,} \hlnum{351}\hlstd{,} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlkwd{ncol}\hlstd{(x)))}
+\hlstd{> }\hlkwd{plot}\hlstd{(lds,} \hlopt{-}\hlkwd{log10}\hlstd{(t_score}\hlopt{$}\hlstd{p),} \hlkwc{xlab}\hlstd{=}\hlstr{"r^2"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"-log(p)"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.4\textwidth]{figure/unnamed-chunk-56-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
 \subsection{Binary phenotype}
 
 We use the quantitative phenotype previously generated to construct a binary phenotype,
 and we perform the association test with a logistic mixed model (only the score test is 
 available). The baby Manhattan plot is plotted again.
-\begin{center}
-\setkeys{Gin}{width=0.7\textwidth}
-\begin{Schunk}
-\begin{Sinput}
-> y1 <- as.numeric(y > mean(y))
-> t_binary <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
-\end{Sinput}
-\begin{Soutput}
+%\begin{center}
+%\setkeys{Gin}{width=0.7\textwidth}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{y1} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(y} \hlopt{>} \hlkwd{mean}\hlstd{(y))}
+\hlstd{> }\hlstd{t_binary} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y1,} \hlkwc{K} \hlstd{= R}\hlopt{$}\hlstd{K,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{,} \hlkwc{response} \hlstd{=} \hlstr{"binary"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
 [Initialization] beta = -0.0357891
 [Initialization] tau = 4.00925
 [Iteration 1] tau = 3.03346
@@ -1525,15 +1762,22 @@ available). The baby Manhattan plot is plotted again.
 [Iteration 4] Constraining tau
 [Iteration 4] tau = 1e-06
 [Iteration 4] beta = -0.0357891
-\end{Soutput}
-\begin{Sinput}
-> # (mini) Manhattan plot
-> plot(-log10(t_binary$p), xlab="SNP index", ylab = "-log(p)",
-       col = c(rep(1,350),2,rep(1,ncol(x)-351)))
-\end{Sinput}
-\end{Schunk}
-\includegraphics{gaston-060}
-\end{center}
+\end{verbatim}
+\begin{alltt}
+\hlstd{> }\hlcom{# (mini) Manhattan plot}
+\hlstd{> }\hlkwd{plot}\hlstd{(}\hlopt{-}\hlkwd{log10}\hlstd{(t_binary}\hlopt{$}\hlstd{p),} \hlkwc{xlab}\hlstd{=}\hlstr{"SNP index"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"-log(p)"}\hlstd{,}
+\hlstd{+ }      \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{350}\hlstd{),}\hlnum{2}\hlstd{,}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlkwd{ncol}\hlstd{(x)}\hlopt{-}\hlnum{351}\hlstd{)))}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=0.7\textwidth]{figure/unnamed-chunk-57-1} 
+
+}
+
+
+
+\end{knitrout}
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill\eject

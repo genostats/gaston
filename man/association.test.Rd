@@ -51,7 +51,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 
   If \code{test = "score"}, all parameters are estimated with the same procedure as in 
   \code{\link{lmm.aireml}} and the argument \code{K} is used to specify the GRM matrix (or a list of GRM
-  matrices for inclusion of several random effects in the model). The argument \code{p} is ignored.
+  matrices for inclusion of several random effects in the model). If \code{p} is positive, the paramater \code{eigenK}
+  needs to be given as well.
   For Wald and LRT tests the procedure used is the same as in \code{\link{lmm.diago}} and \code{eigenK} is used to 
   specify the GRM matrix.
 
@@ -62,11 +63,12 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \eqn{X} the covariable matrix. A score test is performed, independantly of the value of \code{test}.
   All parameters under null model are estimated with the same procedure as in \code{\link{logistic.mm.aireml}}.
   It is possible to give a list in argument \code{K} for inclusion of several random effects in the model.
-  The argument \code{p} is ignored.
+  If \code{p} is positive, the paramater \code{eigenK} needs to be given as well.
 
   Note: this function is not multithreaded. Wald test with Linear Mixed Models are computationally intensive, 
   to run a GWAS with such tests consider using \code{association.test.parallel} in package \code{gaston.utils} 
-  (on github).
+  (on github). Association tests with dosages can be done with \code{association.test.dosage} and 
+  \code{association.test.dosage.parallel} in the same package.
 }
 
 \value{

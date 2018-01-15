@@ -1,14 +1,16 @@
 Package: gaston
 Type: Package
 Title: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models
-Version: 1.5
+Version: 1.5.1
 Date: 2017-05-24
 Encoding: UTF-8
+VignetteBuilder: knitr
 Author: Hervé Perdry & Claire Dandine-Roulland
 Maintainer: Hervé Perdry <herve.perdry@u-psud.fr>
 Description: Manipulation of genetic data (SNPs), computation of Genetic Relationship Matrix, Linkage Disequilibrium, etc. Efficient algorithms for Linear Mixed Model (AIREML, diagonalization trick).
 License: GPL-3
 LinkingTo: Rcpp, RcppParallel, RcppEigen
+Suggests: knitr
 Depends: Rcpp, RcppParallel, methods
 Imports:
 NeedsCompilation: yes

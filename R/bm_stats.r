@@ -71,7 +71,7 @@ set.stats <- function(x, set.p = TRUE, set.mu_sigma = TRUE, verbose = getOption(
 
   if(set.mu_sigma) { # calcul brutal
     n <- nrow(x) - x@snps$NAs;
-    mu <- (2*x@snps$N2 + x@snps$N1)/n;
+    mu <- (2*x@snps$N2 + x@snps$N1)/n; # c'est 2 pp ... enfin bref
     N <- nrow(x)
     s <- sqrt( (x@snps$N1 + 4*x@snps$N2 + mu**2*x@snps$NAs)/(N-1) - N/(N-1)*mu**2 )
     x@mu <- mu;
