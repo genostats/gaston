@@ -1,20 +1,32 @@
-
-qqplot.pvalues <- function(p, pch = ".", cex = 2, xlab = expression(paste("expected ", -log[10](p))), 
+qqplot.pvalues <- function(p, xlab = expression(paste("expected ", -log[10](p))), 
                            ylab = expression(paste("observed ", -log[10](p))), main = "QQ plot of p-values", 
-                           col.abline = "red", CB = TRUE, col.CB = gray(.9), CB.level = 0.95, ...) {
+                           col.abline = "red", CB = TRUE, col.CB = gray(.9), CB.level = 0.95,
+                           thinning = TRUE, thinning.step = 1e-3, ...) {
+  if(is.list(p)) { # ok pour les data frame aussi
+    if(is.null(p$p))
+      stop("No p-values were found")
+    p <- p$p
+  }
+  p <- p[ !is.na(p) ] # on supprime ces valeurs silencieusement...
+  
+  if(any(p>1) | any(p<0))
+    stop("p-values should be in [0,1]\n")
+
+  w <- (p == 0)
+  if(any(w)) { # mais ça on avertit
+    warning("There are ", sum(w), " zero p-values that won't be displayed")
+    p <- p[!w]
+  }
+
   args <- list(...)
-  args$pch <- pch
   args$xlab <- xlab
   args$ylab <- ylab
   args$main <- main
 
   n <- length(p)
-  expected <- -log10( (1:n)/(n+1) )
-  observed <- -log10( sort(p) )
-
   args$type <- "n"
-  args$x <- range(expected)
-  args$y <- range(observed)
+  args$x <- -log10( c(1,n) / (n+1) )
+  args$y <- -log10( range(p) )
   do.call( plot, args )
 
   # confidence interval
@@ -27,8 +39,17 @@ qqplot.pvalues <- function(p, pch = ".", cex = 2, xlab = expression(paste("expec
   segments(0, 0, -log10(1/n), -log10(1/n), col = col.abline) 
 
   # the points
-  args$x <- expected
-  args$y <- observed
+  expected <- -log10( (n:1)/(n+1) )
+  observed <- sort(-log10( p ))
+
+  if(thinning) {
+    w <- logp.thinning(observed, thinning.step)
+    args$x <- expected[w]
+    args$y <- observed[w] 
+  } else {
+    args$x <- expected
+    args$y <- observed
+  }
   args$type <- "p"
   do.call( points, args )
 }

@@ -11,6 +11,7 @@
 extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 /* .Call calls */
+extern SEXP gg_logp_thinning(SEXP, SEXP);
 extern SEXP gg_AIREML1_logit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_logit_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -83,6 +84,7 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
+    {"gg_logp_thinning",                  (DL_FUNC) &gg_logp_thinning,                   2},
     {"gg_AIREML1_logit",                  (DL_FUNC) &gg_AIREML1_logit,                  13},
     {"gg_AIREML1_logit_nofix",            (DL_FUNC) &gg_AIREML1_logit_nofix,            10},
     {"gg_AIREML1_nofix",                  (DL_FUNC) &gg_AIREML1_nofix,                  14},

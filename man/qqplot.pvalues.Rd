@@ -4,16 +4,14 @@
 \title{ QQ plot of p-values }
 
 \description{ Draw a QQ plot of p-values }
-\usage{ qqplot.pvalues(p, pch = ".", cex = 2, 
-                       xlab = expression(paste("expected ", -log[10](p))),
+\usage{ qqplot.pvalues(p, xlab = expression(paste("expected ", -log[10](p))),
                        ylab = expression(paste("observed ", -log[10](p))), 
                        main = "QQ plot of p-values", col.abline = "red", 
-                       CB = TRUE, col.CB = gray(.9), CB.level = 0.95, ...) }
+                       CB = TRUE, col.CB = gray(.9), CB.level = 0.95, 
+                       thinning = TRUE, thinning.step = 1e-3, ...) }
 
 \arguments{
-  \item{p}{ A vector of p-values }
-  \item{pch}{ The plotting symbol }
-  \item{cex}{ Size of points }
+  \item{p}{ A vector of p-values, or a data.frame with a column named \code{p} }
   \item{xlab}{ X-axis label }
   \item{ylab}{ Y-axis label }
   \item{main}{ Main title for the plot }
@@ -21,18 +19,27 @@
   \item{CB}{ \code{Logical}. If \code{TRUE}, a confidence band is included in the plot. }
   \item{col.CB}{ The color of the confidence band. }
   \item{CB.level}{ The level of the confidence band. }
+  \item{thinning}{ \code{Logical}. If \code{TRUE}, not all points are displayed. }
+  \item{thinning.step}{ The minimal distance between thinned points (measured on the y-axis). }
   \item{...}{ Additional parameters to be passed to \code{plot} and \code{points} }
 }
 
 \details{ The QQ plot is on the \eqn{-\log_{10}}{-log10} scale, as is usual when reporting
 GWAS results. The confidence band is not a global confidence region: it is the juxtaposition
-of confidence intervals for each quantile.}
+of confidence intervals for each quantile.
 
-\seealso{ \code{\link{qqplot}}, \code{\link{plot.default}}, \code{\link{points.default}} }
+The thinning procedure suppress some points to avoid generating too heavy graphs. The user 
+should check that setting \code{thinning = FALSE} does not change the final aspect of the 
+QQ plot. Smaller values of \code{thinning.step} result in more points plotted.
+}
+
+\seealso{ \code{\link{association.test}}, \code{\link{qqplot}}, \code{\link{plot.default}}, \code{\link{points.default}} }
 
 \examples{
 # a vector of uniform p-values
-p <- runif(1e5)
+p <- runif(1e6)
 qqplot.pvalues(p)
+# if we don't thin the points, using pch = "." is advised
+qqplot.pvalues(p, pch = ".", cex = 2, thinning = FALSE)
 }
 
