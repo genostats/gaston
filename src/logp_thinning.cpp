@@ -8,10 +8,14 @@ IntegerVector logp_thinning(NumericVector logp, double step) {
   double x = 0;
   int i = 0, n = logp.size();
   debut:
-    while(logp[i] < x && i < n) i++;
+    while(logp[i] < x && i < n)  i++;
     if(i < n) {
-      r.push_back( i+1 );
-      x = logp[i] + step;
+      if(std::isnan(logp[i])) 
+        i++;
+      else {
+        x = logp[i] + step;
+        r.push_back( ++i );
+      }
       goto debut;
     }
   return wrap(r);
@@ -27,4 +31,3 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-

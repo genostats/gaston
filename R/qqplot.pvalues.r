@@ -1,6 +1,4 @@
-qqplot.pvalues <- function(p, xlab = expression(paste("expected ", -log[10](p))), 
-                           ylab = expression(paste("observed ", -log[10](p))), main = "QQ plot of p-values", 
-                           col.abline = "red", CB = TRUE, col.CB = gray(.9), CB.level = 0.95,
+qqplot.pvalues <- function(p, col.abline = "red", CB = TRUE, col.CB = "gray90", CB.level = 0.95,
                            thinning = TRUE, thinning.step = 1e-3, ...) {
   if(is.list(p)) { # ok pour les data frame aussi
     if(is.null(p$p))
@@ -19,9 +17,12 @@ qqplot.pvalues <- function(p, xlab = expression(paste("expected ", -log[10](p)))
   }
 
   args <- list(...)
-  args$xlab <- xlab
-  args$ylab <- ylab
-  args$main <- main
+  if(is.null(args$xlab))
+    args$xlab <- expression(paste("expected ", -log[10](p)))
+  if(is.null(args$ylab))
+    args$ylab <- expression(paste("observed ", -log[10](p)))
+  if(is.null(args$main))
+    args$main <- "QQ plot of p-values"
 
   n <- length(p)
   args$type <- "n"
@@ -43,7 +44,7 @@ qqplot.pvalues <- function(p, xlab = expression(paste("expected ", -log[10](p)))
   observed <- sort(-log10( p ))
 
   if(thinning) {
-    w <- logp.thinning(observed, thinning.step)
+    w <- gaston:::logp.thinning(observed, thinning.step)
     args$x <- expected[w]
     args$y <- observed[w] 
   } else {
