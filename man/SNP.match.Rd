@@ -14,14 +14,15 @@
 
 \details{When \code{x} is a bed.matrix, the data.frame \code{x@bed} will be used; the 
 same holds for \code{table}. The columns that will be taken in consideration
-are \code{id}, \code{chr}, \code{pos}, \code{A1}, and \code{A2}. Only columns
-\code{chr} and \code{pos} are mandatory (see below). All columns present in \code{x}
+are \code{id}, \code{chr}, \code{pos}, \code{A1}, and \code{A2}. Not all columns
+are mandatory (see below). All columns present in \code{x}
 must be present in \code{table}.
 
 The matching criterium depends on the columns present in \code{x}.
-There are 4 possible criteria : (i) matching by chromosome and position, (ii)
-matching by chromosome, position, and alleles, (iii) matching by id, chromosome 
-and position, and (iv) matching by id, chromosome, position and alleles.
+There are 5 possible criteria : (i) matching by chromosome and position, (ii)
+matching by chromosome, position, and alleles, (iii) matching by id, 
+(iv) matching by id, chromosome and position, and (v) matching by id, 
+chromosome, position and alleles.
 
 For each SNP in \code{x}, the function looks for the position of the first
 matching SNP in \code{table}. If alleles are included in the matching criterium

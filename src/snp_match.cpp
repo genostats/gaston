@@ -1,17 +1,9 @@
-// [[Rcpp::depends(BH)]]
-//
 #include <Rcpp.h>
 #include <iostream>
 #include "snp_hash.h"
 #include "flip_strand.h"
 
 using namespace Rcpp;
-
-//[[Rcpp::export]]
-IntegerVector which_duplicated_chr_pos(IntegerVector Chr1, IntegerVector Pos1) {
-  SNPhash h(Chr1, Pos1);
-  return wrap(h.dup_indices);
-}
 
 // snps_table est supposé avoir toutes les colonnes id chr pos a1 a2
 // (en fait il suffit d'avoir les colonnes présentes dans x)
@@ -197,17 +189,6 @@ List SNPmatch(DataFrame x, DataFrame table) {
   return L;
 }
 
-
-RcppExport SEXP gg_which_duplicated_chr_pos(SEXP Chr1SEXP, SEXP Pos1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerVector >::type Chr1(Chr1SEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type Pos1(Pos1SEXP);
-    rcpp_result_gen = Rcpp::wrap(which_duplicated_chr_pos(Chr1, Pos1));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 RcppExport SEXP gg_SNPmatch(SEXP xSEXP, SEXP tableSEXP) {
 BEGIN_RCPP

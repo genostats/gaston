@@ -17,6 +17,10 @@ extern SEXP gg_re_likelihood(SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_re_likelihood_nofix(SEXP, SEXP, SEXP);
 extern SEXP gg_SNPmatch(SEXP, SEXP);
 extern SEXP gg_which_duplicated_chr_pos(SEXP, SEXP);
+extern SEXP gg_which_duplicated_chr_pos_alleles(SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_which_duplicated_id(SEXP);
+extern SEXP gg_which_duplicated_id_chr_pos(SEXP, SEXP, SEXP);
+extern SEXP gg_which_duplicated_id_chr_pos_alleles(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_logp_thinning(SEXP, SEXP);
 extern SEXP gg_AIREML1_logit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_logit_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -96,6 +100,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_pre_likelihood_nofix",           (DL_FUNC) &gg_pre_likelihood_nofix,            3},
     {"gg_SNPmatch",                       (DL_FUNC) &gg_SNPmatch,                        2},
     {"gg_which_duplicated_chr_pos",       (DL_FUNC) &gg_which_duplicated_chr_pos,        2},
+    {"gg_which_duplicated_chr_pos_alleles", (DL_FUNC) &gg_which_duplicated_chr_pos_alleles, 4},
+    {"gg_which_duplicated_id",            (DL_FUNC) &gg_which_duplicated_id,             1},
+    {"gg_which_duplicated_id_chr_pos",    (DL_FUNC) &gg_which_duplicated_id_chr_pos,     3},
+    {"gg_which_duplicated_id_chr_pos_alleles", (DL_FUNC) &gg_which_duplicated_id_chr_pos_alleles, 5},
     {"gg_logp_thinning",                  (DL_FUNC) &gg_logp_thinning,                   2},
     {"gg_AIREML1_logit",                  (DL_FUNC) &gg_AIREML1_logit,                  13},
     {"gg_AIREML1_logit_nofix",            (DL_FUNC) &gg_AIREML1_logit_nofix,            10},
