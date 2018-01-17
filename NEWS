@@ -49,7 +49,9 @@
        Auto set the #threads when loaded
 1.5.1: Improved function association.test
        Vignette in knitr
-       New functions qqplot.pvalue, manhattan
        cbind : now keep p, mu, sigma
        rbind : now handles alleles longer than 1
-
+       New functions qqplot.pvalue, manhattan
+       New functions SNP.duplicated, SNP.match
+       New functions lmm.restricted.likelihood, lmm.profile.restricted.likelihood
+       

@@ -35,9 +35,11 @@
   If both \code{tau} and \code{s2} (for \eqn{\sigma^2}{sigma^2}) are provided, \code{lmm.diago.likelihood}
   computes the restricted
   likelihood for these values of the parameters; if these parameters are vectors of length \eqn{> 1},
-  then a matrix of likelihood values is computed. The function \code{lmm.diago.profile.likelihood} 
-  computes \eqn{\beta}{beta} which maximizes the full likelihood for these values of \eqn{\tau}{tau}
-  and \eqn{\sigma^2}{sigma^2}, and computes its value.
+  then a matrix of likelihood values is computed. 
+
+  The function \code{lmm.diago.profile.likelihood} computes the full likelihood, profiled for \eqn{\beta}{beta}.
+  That is, the value \eqn{\beta}{beta} which maximizes the full likelihood for the given values of \eqn{\tau}{tau}
+  and \eqn{\sigma^2}{sigma^2} is computed, and then the full likelihood is computed.
 
   If \code{h2} is provided, both functions compute \eqn{\tau}{tau} and \eqn{\sigma^2}{sigma^2} which
   maximizes the likelihood under the constraint \eqn{ {\tau \over \tau + \sigma^2 } = h^2 }{tau/(tau + sigma^2) = h^2},
@@ -55,7 +57,7 @@
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
-\seealso{ \code{\link{lmm.diago}}, \code{\link{lmm.aireml}} }
+\seealso{ \code{\link{lmm.restricted.likelihood}}, \code{\link{lmm.profile.restricted.likelihood}},  \code{\link{lmm.diago}}, \code{\link{lmm.aireml}} }
 
 \examples{
 # Load data

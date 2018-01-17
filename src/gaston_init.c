@@ -11,6 +11,10 @@
 extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 /* .Call calls */
+extern SEXP gg_pre_likelihood(SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_pre_likelihood_nofix(SEXP, SEXP, SEXP);
+extern SEXP gg_re_likelihood(SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_re_likelihood_nofix(SEXP, SEXP, SEXP);
 extern SEXP gg_SNPmatch(SEXP, SEXP);
 extern SEXP gg_which_duplicated_chr_pos(SEXP, SEXP);
 extern SEXP gg_logp_thinning(SEXP, SEXP);
@@ -86,6 +90,10 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
+    {"gg_re_likelihood",                  (DL_FUNC) &gg_re_likelihood,                   4},
+    {"gg_re_likelihood_nofix",            (DL_FUNC) &gg_re_likelihood_nofix,             3},
+    {"gg_pre_likelihood",                 (DL_FUNC) &gg_pre_likelihood,                  4},
+    {"gg_pre_likelihood_nofix",           (DL_FUNC) &gg_pre_likelihood_nofix,            3},
     {"gg_SNPmatch",                       (DL_FUNC) &gg_SNPmatch,                        2},
     {"gg_which_duplicated_chr_pos",       (DL_FUNC) &gg_which_duplicated_chr_pos,        2},
     {"gg_logp_thinning",                  (DL_FUNC) &gg_logp_thinning,                   2},
