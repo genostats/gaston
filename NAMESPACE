@@ -24,3 +24,4 @@ export(random.pm, lmm.simu, lmm.aireml, logistic.mm.aireml, lmm.diago, lmm.diago
 export(association.test)
 export(score.variance.linear, score.variance.logistic, score.fixed.linear, score.fixed.logistic)
 export(qqplot.pvalues, manhattan)
+export(SNP.duplicated, SNP.match)
