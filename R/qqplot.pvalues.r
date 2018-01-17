@@ -44,7 +44,7 @@ qqplot.pvalues <- function(p, col.abline = "red", CB = TRUE, col.CB = "gray90", 
   observed <- sort(-log10( p ))
 
   if(thinning) {
-    w <- gaston:::logp.thinning(observed, thinning.step)
+    w <- logp.thinning(observed, thinning.step)
     args$x <- expected[w]
     args$y <- observed[w] 
   } else {
