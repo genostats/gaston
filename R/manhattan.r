@@ -43,7 +43,7 @@ manhattan <- function(x, bty="n", thinning = TRUE, thinning.step = 1e-5, ... ) {
     lp <- -log10(x$p)
     o <- order( lp )
     lp <- lp[o]
-    w <- gaston:::logp.thinning(lp, thinning.step)
+    w <- logp.thinning(lp, thinning.step)
     args$y <- lp[w]
     oo <- o[w]
     args$x <- args$x[oo]
