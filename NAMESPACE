@@ -1,7 +1,7 @@
 import(methods)
 
 importFrom("grDevices", "heat.colors", "dev.off", "pdf", "rgb", "gray")
-importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "rect", "segments", "strheight", "strwidth", "text", "points")
+importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "rect", "segments", "strheight", "strwidth", "text", "points", "axis")
 importFrom("stats", "pchisq", "quantile", "rnorm", "kmeans", "glm", "binomial", "pt", "qbeta")
 importFrom("utils", "read.table", "write.table")
 importFrom("Rcpp", "evalCpp") # just to avoid << function 'enterRNGScope' not provided by package 'Rcpp' >> error
