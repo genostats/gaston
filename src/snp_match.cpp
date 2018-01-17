@@ -3,7 +3,7 @@
 #include <Rcpp.h>
 #include <iostream>
 #include "snp_hash.h"
-#include "flip_strand.hpp"
+#include "flip_strand.h"
 
 using namespace Rcpp;
 
