@@ -49,4 +49,7 @@
        Auto set the #threads when loaded
 1.5.1: Improved function association.test
        Vignette in knitr
-       New function qqplot.pvalue
+       New functions qqplot.pvalue, manhattan
+       cbind : now keep p, mu, sigma
+       rbind : now handles alleles longer than 1
+
