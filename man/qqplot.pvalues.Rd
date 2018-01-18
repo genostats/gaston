@@ -19,8 +19,13 @@
 }
 
 \details{ The QQ plot is on the \eqn{-\log_{10}}{-log10} scale, as is usual when reporting
-GWAS results. The confidence band is not a global confidence region: it is the juxtaposition
-of confidence intervals for each quantile.
+GWAS results. 
+
+The confidence band is not a global confidence region: it is the mere juxtaposition 
+of confidence intervals for each quantile. Moreover it assumes independance of the
+p-values, an hypothesis hich is false for the p-values resulting from an association 
+test in presence of linkage disequilibrium. Therefore, the probability that some of the
+points lie outsite of this band is greater that \code{CB.level}.
 
 The thinning procedure suppress some points to avoid generating too heavy graphs. The user 
 should check that setting \code{thinning = FALSE} does not change the final aspect of the 
