@@ -11,6 +11,7 @@
 extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 /* .Call calls */
+extern SEXP gg_manhattan_thinning(SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_pre_likelihood(SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_pre_likelihood_nofix(SEXP, SEXP, SEXP);
 extern SEXP gg_re_likelihood(SEXP, SEXP, SEXP, SEXP);
@@ -94,6 +95,7 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
+    {"gg_manhattan_thinning",             (DL_FUNC) &gg_manhattan_thinning,              4},
     {"gg_re_likelihood",                  (DL_FUNC) &gg_re_likelihood,                   4},
     {"gg_re_likelihood_nofix",            (DL_FUNC) &gg_re_likelihood_nofix,             3},
     {"gg_pre_likelihood",                 (DL_FUNC) &gg_pre_likelihood,                  4},
