@@ -74,7 +74,7 @@ lmm.aireml(Y, X = matrix(1, nrow = length(Y)), K,
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
-\seealso{\code{\link{lmm.diago}}, \code{\link{lmm.simu}}}
+\seealso{\code{\link{lmm.diago}}, \code{\link{logistic.mm.aireml}}, \code{\link{lmm.simu}}}
 
 \examples{
 # Load data

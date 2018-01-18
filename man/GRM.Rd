@@ -30,7 +30,7 @@ authors might disagree. Note in particular that some entries will be negative.}
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
-\seealso{ \code{\link{reshape.GRM}}, \code{\link{lmm.aireml}}, \code{\link{lmm.diago}}, \code{\link{standardize}}, \code{\link{bed.loadings}} }
+\seealso{ \code{\link{DM}}, \code{\link{reshape.GRM}}, \code{\link{lmm.aireml}}, \code{\link{lmm.diago}}, \code{\link{standardize}}, \code{\link{bed.loadings}} }
 \examples{
 # load chr2 data set (~10k SNPs in low LD)
 x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )

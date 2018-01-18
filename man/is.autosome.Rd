@@ -26,9 +26,7 @@
   \code{gaston.chr.mt}.
 
   For example, \code{is.autosome(chr)} is a short cut for 
-  \code{chr \%in\% getOption("gaston.autosomes")}. It is used in particular
-  in the default value of argument \code{which.snps} in \code{\link{GRM}} 
-  and \code{\link{LD.thin}}.
+  \code{chr \%in\% getOption("gaston.autosomes")}.
 }
 
 \value{ 
@@ -37,6 +35,6 @@
 
 \author{ Hervé Perdry }
 
-\seealso{ \code{\link{GRM}}, \code{\link{LD.thin}} }
+%\seealso{ \code{\link{GRM}}, \code{\link{DM}}, \code{\link{LD.thin}} }
 
 \keyword{ Chromosome }

@@ -31,7 +31,7 @@
 
 \author{Hervé Perdry}
 
-\seealso{ \code{\link{set.stats}} }
+\seealso{ \code{\link{set.stats}}, \code{\link{set.hwe}} }
 
 \keyword{ Genomic Sex }
 

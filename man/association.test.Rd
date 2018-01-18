@@ -82,43 +82,38 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \item{p}{The corresponding p-value}
 }
 
-\seealso{ \code{\link{lmm.diago}},  \code{\link{lmm.aireml}}, \code{\link{logistic.mm.aireml}}, \code{\link[stats:optimize]{optimize}} }
-
-\author{ Hervé Perdry and Claire Dandine-Roulland }
+\seealso{ \code{\link{qqplot.pvalues}}, \code{\link{manhattan}},  \code{\link{lmm.diago}},  
+          \code{\link{lmm.aireml}}, \code{\link{logistic.mm.aireml}}, \code{\link[stats:optimize]{optimize}} }
 
 \examples{
 \donttest{
 # Load data
-data(AGT)
-x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+data(TTN)
+x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
 standardize(x) <- "p"
 
-# generate a random positive matrix (to play the role of the GRM)
+# simulate quantitative phenotype with effect of SNP #631 and a polygenic component 
 set.seed(1)
-R <- random.pm(nrow(x))
+y <- x \%*\% c(rep(0,630),0.5,rep(0,ncol(x)-631)) + rnorm(nrow(x))
 
-# simulate quantitative phenotype with effect of SNP #351 and a polygenic component 
-y <- x \%*\% c(rep(0,350),0.25,rep(0,ncol(x)-351)) + lmm.simu(0.3,1,eigenK=R$eigen)$y
+# association test with linear model 
+test <- association.test(x, y, method="lm", response = "quanti")
 
-# association test with mixed model (default is quantitative response, score test)
-t_score <- association.test(x, y, K = R$K, method = "lmm")
-t_wald <- association.test(x, y, eigenK = R$eigen, method = "lmm", test = "wald")
+# a p-values qq plot
+qqplot.pvalues(test)
 
-# comparaison des p-valeurs obtenues par les deux tests
-plot( t_score$p, t_wald$p, log = "xy", xlab = "score", ylab = "wald")
-
-# (mini) Manhattan plot
-plot(-log10(t_score$p), xlab="SNP index", ylab = "-log(p)")
-
-# link between p-values and LD with SNP #351
-lds <- LD(x, 351, c(1,ncol(x)))
-plot(lds, -log10(t_score$p), xlab="r^2", ylab="-log(p)")
+# a small Manhattan plot 
+# hihlighting the link between p-values and LD with SNP #631
+lds <- LD(x, 631, c(1,ncol(x)))
+manhattan(test, col = rgb(lds,0,0), pch = 20)
 
 # use y to simulate a binary phenotype
 y1 <- as.numeric(y > mean(y))
-t_binary <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
-# (mini) Manhattan plot
-plot(-log10(t_binary$p), xlab="SNP index", ylab = "-log(p)")
+
+# logistic regression
+t_binary <- association.test(x, y1, method = "lm", response = "binary")
+# another small Manhattan plot
+manhattan(t_binary, col = rgb(lds,0,0), pch = 20)
 
 }}
 

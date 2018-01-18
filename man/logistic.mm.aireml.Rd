@@ -59,9 +59,7 @@ parameter estimation in linear mixed models}, Biometrics, \bold{1440-1450}
 Chen, Han et al. (2016), \emph{Control for Population Structure and Relatedness for Binary Traits in Genetic Association Studies via
 Logistic Mixed Models}, The American Journal of Human Genetics, \bold{653--666}}
 
-\author{ Hervé Perdry and Claire Dandine-Roulland }
-
-%\seealso{\code{\link{lmm.diago}}, \code{\link{lmm.simu}}}
+\seealso{ \code{\link{lmm.aireml}}, \code{\link{lmm.diago}}, \code{\link{lmm.simu}}}
 
 \examples{
 # Load data
