@@ -4,17 +4,20 @@
 \title{ Random square definite positive matrix }
 
 \description{ Generate a random definite positive matrix with specified dimension }
-\usage{ random.pm(n, values = n*diff(seq(0,1,length=n+1)**0.75)) }
+\usage{ random.pm(n, values) }
 
 \arguments{
   \item{n}{ Dimension of matrix }
-  \item{values}{ Eigenvalues of matrix }
+  \item{values}{ (Optional) A numeric vector of dimension n : the eigenvalues of the matrix }
 }
 
 \details{
-  The default for \code{values} is chosen so that the eigenvalues of the 
-  resulting matrix are roughly
-  similar to the eigenvalues typically observed on Genetic Relationship Matrices.
+  If \code{values} isn't given, it is chosen (deterministically) 
+  so that the eigenvalues of the resulting matrix are 
+  similar to eigenvalues observed on Genetic Relationship Matrices.
+
+  The random matrix is generated as \eqn{ U diag( values ) U' }{U \%*\% diag(values) \%*\% t(U)}
+  with \eqn{U} a random orthogonal matrix.
 }
 
 \value{
@@ -28,6 +31,6 @@
 \examples{
 # generate a random positive matrix 
 set.seed(1)
-R <- random.pm(503)
+R <- random.pm(500)
 str(R)
 }
