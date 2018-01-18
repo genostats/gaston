@@ -23,8 +23,6 @@
   \item{eigen}{ The eigen decomposition of \code{K} as \code{eigen(K)} would output it }
 }
 
-\author{ Hervé Perdry and Claire Dandine-Roulland }
-
 \seealso{ \code{\link{lmm.simu}}, \code{\link[base:eigen]{eigen}}}
 
 \examples{
