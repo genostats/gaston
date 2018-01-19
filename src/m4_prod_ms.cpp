@@ -23,7 +23,7 @@ struct paraPro_ms : public Worker {
 
   //constructeur
   paraPro_ms(matrix4 & A, std::vector<double> mu, std::vector<double> sd, size_t r, double * v, double * Av)
-            : A(A), mu(mu), sd(sd), ncol(A.ncol), true_ncol(A.true_ncol), v(v), r(r), Av(Av) {}
+            : A(A), mu(mu), sd(sd), ncol(A.ncol), true_ncol(A.true_ncol), r(r), v(v), Av(Av) {}
 
   //worker
   void operator()(size_t beg, size_t end) {

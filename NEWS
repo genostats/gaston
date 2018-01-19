@@ -47,11 +47,11 @@
        New functions test.snps test.inds which.snps which.inds
        Faster optimization with the diagonalization trick
        Auto set the #threads when loaded
-1.5.1: Improved function association.test
+1.5.1: Improved functions association.test / random.pm
        Vignette in knitr
        cbind : now keep p, mu, sigma
        rbind : now handles alleles longer than 1
        New functions qqplot.pvalue, manhattan
        New functions SNP.duplicated, SNP.match
        New functions lmm.restricted.likelihood, lmm.profile.restricted.likelihood
-       
+       Remove some compilation warnings (-Wreorder)

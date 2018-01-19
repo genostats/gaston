@@ -22,13 +22,13 @@ struct paraPro2 : public Worker {
 
  //constructeur
   paraPro2(matrix4 & A, std::vector<double> mu, std::vector<double> sd, size_t r, double * v) 
-          : A(A), mu(mu), sd(sd), ncol(A.ncol), true_ncol(A.true_ncol), v(v), r(r) {
+          : A(A), mu(mu), sd(sd), ncol(A.ncol), true_ncol(A.true_ncol), r(r), v(v) {
     vA = new double[r*ncol];
     std::fill(vA, vA+r*ncol, 0);
   }
   //constructeur pour le split
   paraPro2(paraPro2 & Q, Split) : A(Q.A), mu(Q.mu), sd(Q.sd), ncol(Q.ncol), 
-           true_ncol(Q.true_ncol), v(Q.v), r(Q.r) {
+           true_ncol(Q.true_ncol), r(Q.r), v(Q.v) {
     vA = new double[r*ncol];
     std::fill(vA, vA+r*ncol, 0);
   }
