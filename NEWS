@@ -54,4 +54,7 @@
        New functions qqplot.pvalue, manhattan
        New functions SNP.duplicated, SNP.match
        New functions lmm.restricted.likelihood, lmm.profile.restricted.likelihood
-       Remove some compilation warnings (-Wreorder)
+1.5.2  Remove some compilation warnings (-Wreorder)
+       Temporarily disable TBB (UBSAN test)
+
+

@@ -1,6 +1,4 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
-#include <RcppParallel.h>
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
@@ -8,7 +6,6 @@
 #include "m4_ld.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
 
 // la signature les différencie des autres !
 void LD_col(matrix4 & A, bar & p, size_t c1, size_t c2, lou & LD) {

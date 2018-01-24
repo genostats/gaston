@@ -1,4 +1,3 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
 #include <iostream>
 #include "matrix4.h"

@@ -1,12 +1,9 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
-#include <RcppParallel.h>
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
 
 uint8_t N0[256] = {
 4, 3, 3, 3, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 

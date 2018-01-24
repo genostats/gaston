@@ -1,12 +1,12 @@
 #include <Rcpp.h>
-#include <RcppParallel.h>
+#include "Parallel.h"
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
 #include "loubar.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
+using namespace Parallel;
 
 
 struct paraPro2_p : public Worker {

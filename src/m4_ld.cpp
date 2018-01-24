@@ -1,6 +1,5 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
-#include <RcppParallel.h>
+#include "Parallel.h"
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
@@ -8,8 +7,7 @@
 #include "m4_ld.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
-
+using namespace Parallel;
 
 /* ************
  * calcul du LD par un crossproduct sur une fenêtre des génotypes

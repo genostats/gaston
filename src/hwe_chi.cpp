@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-#include <RcppParallel.h>
 #include <iostream>
 #include <ctime>
 #include <limits>

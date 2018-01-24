@@ -1,12 +1,11 @@
-// [[Rcpp::depends(RcppParallel)]]
 #include <Rcpp.h>
-#include <RcppParallel.h>
+#include "Parallel.h"
 #include <iostream>
 #include "matrix4.h"
 #include "m4_kinship_type.h"
 
 using namespace Rcpp;
-using namespace RcppParallel;
+using namespace Parallel;
 
 
 // ************* [on ne symmétrise pas] ***********

@@ -89,6 +89,8 @@ extern SEXP gg_set_snp_to_na(SEXP, SEXP);
 extern SEXP gg_snp_hz_to_na(SEXP, SEXP);
 extern SEXP gg_write_bed_file(SEXP, SEXP);
 extern SEXP isnullptr(SEXP);
+extern SEXP set_nb_threads(SEXP);
+extern SEXP set_nb_threads_to_default();
 
 static const R_CMethodDef CEntries[] = {
     {"qfc", (DL_FUNC) &qfc, 11},
@@ -174,6 +176,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_snp_hz_to_na",                   (DL_FUNC) &gg_snp_hz_to_na,                    2},
     {"gg_write_bed_file",                 (DL_FUNC) &gg_write_bed_file,                  2},
     {"isnullptr",                         (DL_FUNC) &isnullptr,                          1},
+    {"set_nb_threads",                    (DL_FUNC) &set_nb_threads,                     1},
+    {"set_nb_threads_to_default",         (DL_FUNC) &set_nb_threads_to_default,          0},
     {NULL, NULL, 0}
 };
 
