@@ -19,4 +19,5 @@
 #include "m4_kinship_type.h"
 #include "matrix-varia.h"
 #include "optimize_2.h"
+#include "snp_hash.h"
 #endif
