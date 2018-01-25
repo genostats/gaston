@@ -55,6 +55,6 @@
        New functions SNP.duplicated, SNP.match
        New functions lmm.restricted.likelihood, lmm.profile.restricted.likelihood
 1.5.2  Remove some compilation warnings (-Wreorder)
-       Temporarily disable TBB (UBSAN test)
+       Temporarily disable TBB (UBSAN test) + function setThreadOptions
 
 
