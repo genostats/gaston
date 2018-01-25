@@ -36,7 +36,7 @@ double gg_pre_likelihood(NumericVector Y, NumericMatrix X, List K_, NumericVecto
 
   // Py = P * y (en tenant ompte de la symmétrie de P)
   Py.noalias()   =  P.selfadjointView<Lower>() * y;
-  double logL = -0.5*(log_detV + log_d1 + (n-p)*log(Py.dot(y.col(0))) + (n-p)*(1-log(n-p)));
+  double logL = -0.5*(log_detV + log_d1 + (n-p)*log(Py.dot(y.col(0))) + (n-p)*(1-log((double) (n-p))));
   return logL;
 }
 
@@ -62,7 +62,7 @@ double gg_pre_likelihood_nofix(NumericVector Y, List K_, NumericVector h2) {
 
   // Py = P * y = Vi * y 
   Py.noalias()   =  Vi.selfadjointView<Lower>() * y;
-  double logL = -0.5*(log_detV + n*log(Py.dot(y.col(0))) + n*(1-log(n)));
+  double logL = -0.5*(log_detV + n*log(Py.dot(y.col(0))) + n*(1-log((double)n)));
   return logL;
 
 }

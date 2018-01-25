@@ -56,5 +56,5 @@
        New functions lmm.restricted.likelihood, lmm.profile.restricted.likelihood
 1.5.2  Remove some compilation warnings (-Wreorder)
        Temporarily disable TBB (UBSAN test) + function setThreadOptions
-
+1.5.3  Cast in log() function (fix compilation error on solaris)
 
