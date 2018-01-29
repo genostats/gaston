@@ -8,7 +8,7 @@ IntegerVector logp_thinning(NumericVector logp, double step) {
   double x = 0;
   int i = 0, n = logp.size();
   debut:
-    while(logp[i] < x && i < n)  i++;
+    while(i < n && logp[i] < x)  i++;
     if(i < n) {
       if(std::isnan(logp[i])) 
         i++;
