@@ -44,10 +44,10 @@ manhattan <- function(x, bty="n", chrom.col = c("black", "gray50"), thinning = T
   args$y <- -log10(x$p) 
  
   if(thinning) {
-    # les valeurs 1000 et 500 ont l'air à peu près adaptées à n'importe quel manhattan plot, 
+    # ces valeurs ont l'air à peu près adaptées à n'importe quel manhattan plot, 
     # pas la peine d'enquiquiner l'utilisateur avec ces paramètres (en plus il faudrait les
     # documenter)
-    w <- manhattan.thinning(args$x, args$y, 1000, 500) 
+    w <- manhattan.thinning(args$x, args$y, 1000, 1000) 
     args$y <- args$y[w]
     args$x <- args$x[w]
     if(length(args$col) > 1) args$col <- args$col[w]

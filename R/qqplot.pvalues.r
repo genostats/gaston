@@ -1,5 +1,5 @@
-qqplot.pvalues <- function(p, col.abline = "red", CB = TRUE, col.CB = "gray90", CB.level = 0.95,
-                           thinning = TRUE, thinning.step = 1e-3, ...) {
+qqplot.pvalues <- function(p, col.abline = "red", CB = TRUE, col.CB = "gray80", CB.level = 0.95,
+                           thinning = TRUE, ...) {
   if(is.list(p)) { # ok pour les data frame aussi
     if(is.null(p$p))
       stop("No p-values were found")
@@ -44,7 +44,7 @@ qqplot.pvalues <- function(p, col.abline = "red", CB = TRUE, col.CB = "gray90", 
   observed <- sort(-log10( p ))
 
   if(thinning) {
-    w <- logp.thinning(observed, thinning.step)
+    w <- manhattan.thinning(expected, observed, 10000, 10000)
     args$x <- expected[w]
     args$y <- observed[w] 
   } else {
