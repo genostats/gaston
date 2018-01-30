@@ -57,6 +57,10 @@ score.variance.logistic(K0, Y, X = matrix(1, length(Y)), K, acc_davies=1e-10, ..
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
 \examples{
+# temporarily set nb threads to 2 to comply with CRAN rules
+n.threads <- getNumThreads()
+setThreadOptions(2)
+
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -86,6 +90,9 @@ y <- 1*(runif(length(pi))<pi)
 
 tt <- score.variance.logistic(K0, y, K=R$K, verbose=FALSE)
 str(tt)
+
+# back to previous nb threads value
+setThreadOptions(n.threads)
 }
 
 \keyword{ Variance Component Test }

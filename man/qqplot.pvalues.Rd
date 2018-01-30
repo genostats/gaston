@@ -4,8 +4,8 @@
 \title{ QQ plot of p-values }
 
 \description{ Draws a QQ plot of p-values }
-\usage{ qqplot.pvalues(p, col.abline = "red", CB = TRUE, col.CB = "gray90", 
-                       CB.level = 0.95, thinning = TRUE, thinning.step = 1e-3, ...) }
+\usage{ qqplot.pvalues(p, col.abline = "red", CB = TRUE, col.CB = "gray80", 
+                       CB.level = 0.95, thinning = TRUE, ...) }
 
 \arguments{
   \item{p}{ A vector of p-values, or a data.frame with a column named \code{p} }
@@ -14,7 +14,6 @@
   \item{col.CB}{ The color of the confidence band. }
   \item{CB.level}{ The level of the confidence band. }
   \item{thinning}{ \code{Logical}. If \code{TRUE}, not all points are displayed. }
-  \item{thinning.step}{ The minimal distance between thinned points (measured on the y-axis). }
   \item{...}{ Graphical parameters to be passed to \code{plot} and \code{points} }
 }
 
@@ -29,7 +28,7 @@ points lie outsite of this band is greater that \code{CB.level}.
 
 The thinning procedure suppress some points to avoid generating too heavy graphs. The user 
 should check that setting \code{thinning = FALSE} does not change the final aspect of the 
-QQ plot. Smaller values of \code{thinning.step} result in more points plotted.
+QQ plot. 
 }
 
 \seealso{ \code{\link{association.test}}, \code{\link{manhattan}}, \code{\link{qqplot}}, 

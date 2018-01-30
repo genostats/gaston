@@ -77,6 +77,10 @@ lmm.aireml(Y, X = matrix(1, nrow = length(Y)), K,
 \seealso{\code{\link{lmm.diago}}, \code{\link{logistic.mm.aireml}}, \code{\link{lmm.simu}}}
 
 \examples{
+# Temporarily set nb threads to 2 to comply with CRAN rules
+n.threads <- getNumThreads()
+setThreadOptions(2)
+
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -92,6 +96,9 @@ y <- 1 + x \%*\% rnorm(ncol(x), sd = 1)/sqrt(ncol(x)) + rnorm(nrow(x), sd = sqrt
 # Estimates
 estimates <- lmm.aireml(y, K = K, verbose = FALSE)
 str(estimates)
+
+# back to previous nb threads value
+setThreadOptions(n.threads)
 }
 
 \keyword{ Average Information Restricted Maximum Likelihood (AIREML) }

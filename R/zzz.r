@@ -4,8 +4,8 @@
 
   n <- RcppParallel::defaultNumThreads()
   n <- 2**max(0,floor(min(3, log2(n) - 1)))
-  RcppParallel::setThreadOptions(n)
-  packageStartupMessage("Gaston set number of threads to ", n, ". Use RcppParallel::setThreadOptions() to modify this.")
+  setThreadOptions(n)
+  packageStartupMessage("Gaston set number of threads to ", n, ". Use setThreadOptions() to modify this.")
 }
 
 .onLoad <- function(libname, pkgname) {

@@ -58,7 +58,8 @@ LD.plot( ld.x[1:20,1:20], snp.positions = x@snps$pos[1:20],
 \dontrun{
 # Plotting the whole matrix in X11 display is very long (lots of polygons)
 # but it is ok with a pdf file
-LD.plot(ld.x, snp.positions = x@snps$pos, max.dist = 50e3, write.ld = NULL, pdf.file = "LD_AGT.pdf")
+# (please uncomment to run)
+#LD.plot(ld.x, snp.positions = x@snps$pos, max.dist = 50e3, write.ld = NULL, pdf.file = "LDAGT.pdf")
 }
 }
 

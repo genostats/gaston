@@ -32,6 +32,10 @@
 
 \seealso{ \code{\link{GRM}} }
 \examples{
+# temporarily set nb threads to 2 to comply with CRAN rules
+n.threads <- getNumThreads()
+setThreadOptions(2)
+
 # load chr2 data set (~10k SNPs in low LD)
 x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )
 
@@ -43,6 +47,9 @@ pairs <- reshape.GRM(K, exclude = c(-Inf, 0.07))
 
 # Exclude first individual from each such pair
 x1 <- x[ -pairs$i, ]
+
+# back to previous nb threads value
+setThreadOptions(n.threads)
 }
 
 \keyword{ Genetic Relationship Matrix }

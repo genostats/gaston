@@ -87,6 +87,10 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 
 \examples{
 \donttest{
+# Product below is multithreaded; temporarily set nb threads to 2 to comply with CRAN rules
+n.threads <- getNumThreads()
+setThreadOptions(2)
+
 # Load data
 data(TTN)
 x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
@@ -114,6 +118,9 @@ y1 <- as.numeric(y > mean(y))
 t_binary <- association.test(x, y1, method = "lm", response = "binary")
 # another small Manhattan plot
 manhattan(t_binary, col = rgb(lds,0,0), pch = 20)
+
+# back to previous nb threads value
+setThreadOptions(n.threads)
 
 }}
 

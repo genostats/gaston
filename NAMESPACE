@@ -26,4 +26,4 @@ export(association.test)
 export(score.variance.linear, score.variance.logistic, score.fixed.linear, score.fixed.logistic)
 export(qqplot.pvalues, manhattan)
 export(SNP.duplicated, SNP.match)
-export(setThreadOptions) # !! 
+export(setThreadOptions, getNumThreads) # !! 

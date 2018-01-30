@@ -91,6 +91,7 @@ extern SEXP gg_write_bed_file(SEXP, SEXP);
 extern SEXP isnullptr(SEXP);
 extern SEXP set_nb_threads(SEXP);
 extern SEXP set_nb_threads_to_default();
+extern SEXP get_nb_threads();
 
 static const R_CMethodDef CEntries[] = {
     {"qfc", (DL_FUNC) &qfc, 11},
@@ -98,6 +99,7 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
+    {"get_nb_threads",                    (DL_FUNC) &get_nb_threads,                     0},
     {"gg_random_ortho",                   (DL_FUNC) &gg_random_ortho,                    1},
     {"gg_manhattan_thinning",             (DL_FUNC) &gg_manhattan_thinning,              4},
     {"gg_re_likelihood",                  (DL_FUNC) &gg_re_likelihood,                   4},

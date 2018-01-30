@@ -55,6 +55,10 @@
 \seealso{ \code{\link{lmm.diago.likelihood}}, \code{\link{lmm.diago}}, \code{\link{lmm.aireml}} }
 
 \examples{
+# temporarily set nb threads to 2 to comply with CRAN rules
+n.threads <- getNumThreads()
+setThreadOptions(2)
+
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -76,6 +80,9 @@ lmm.profile.restricted.likelihood(y, K=K, h2 = 0.2)
 # identity with the values computed with the diagonalisation trick
 lmm.diago.likelihood(tau = 0.2, s2 = 0.8, Y = y, eigenK = eiK)
 lmm.diago.likelihood(h2 = 0.2, Y = y, eigenK = eiK)
+
+# back to previous nb threads value
+setThreadOptions(n.threads)
 }
 
 \keyword{ Eigen decomposition }
