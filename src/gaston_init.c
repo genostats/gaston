@@ -34,6 +34,7 @@ extern SEXP gg_AIREML1(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEX
 extern SEXP gg_AIREML1_contrast(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREMLn(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREMLn_contrast(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_alleles_duplicated(SEXP, SEXP);
 extern SEXP gg_alleles_recoding(SEXP);
 extern SEXP gg_as_matrix4(SEXP);
 extern SEXP gg_bind_inds2(SEXP, SEXP);
@@ -46,6 +47,7 @@ extern SEXP gg_diago_likelihood1(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_diago_likelihood1_nocovar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_diago_likelihood2(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_diago_likelihood2_nocovar(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_duplicated_remove(SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_extract_inds_bool(SEXP, SEXP);
 extern SEXP gg_extract_inds_indices(SEXP, SEXP);
 extern SEXP gg_extract_snps_bool(SEXP, SEXP);
@@ -123,6 +125,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_AIREMLn",                        (DL_FUNC) &gg_AIREMLn,                        15},
     {"gg_AIREML1_contrast",               (DL_FUNC) &gg_AIREML1_contrast,               15},
     {"gg_AIREMLn_contrast",               (DL_FUNC) &gg_AIREMLn_contrast,               15},
+    {"gg_alleles_duplicated",             (DL_FUNC) &gg_alleles_duplicated,              2},
     {"gg_alleles_recoding",               (DL_FUNC) &gg_alleles_recoding,                1},
     {"gg_as_matrix4",                     (DL_FUNC) &gg_as_matrix4,                      1},
     {"gg_bind_inds2",                     (DL_FUNC) &gg_bind_inds2,                      2},
@@ -135,6 +138,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_diago_likelihood1_nocovar",      (DL_FUNC) &gg_diago_likelihood1_nocovar,       5},
     {"gg_diago_likelihood2",              (DL_FUNC) &gg_diago_likelihood2,               7},
     {"gg_diago_likelihood2_nocovar",      (DL_FUNC) &gg_diago_likelihood2_nocovar,       6},
+    {"gg_duplicated_remove",              (DL_FUNC) &gg_duplicated_remove,               4},
     {"gg_extract_inds_bool",              (DL_FUNC) &gg_extract_inds_bool,               2},
     {"gg_extract_inds_indices",           (DL_FUNC) &gg_extract_inds_indices,            2},
     {"gg_extract_snps_bool",              (DL_FUNC) &gg_extract_snps_bool,               2},

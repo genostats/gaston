@@ -16,29 +16,29 @@ XPtr<matrix4> duplicated_remove(XPtr<matrix4> x, NumericVector D, StringVector f
   int n = x->ncol;
   int m = x->nrow;
   NumericVector snp(m);
-  int nn=n;
-  nn -= rem;
+  int mm=m-rem;
 
-  XPtr<matrix4> r(new matrix4(m,nn));
+  XPtr<matrix4> r(new matrix4(mm,n));
   int col=0;
-  for(int i = 0; i < n; i++) {
+  for(int i = 0; i < m; i++) {
 	if ( flip(i)=="remove" || flip(i)=="ref")
     {
 	  continue;
 	}
 	if (flip(i)=="keep") {
-	  for(int k = 0; k < m; k++) snp(k)=(*x)(i,k);
+	  for(int k = 0; k < n; k++) snp(k)=(*x)(i,k);
 	
-	  for(int j = 0; j < n; j++) {
+	  for(int j = 0; j < m; j++) {
 	    if( D(i)!=D(j) ) {
 		  continue;
 		} else {
-	      for(int k = 0; k < m; k++) snp(k) = compare_geno( snp(k), (*x)(j,k), Rcpp::as< std::string >( flip(j) ) );
+	      for(int k = 0; k < n; k++) snp(k) = compare_geno( snp(k), (*x)(j,k), Rcpp::as< std::string >( flip(j) ) );
         }
 	  }
 
       //copie dans la nouvelle bed.matrix
-	  for(int k = 0; k < m; k++) (*r)(col++,k)=snp(k);
+	  for(int k = 0; k < n; k++) (*r)(col,k)=snp(k);
+      col++;
 	}
   }
   return r;

@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 #include <iostream>
-#include "matrix4.h"
 #include "flip_strand.h"
 
 using namespace Rcpp;
