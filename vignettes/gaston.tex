@@ -93,7 +93,7 @@
 
 
 \title{{\bfseries Gaston}\\
-       {\large Version 1.5}}
+       {\large Version 1.5.3}}
 \author{Hervé Perdry, Claire Dandine-Roulland}
 
 
@@ -298,7 +298,7 @@ ped stats are set
 \hlstd{> }\hlstd{x}\hlopt{@}\hlkwc{bed}
 \end{alltt}
 \begin{verbatim}
-<pointer: 0x35f01e0>
+<pointer: 0x436b850>
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1034,12 +1034,12 @@ need to standardize \verb!x! explicitely: is \verb!x! isn't standardized,
 \end{alltt}
 \begin{verbatim}
                      [,1]          [,2]
-rs113106463  0.0059549223  0.0064476350
-rs13390778   0.0099678227 -0.0125720968
-rs75011129   0.0001122798 -0.0001181855
-rs4637157    0.0151318030 -0.0148076787
-rs62116661   0.0002977574  0.0048268360
-rs10170011  -0.0185198430 -0.0019553339
+rs113106463  0.0059549201  0.0064476344
+rs13390778   0.0099678236 -0.0125721014
+rs75011129   0.0001122793 -0.0001181844
+rs4637157    0.0151318053 -0.0148076772
+rs62116661   0.0002977573  0.0048268309
+rs10170011  -0.0185198431 -0.0019553418
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1066,24 +1066,24 @@ to explicitely standardize \verb!x!):
 \end{alltt}
 \begin{verbatim}
                 [,1]        [,2]
-HG00096 -0.021410880 -0.12418404
-HG00097  0.014005020 -0.07378045
-HG00099 -0.001384442 -0.09708207
-HG00100 -0.020319167 -0.08920823
-HG00101 -0.002596089 -0.08925960
-HG00102 -0.010155043 -0.08968428
+HG00096 -0.021410863 -0.12418398
+HG00097  0.014005030 -0.07378042
+HG00099 -0.001384432 -0.09708208
+HG00100 -0.020319164 -0.08920828
+HG00101 -0.002596083 -0.08925961
+HG00102 -0.010155031 -0.08968427
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlkwd{head}\hlstd{( PC[,}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{] )}
 \end{alltt}
 \begin{verbatim}
              [,1]        [,2]
-[1,] -0.021410883 -0.12418404
-[2,]  0.014005016 -0.07378046
-[3,] -0.001384440 -0.09708206
-[4,] -0.020319160 -0.08920821
-[5,] -0.002596079 -0.08925958
-[6,] -0.010155033 -0.08968427
+[1,] -0.021410843 -0.12418392
+[2,]  0.014005028 -0.07378041
+[3,] -0.001384429 -0.09708204
+[4,] -0.020319171 -0.08920827
+[5,] -0.002596078 -0.08925959
+[6,] -0.010155008 -0.08968426
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1491,19 +1491,16 @@ List of 9
 \begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 0
-[Iteration 1] Current point = 0 df = 64.413
-[Iteration 2] Current point = 0.194425 df = 25.2582
-[Iteration 3] Current point = 0.392811 df = 6.1397
-[Iteration 4] Current point = 0.475146 df = 0.46511
-[Iteration 5] Current point = 0.482424 df = 0.00283126
-[Iteration 6] Current point = 0.482469 df = 1.05346e-07
+[Iteration 1] Current point = 0 df = 3.32616
+[Iteration 2] Current point = 0.099573 df = 0.0543536
+[Iteration 3] Current point = 0.101252 df = 1.2657e-05
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
 
-  We have $\widehat\tau = 1.439$ and $\widehat{\sigma^2} = 1.54$,
-  hence $h^2$ is estimated to $48.2\%$.
+  We have $\widehat\tau = 0.298$ and $\widehat{\sigma^2} = 2.65$,
+  hence $h^2$ is estimated to $10.1\%$.
 
   The function \verb!lmm.diago.likelihood! allows to compute a profile likelihood with parameter 
   $h^2 = {\tau \over \tau + \sigma^2}$. It can be useful to get confidence intervals. Here,
@@ -1550,19 +1547,16 @@ Optimizing with p = 0
 \begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 0
-[Iteration 1] Current point = 0 df = 275.603
-[Iteration 2] Current point = 0.108389 df = 122.929
-[Iteration 3] Current point = 0.268437 df = 50.3768
-[Iteration 4] Current point = 0.457027 df = 16.094
-[Iteration 5] Current point = 0.58536 df = 2.6002
-[Iteration 6] Current point = 0.614618 df = 0.0830966
-[Iteration 7] Current point = 0.615616 df = 8.80129e-05
+[Iteration 1] Current point = 0 df = 8.47139
+[Iteration 2] Current point = 0.239713 df = 0.364915
+[Iteration 3] Current point = 0.2509 df = 0.000461187
+[Iteration 4] Current point = 0.250914 df = 7.18119e-10
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{fit0}\hlopt{$}\hlstd{tau}\hlopt{/}\hlstd{(fit0}\hlopt{$}\hlstd{tau}\hlopt{+}\hlstd{fit0}\hlopt{$}\hlstd{sigma2)}
 \end{alltt}
 \begin{verbatim}
-[1] 0.6156168
+[1] 0.2509142
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{fit10} \hlkwb{<-} \hlkwd{lmm.diago}\hlstd{(y1,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen,} \hlkwc{p} \hlstd{=} \hlnum{10}\hlstd{)}
@@ -1570,17 +1564,15 @@ Optimizing with p = 0
 \begin{verbatim}
 Optimization in interval [0, 1]
 Optimizing with p = 10
-[Iteration 1] Current point = 0 df = 24.586
-[Iteration 2] Current point = 0.225041 df = 5.55678
-[Iteration 3] Current point = 0.308349 df = 0.358557
-[Iteration 4] Current point = 0.314477 df = 0.00156928
-[Iteration 5] Current point = 0.314504 df = 3.01487e-08
+[Iteration 1] Current point = 0 df = 4.45003
+[Iteration 2] Current point = 0.143356 df = 0.0854252
+[Iteration 3] Current point = 0.146209 df = 2.38332e-05
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{fit10}\hlopt{$}\hlstd{tau}\hlopt{/}\hlstd{(fit10}\hlopt{$}\hlstd{tau}\hlopt{+}\hlstd{fit10}\hlopt{$}\hlstd{sigma2)}
 \end{alltt}
 \begin{verbatim}
-[1] 0.3145042
+[1] 0.1462102
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1650,30 +1642,24 @@ Stay tuned!
 \hlstd{> }\hlstd{t_score} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y,} \hlkwc{K} \hlstd{= R}\hlopt{$}\hlstd{K,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
-[Iteration 1] theta = 0.657707 0.657707
-[Iteration 1] log L = -323.651
+[Iteration 1] theta = 0.708172 0.708172
+[Iteration 1] log L = -342.103
+[Iteration 1] Constraining tau
 [Iteration 1] AI-REML update
-[Iteration 1] ||gradient|| = 4.85288
-[Iteration 2] theta =   1.20215 0.0972206
-[Iteration 2] log L = -322.682
+[Iteration 1] ||gradient|| = 1.20936
+[Iteration 2] theta = 1.41153   1e-06
+[Iteration 2] log L = -341.48
 [Iteration 2] AI-REML update
-[Iteration 2] ||gradient|| = 4.37215
-[Iteration 3] theta =   1.1115 0.202708
-[Iteration 3] log L = -322.576
+[Iteration 2] ||gradient|| = 0.606817
+[Iteration 3] theta = 1.41633   1e-06
+[Iteration 3] log L = -341.478
 [Iteration 3] AI-REML update
-[Iteration 3] ||gradient|| = 0.257808
-[Iteration 4] theta = 1.10565 0.20968
-[Iteration 4] log L = -322.575
+[Iteration 3] ||gradient|| = 0.00204975
+[Iteration 4] theta = 1.41634   1e-06
+[Iteration 4] log L = -341.478
+[Iteration 4] Checking gradient components signs before last iteration
 [Iteration 4] AI-REML update
-[Iteration 4] ||gradient|| = 0.002778
-[Iteration 5] theta =  1.10593 0.209392
-[Iteration 5] log L = -322.575
-[Iteration 5] AI-REML update
-[Iteration 5] ||gradient|| = 0.00015272
-[Iteration 6] theta =  1.10592 0.209406
-[Iteration 6] log L = -322.575
-[Iteration 6] AI-REML update
-[Iteration 6] ||gradient|| = 7.32907e-06
+[Iteration 4] ||gradient|| = 2.37022e-08
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlstd{t_wald} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y,} \hlkwc{eigenK} \hlstd{= R}\hlopt{$}\hlstd{eigen,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{,} \hlkwc{test} \hlstd{=} \hlstr{"wald"}\hlstd{)}
@@ -1746,22 +1732,26 @@ available). The baby Manhattan plot is plotted again.
 \hlstd{> }\hlstd{t_binary} \hlkwb{<-} \hlkwd{association.test}\hlstd{(x, y1,} \hlkwc{K} \hlstd{= R}\hlopt{$}\hlstd{K,} \hlkwc{method} \hlstd{=} \hlstr{"lmm"}\hlstd{,} \hlkwc{response} \hlstd{=} \hlstr{"binary"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
-[Initialization] beta = -0.0357891
-[Initialization] tau = 4.00925
-[Iteration 1] tau = 3.03346
-[Iteration 1] beta = -0.0383983
-[Iteration 2] gr = -11.3518
+[Initialization] beta = -0.0198814
+[Initialization] tau = 4.00836
+[Iteration 1] tau = 3.01058
+[Iteration 1] beta = -0.0187091
+[Iteration 2] gr = -11.4953
 [Iteration 2] Constraining tau
 [Iteration 2] tau = 1e-06
-[Iteration 2] beta = -0.0406058
-[Iteration 3] gr = -0.195732
-[Iteration 3] Constraining tau
-[Iteration 3] tau = 1e-06
-[Iteration 3] beta = -0.0357889
-[Iteration 4] gr = -0.201502
-[Iteration 4] Constraining tau
-[Iteration 4] tau = 1e-06
-[Iteration 4] beta = -0.0357891
+[Iteration 2] beta = -0.022655
+[Iteration 3] gr = 0.0757621
+[Iteration 3] tau = 0.00479595
+[Iteration 3] beta = -0.0198767
+[Iteration 4] gr = -0.00152393
+[Iteration 4] tau = 0.00469915
+[Iteration 4] beta = -0.0198768
+[Iteration 5] gr = -6.65199e-06
+[Iteration 5] tau = 0.00469873
+[Iteration 5] beta = -0.0198768
+[Iteration 6] gr = -2.47279e-08
+[Iteration 6] tau = 0.00469873
+[Iteration 6] beta = -0.0198768
 \end{verbatim}
 \begin{alltt}
 \hlstd{> }\hlcom{# (mini) Manhattan plot}

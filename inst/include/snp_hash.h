@@ -157,7 +157,7 @@ class SNPhash {
 
   // look up by snpid 
   inline unsigned int lookup(SEXP ID) const {
-    if(htype != snpid && htype != snpid_chr_pos && htype != snpid_chr_pos_al)
+    if(htype != snpid)
       return NA_INTEGER;
     const char * id_ = CHAR(ID);
     unsigned int ad = djb2(id_);
@@ -168,6 +168,21 @@ class SNPhash {
     }
     return NA_INTEGER;
   }
+
+  inline unsigned int lookup(std::string ID) const {
+    if(htype != snpid)
+      return NA_INTEGER;
+    const char * id_ = ID.c_str();
+    unsigned int ad = djb2(id_);
+    while(index[ad]) {
+      if(!std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1))))
+        return index[ad];
+      ++ad %= m;
+    }
+    return NA_INTEGER;
+  }
+
+
   // look up by snpid:chr:pos
   inline unsigned int lookup(SEXP ID, int c, int p) const {
     if(htype != snpid_chr_pos && htype != snpid_chr_pos_al)

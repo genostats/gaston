@@ -4,17 +4,18 @@ SNP.duplicated.rm <- function(x, by='chr:pos') {
   if(class(x) != "bed.matrix") stop("x be a bed matrix")
 
   # where are duplicated
-  dupli <- SNP.match(x@snps[strsplit(by,':')[[1]]], x@snps[SNP.duplicated(x, by=by),])
+  dupli <- SNP.match(x@snps[strsplit(by,':')[[1]]], x@snps[SNP.duplicated(x, by=by),])$index
 	
   a <- .Call("gg_alleles_duplicated",  PACKAGE = "gaston", x@snps, dupli)
-  bed <- .Call("gg_duplicated",  PACKAGE = "gaston", bed, dupli, a$flip, sum(a$flip=='remove'))
+  bed <- .Call("gg_duplicated_remove",  PACKAGE = "gaston", x@bed, dupli, a$flip, sum(a$flip %in% c('ref','remove')))
 
-  x <- new("bed.matrix", bed = bed, snps = bed@snps[,a$flip=='keep'], ped = x@ped$ped,
+  new <- new("bed.matrix", bed = bed, snps = x@snps[a$flip=='keep',], ped = x@ped,
            p = NULL, mu = NULL, sigma = NULL,
            standardize_p = FALSE, standardize_mu_sigma = FALSE )
+  print(new)
 
   if(getOption("gaston.auto.set.stats", TRUE)) 
-    x <- set.stats.snps(x, verbose = FALSE)
+    new <- set.stats.snps(new, verbose = FALSE)
 
   if(a$swap_reference > 0) 
     warning(a$swap_reference, " reference allele inversions were performed during removing duplicated SNP")
@@ -23,5 +24,5 @@ SNP.duplicated.rm <- function(x, by='chr:pos') {
   if(a$NAs > 0) 
     warning(a$NAs, " duplicated SNPs were set to NA because alleles were incompatibles")
 
-  x
+  new
 }
