@@ -43,57 +43,59 @@ fam <- data.frame(famid=1:10, id=1:10, father=0, mother=0, sex=0, pheno=0)
 # Genotypes matrix
 G <- matrix(NA, ncol=16, nrow=10)
 
-## two identical SNPs
+## No duplicated
 bim[1,c('A1','A2')] <- c('A', 'C')
+G[,1] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+
+## two identical SNPs
 bim[2,c('A1','A2')] <- c('A', 'C')
-G[,1] <- G[,2] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[1,1] <- NA
+bim[3,c('A1','A2')] <- c('A', 'C')
+G[,2] <- G[,3] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[1,2] <- NA
 
 ## reference alllele reverse
-bim[3,c('A1','A2')] <- c('A', 'C')
-bim[4,c('A1','A2')] <- c('C', 'A')
-G[,3] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[,4] <- 2-G[,3]
-G[2,4] <- NA
+bim[4,c('A1','A2')] <- c('A', 'C')
+bim[5,c('A1','A2')] <- c('C', 'A')
+G[,4] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[,5] <- 2-G[,3]
+G[2,5] <- NA
 
 ## reverse strand
-bim[5,c('A1','A2')] <- c('A', 'C')
-bim[6,c('A1','A2')] <- c('T', 'G')
-G[,5] <- G[,6] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[3,5] <- G[4,6] <- NA
+bim[6,c('A1','A2')] <- c('A', 'C')
+bim[7,c('A1','A2')] <- c('T', 'G')
+G[,6] <- G[,7] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[3,7] <- G[4,7] <- NA
 
 ## reverse reference allele and strand
-bim[7,c('A1','A2')] <- c('A', 'C')
-bim[8,c('A1','A2')] <- c('G', 'T')
-G[,7] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[,8] <- 2-G[,7]
-G[5,7] <- G[6,8] <- NA
+bim[8,c('A1','A2')] <- c('A', 'C')
+bim[9,c('A1','A2')] <- c('G', 'T')
+G[,8] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[,9] <- 2-G[,8]
+G[5,8] <- G[6,9] <- NA
 
 ## incompatible alleles
-bim[9,c('A1','A2')] <- c('A', 'C')
-bim[10,c('A1','A2')] <- c('A', 'T')
-G[,9] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+bim[10,c('A1','A2')] <- c('A', 'C')
+bim[11,c('A1','A2')] <- c('A', 'T')
 G[,10] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[7,9] <- NA
+G[,11] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[7,10] <- NA
 
 ## one monomorphic SNP
-bim[11,c('A1','A2')] <- c('A', 'C')
-bim[12,c('A1','A2')] <- c('A', '0')
-G[,11:12] <- 0
-G[8:10, 11] <- c(1,1,NA)
-G[8,12] <- NA
+bim[12,c('A1','A2')] <- c('A', 'C')
+bim[13,c('A1','A2')] <- c('A', '0')
+G[,12:13] <- 0
+G[8:10, 12] <- c(1,1,NA)
+G[8,13] <- NA
 
 ## more than 2 replications
-bim[13,c('A1','A2')] <- c('A', 'C')
-bim[14,c('A1','A2')] <- c('T', 'G')
-bim[15,c('A1','A2')] <- c('G', 'T')
-G[,13] <- G[,14] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
-G[,15] <- 2-G[,13]
-G[9,13] <- NA
-G[10,15] <- NA
+bim[15,c('A1','A2')] <- c('A', 'C')
+bim[15,c('A1','A2')] <- c('T', 'G')
+bim[16,c('A1','A2')] <- c('G', 'T')
+G[,14] <- G[,15] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
+G[,16] <- 2-G[,14]
+G[9,14] <- NA
+G[10,16] <- NA
 
-## No duplicated
-G[,16] <- sample(c(0:2, NA), 10, replace=T, prob=c(0.45,0.30,0.20,0.05))
  
 x <- as.bed.matrix(G, bim=bim, fam=fam)
 as.matrix(SNP.duplicated.rm(x))
