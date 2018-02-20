@@ -14,15 +14,22 @@ List alleles_duplicated(DataFrame snps, NumericVector D) {
 
   int nas = 0, strand = 0, ref = 0;
   
-  StringVector R(n);
+  LogicalVector K(n, true);
+  LogicalVector R(n);
   CharacterVector A1 = as<CharacterVector>(snps["A1"]);
   CharacterVector A2 = as<CharacterVector>(snps["A2"]);
   
   for(int i = 0; i < n; i++) { // on parcourt les SNP
   
-    if ( R_IsNA(D(i)) || R(i)=="ref" || R(i)=="remove" ) continue; // pas de dupliqué ou déjà traité
+    if ( R_IsNA(D(i)) ) {
+	  K(i) = true;
+	  R(i) = false;
+      continue; // pas de dupliqué
+    }
+    if ( K(i)==false ) continue; //déjà traité
 	
-	R(i) = "keep";
+	K(i) = true;
+	R(i) = false;
 	
     const char * a1 = CHAR(STRING_ELT(A1,i));
     const char * a2 = CHAR(STRING_ELT(A2,i));
@@ -35,12 +42,14 @@ List alleles_duplicated(DataFrame snps, NumericVector D) {
         const char * b2 = CHAR(STRING_ELT(A2,j));
         // tout ok
         if( !std::strcmp(a1, b1) && !std::strcmp(a2, b2) ) {
-          R(j) = "remove";
+          K(j) = false;
+		  R(j) = false;
           continue; // case closed
         }
         // inversion allèle ref ?
         if( !std::strcmp(a1, b2) && !std::strcmp(a2, b1) ) {
-          R(j) = "ref";
+		  K(j) = false;
+          R(j) = true;
           ref++;
           continue; // case closed
         }
@@ -48,12 +57,14 @@ List alleles_duplicated(DataFrame snps, NumericVector D) {
         std::string c1 = flip_strand(b1);
         std::string c2 = flip_strand(b2);
         if( c1 == a1 && c2 == a2 ) { // ok
-          R(j) = "remove";
+          K(j) = false;
+		  R(j) = false;
           strand++;
           continue;
         }
         if( c1 == a2 && c2 == a1 ) { // + inversion allèle ref
-          R(j) = "ref";
+		  K(j) = false;
+          R(j) = true;
           strand++; 
           ref++;
           continue;
@@ -61,111 +72,125 @@ List alleles_duplicated(DataFrame snps, NumericVector D) {
 		// un des cas monomorphes
 		if( !std::strcmp(a1, "0") ) {
 		  if( !std::strcmp(a2, b2) ) {
-		    R(i) = "remove";
-			R(j) = "keep";
+		    K(i) = false;
+			K(j) = true;
+			R(j) = false;
 			// Il vaut mieux garder le second qui repassera dans la boucle
 			// pour un potentiel autre duplica
 			break;
 		  }		  
 		  if( !std::strcmp(a2, b1) ) {
-		    R(i) = "ref";
-			R(j) = "keep";
+			K(i) = false;
+		    R(i) = true;
+			K(j) = true;
+			R(j) = false;
 			break;
 		  }
 		  std::string c2 = flip_strand(b2);
           if( a2==c2 ) {
-		     R(i) = "remove";
-			 R(j) = "keep";
-			 break;
+		    R(i) = false;
+			K(j) = true;
+			R(j) = false;
+			break;
 		  }
 		  std::string c1 = flip_strand(b1);
           if( a2==c1 ) {
-		     R(i) = "ref";
-			 R(j) = "keep";
-			 break;
+			K(i) = false;
+		    R(i) = true;
+			K(j) = true;
+			R(j) = false;
+			break;
 		  }
 	    }
 		if( !std::strcmp(a2, "0") ) {
 		  if( !std::strcmp(a1, b1) ) {
-		    R(i) = "remove";
-			R(j) = "keep";
+		    R(i) = false;
+			K(j) = true;
+			R(j) = false;
 			break;
 		  }		  
 		  if( !std::strcmp(a1, b2) ) {
-		    R(i) = "ref";
-			R(j) = "keep";
+			K(i) = false;
+		    R(i) = true;
+			K(j) = true;
+			R(j) = false;
 			break;
 		  }
 		  std::string c1 = flip_strand(b1);
           if( a1==c1 ) {
-		     R(i) = "remove";
-			 R(j) = "keep";
-			 break;
+		    R(i) = false;
+			K(j) = true;
+			R(j) = false;
+			break;
 		  }
 		  std::string c2 = flip_strand(b2);
           if( a1==c2 ) {
-		     R(i) = "ref";
-			 R(j) = "keep";
-			 break;
+			K(i) = false;
+		    R(i) = true;
+			K(j) = true;
+			R(j) = false;
+			break;
 		  }
 	    }
 		if( !std::strcmp(b1, "0") ) {
 		  if( !std::strcmp(a2, b2) ) {
-		    R(i) = "keep";
-			R(j) = "remove";
+			K(j) = false;
+			R(j) = false;
 			continue;
 		  }		  
 		  if( !std::strcmp(a1, b2) ) {
-		    R(i) = "keep";
-			R(j) = "ref";
+			K(j) = false;
+			R(j) = true;
 			continue;
 		  }
 		  std::string c2 = flip_strand(a2);
           if( c2==b2 ) {
-		     R(i) = "keep";
-			 R(j) = "remove";
+			K(j) = false;
+			R(j) = false;
 			 continue;
 		  }
 		  std::string c1 = flip_strand(a1);
           if( c1==b2 ) {
-		     R(i) = "keep";
-			 R(j) = "ref";
+			K(j) = false;
+			R(j) = true;
 			 continue;
 		  }
 	    }
 		if( !std::strcmp(b2, "0") ) {
 		  if( !std::strcmp(a1, b1) ) {
-		    R(i) = "keep";
-			R(j) = "remove";
+			K(j) = false;
+			R(j) = false;
 			continue;
 		  }		  
 		  if( !std::strcmp(a2, b1) ) {
-		    R(i) = "keep";
-			R(j) = "ref";
+			K(j) = false;
+			R(j) = true;
 			continue;
 		  }
 		  std::string c1 = flip_strand(a1);
           if( c1==b1 ) {
-		     R(i) = "keep";
-			 R(j) = "remove";
-			 continue;
+			K(j) = false;
+			R(j) = false;
+			continue;
 		  }
 		  std::string c2 = flip_strand(a2);
           if( c2==b1 ) {
-		     R(i) = "keep";
-			 R(j) = "ref";
-			 continue;
+			K(j) = false;
+			R(j) = true;
+			continue;
 		  }
 	    }
 		
         // si on est arrivés jusque là c"est qu"il y a discordance sans remède
-	    R(i) = "remove";
-		R(j) = "remove";
+	    K(i) = false;
+		K(j) = false;
+		R(j) = false;
         nas++;
       }
 	}
   }
   List LL;
+  LL["keep"] = K;
   LL["flip"] = R;
   LL["swap_reference"] = ref;
   LL["flip_strand"] = strand;
