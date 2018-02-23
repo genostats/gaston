@@ -11,7 +11,7 @@ template<typename T1, typename T2>
 void logistic_model(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T2> & x, double eps, VectorXd & beta, MatrixXd & XWX_i) {
   int n(y.rows()), p(x.cols());
   VectorXd W(n);
-  MatrixXd XWX(p,p), WX(n,p), P(n,n);
+  MatrixXd XWX(p,p), WX(n,p);
   VectorXd pi(n), z(n), Pz(n);
   double d, log_d;
 
@@ -48,7 +48,7 @@ template<typename T1, typename T2>
 void logistic_model_f(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T2> & x, float eps, VectorXf & beta, MatrixXf & XWX_i) {
   int n(y.rows()), p(x.cols());
   VectorXf W(n);
-  MatrixXf XWX(p,p), WX(n,p), P(n,n);
+  MatrixXf XWX(p,p), WX(n,p);
   VectorXf pi(n), z(n), Pz(n);
   float d, log_d;
   W.setZero();
