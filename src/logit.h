@@ -12,7 +12,7 @@ void logistic_model(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T2>
   int n(y.rows()), p(x.cols());
   VectorXd W(n);
   MatrixXd XWX(p,p), WX(n,p);
-  VectorXd pi(n), z(n), Pz(n);
+  VectorXd pi(n);
   double d, log_d;
 
   W.setZero();
