@@ -11,6 +11,8 @@
 extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 /* .Call calls */
+extern SEXP gg_duplicated_remove(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_alleles_duplicated(SEXP, SEXP);
 extern SEXP gg_random_ortho(SEXP);
 extern SEXP gg_manhattan_thinning(SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_pre_likelihood(SEXP, SEXP, SEXP, SEXP);
@@ -99,6 +101,8 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
+    {"gg_duplicated_remove",              (DL_FUNC) &gg_duplicated_remove,               6},
+    {"gg_alleles_duplicated",             (DL_FUNC) &gg_alleles_duplicated,              2},
     {"get_nb_threads",                    (DL_FUNC) &get_nb_threads,                     0},
     {"gg_random_ortho",                   (DL_FUNC) &gg_random_ortho,                    1},
     {"gg_manhattan_thinning",             (DL_FUNC) &gg_manhattan_thinning,              4},
