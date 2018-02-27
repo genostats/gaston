@@ -1,31 +1,33 @@
-\name{SNP.duplicated.rm}
-\alias{SNP.duplicated.rm}
+\name{SNP.rm.duplicates}
+\alias{SNP.duplicates}
 
-\title{ Romve duplicated SNPs }
+\title{ Remove duplicated SNPs }
 
-\description{ Remove duplicated SNPs considering mismatch between them. }
+\description{ Remove duplicated SNPs, taking into account possible genotype mismatches }
 \usage{ SNP.duplicated.rm(x, by = "chr:pos", na.keep=TRUE) }
 
 \arguments{
   \item{x}{ A bed.matrix }
-  \item{by}{ The criterium used to determined if SNP is duplicated. }
-  \item{na.keep}{ If \code{TRUE}, duplicated genotypes which are missing for at least one SNP are updtated to NA. }
+  \item{by}{ The criterium used to determine duplicates }
+  \item{na.keep}{ If \code{TRUE}, duplicated genotypes which are missing for at 
+                  least one SNP are set to \code{NA}. }
 }
 
 \details{
-The columns that will be taken in consideration
-Are \code{id}, \code{chr}, \code{pos}, \code{A1}, and \code{A2}. Not all columns
-are mandatory, depending on the value of \code{by}.
+Positions of duplicated SNPs are determined using \code{\link{SNP.duplicated}}
+using parameter \code{by} (we recommend to use \code{"chr:pos"}, the default).
 
-The possible values for \code{by} are \code{"chr:pos"}, \code{"chr:pos:alleles"}, \code{"id"}, 
-\code{"id:chr:pos"} and \code{"id:chr:pos:alleles"}. 
-The default is \code{by = "chr:pos"}, which means that two SNPs are considered as duplicated if they have
-same \code{chr} and \code{pos} values. 
+Then the function considers the possibility of alleles swaps or reference strand flips.
+In case of allele incompatibility, the SNPs are removed. In the contrary, only one 
+copy is conserved. If there are genotype incompatibilities between the duplicates for
+some individuals, these genotypes are set to \code{NA}.
 
-This function considers the possibility of alleles swaps or reference strand flips. In case of
-incompatibility, all duplicated SNPs are removed.
-
-For one individual, incompatible duplicated genotypes are updtated to NA.
+Moreover the function takes special care of SNP with possible alleles \code{"0"}. 
+This case occurs for monomorphic SNPs, when data are read from a \code{.ped} file; for
+example, a whole column of \code{A A}'s will result in a SNP with alleles \code{"A"} and
+\code{"0"}. If there's a duplicate of the SNP with a few, says, \code{A C}'s in it,
+it will have alleles \code{"A"} and \code{"C"}. In that case, \code{\link{SNP.duplicated}} 
+with \code{by = "chr:pos:alleles"} will not consider these SNPs as duplicates. 
 }
 
 \value{A bed.matrix without duplicated SNPs. }
