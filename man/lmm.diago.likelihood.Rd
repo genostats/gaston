@@ -60,10 +60,6 @@
 \seealso{ \code{\link{lmm.restricted.likelihood}}, \code{\link{lmm.profile.restricted.likelihood}},  \code{\link{lmm.diago}}, \code{\link{lmm.aireml}} }
 
 \examples{
-# Temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -91,9 +87,6 @@ par(mfrow=c(1,2))
 lik.contour(TAU, S2, lik1, heat = TRUE, xlab = "tau", ylab = "sigma^2")
 lines(lik2$tau, lik2$sigma2)
 plot(H2, exp(lik2$likelihood), type="l", xlab="h^2", ylab = "likelihood")
-
-# back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ Eigen decomposition }

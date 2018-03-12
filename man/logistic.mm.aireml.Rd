@@ -62,10 +62,6 @@ Logistic Mixed Models}, The American Journal of Human Genetics, \bold{653--666}}
 \seealso{ \code{\link{lmm.aireml}}, \code{\link{lmm.diago}}, \code{\link{lmm.simu}}}
 
 \examples{
-# temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -83,9 +79,6 @@ y <- 1*( runif(length(pi))<pi )
 # Estimates
 estimates <- logistic.mm.aireml(y, K = K, verbose = FALSE)
 str(estimates)
-
-# back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ Penalized Quasi-Likelihood }

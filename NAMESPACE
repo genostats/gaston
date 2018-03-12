@@ -5,7 +5,7 @@ importFrom("graphics", "contour", "image", "legend", "par", "plot", "polygon", "
 importFrom("stats", "pchisq", "quantile", "rnorm", "kmeans", "glm", "binomial", "pt", "qbeta", "ppoints", "qnorm", "sd")
 importFrom("utils", "read.table", "write.table")
 importFrom("Rcpp", "evalCpp") # just to avoid << function 'enterRNGScope' not provided by package 'Rcpp' >> error
-importFrom("RcppParallel", "defaultNumThreads")
+importFrom("RcppParallel", "setThreadOptions")
 
 useDynLib(gaston, .registration = TRUE)
 
@@ -27,4 +27,3 @@ export(score.variance.linear, score.variance.logistic, score.fixed.linear, score
 export(qqplot.pvalues, manhattan)
 export(SNP.duplicated, SNP.match)
 export(SNP.rm.duplicates)
-export(setThreadOptions, getNumThreads) # !! 

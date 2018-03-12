@@ -57,10 +57,6 @@ one for each value in \code{p}.
 
 
 \examples{
-# temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 # Load data
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
@@ -78,9 +74,6 @@ y <- 1 + lmm.simu(tau = 1, sigma2 = 2, eigenK = eiK)$y
 # Estimations
 R <- lmm.diago(Y = y, eigenK = eiK, p = c(0,10))
 str(R)
-
-# back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ Eigen decomposition }

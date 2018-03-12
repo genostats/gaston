@@ -23,11 +23,6 @@ See \code{\link{contour}} for details on parameters. }
 \seealso{ \code{\link{lmm.diago.likelihood}}, \code{\link[graphics:contour]{contour}}, \code{\link[graphics:image]{image}} }
 
 \examples{
-# Load data
-# Temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
 
@@ -46,9 +41,6 @@ TAU <- seq(0.5,2.5,length=30)
 S2 <- seq(1,3,length=30)
 lik1 <- lmm.diago.likelihood(tau = TAU, s2 = S2, Y = y, eigenK = eiK)
 lik.contour(TAU, S2, lik1, heat = TRUE, xlab = "tau", ylab = "sigma^2")
-
-# back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ Heat map }

@@ -91,9 +91,9 @@ extern SEXP gg_set_snp_to_na(SEXP, SEXP);
 extern SEXP gg_snp_hz_to_na(SEXP, SEXP);
 extern SEXP gg_write_bed_file(SEXP, SEXP);
 extern SEXP isnullptr(SEXP);
-extern SEXP set_nb_threads(SEXP);
-extern SEXP set_nb_threads_to_default();
-extern SEXP get_nb_threads();
+// extern SEXP set_nb_threads(SEXP);
+// extern SEXP set_nb_threads_to_default();
+// extern SEXP get_nb_threads();
 
 static const R_CMethodDef CEntries[] = {
     {"qfc", (DL_FUNC) &qfc, 11},
@@ -103,7 +103,7 @@ static const R_CMethodDef CEntries[] = {
 static const R_CallMethodDef CallEntries[] = {
     {"gg_duplicated_remove",              (DL_FUNC) &gg_duplicated_remove,               6},
     {"gg_alleles_duplicated",             (DL_FUNC) &gg_alleles_duplicated,              2},
-    {"get_nb_threads",                    (DL_FUNC) &get_nb_threads,                     0},
+//  {"get_nb_threads",                    (DL_FUNC) &get_nb_threads,                     0},
     {"gg_random_ortho",                   (DL_FUNC) &gg_random_ortho,                    1},
     {"gg_manhattan_thinning",             (DL_FUNC) &gg_manhattan_thinning,              4},
     {"gg_re_likelihood",                  (DL_FUNC) &gg_re_likelihood,                   4},
@@ -182,8 +182,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_snp_hz_to_na",                   (DL_FUNC) &gg_snp_hz_to_na,                    2},
     {"gg_write_bed_file",                 (DL_FUNC) &gg_write_bed_file,                  2},
     {"isnullptr",                         (DL_FUNC) &isnullptr,                          1},
-    {"set_nb_threads",                    (DL_FUNC) &set_nb_threads,                     1},
-    {"set_nb_threads_to_default",         (DL_FUNC) &set_nb_threads_to_default,          0},
+//  {"set_nb_threads",                    (DL_FUNC) &set_nb_threads,                     1},
+//  {"set_nb_threads_to_default",         (DL_FUNC) &set_nb_threads_to_default,          0},
     {NULL, NULL, 0}
 };
 

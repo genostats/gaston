@@ -32,19 +32,12 @@ authors might disagree. Note in particular that some entries will be negative.}
 
 \seealso{ \code{\link{DM}}, \code{\link{reshape.GRM}}, \code{\link{lmm.aireml}}, \code{\link{lmm.diago}}, \code{\link{standardize}}, \code{\link{bed.loadings}} }
 \examples{
-# Temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 # load chr2 data set (~10k SNPs in low LD)
 x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )
 
 # Compute Genetic Relationship Matrix
 K <- GRM(x)
 dim(K)
-
-# back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ Genetic Relationship Matrix }

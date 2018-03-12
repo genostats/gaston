@@ -16,10 +16,6 @@
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
 \examples{
-# Temporarily set nb threads to 2 to comply with CRAN rules
-n.threads <- getNumThreads()
-setThreadOptions(2)
-
 # load chr2 data set (~10k SNPs in low LD)
 x <- read.bed.matrix( system.file("extdata", "chr2.bed", package="gaston") )
 
@@ -49,8 +45,6 @@ colSums(L**2)
 head( (x \%*\% L) / sqrt(ncol(x)-1) )
 head( PC[,1:2] )
 
-## back to previous nb threads value
-setThreadOptions(n.threads)
 }
 
 \keyword{ loadings }

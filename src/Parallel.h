@@ -1,10 +1,4 @@
-
-#define GASTON_use_RcppParallel false
-
-#if GASTON_use_RcppParallel
+// gaston 1.5.4 : we suppress the PoorMansParallel...
 #include <RcppParallel.h>
+
 #define Parallel RcppParallel
-#else
-#include "PoorMansParallel.h"
-#define Parallel PoorMansParallel
-#endif
