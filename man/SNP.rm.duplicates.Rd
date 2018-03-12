@@ -12,7 +12,7 @@
   \item{na.keep}{ If \code{TRUE}, duplicated genotypes which are missing for at 
                   least one SNP are set to \code{NA}. }
   \item{incomp.rm}{ If \code{TRUE}, duplicated SNPs with allele incompatibility are
-                  removed. Else, they are kept as they are. }
+                  removed. Else, they are left as they are. }
 }
 
 \details{
@@ -39,7 +39,7 @@ with \code{by = "chr:pos:alleles"} will not consider these SNPs as duplicates.
 \examples{
 ## Load simulations of 10 individuals with 7 duplicated SNPs
 data(dupli)
-x <- as.bed.matrix(dupli.gen, fam=dupli.ped, bim=dupli.bim)
+x <- as.bed.matrix(dupli.gen, fam = dupli.ped, bim = dupli.bim)
 
 # SNP 1 : No duplicated
 # SNPs 2 and 3 : Two duplicated SNPs without alleles swap or reference strand flip
@@ -55,12 +55,12 @@ x@snps
 # Missing values are included in genotypes data
 as.matrix(x)
 
-## By default (na.keep=T), missing values are kept
+## By default (na.keep = TRUE), missing values are kept
 as.matrix(SNP.rm.duplicates(x))
 
 ## Keep non missing genotypes
-as.matrix(SNP.rm.duplicates(x, na.keep=F))
+as.matrix(SNP.rm.duplicates(x, na.keep = FALSE))
 
 ## Keep SNPs with incompatible alleles
-as.matrix(SNP.rm.duplicates(x, incomp.rm=F))
+as.matrix(SNP.rm.duplicates(x, incomp.rm = FALSE))
 }
