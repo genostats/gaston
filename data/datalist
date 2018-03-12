@@ -1,3 +1,4 @@
 LCT: LCT.gen LCT.bim LCT.ped LCT.pop
 TTN: TTN.gen TTN.bim TTN.ped TTN.pop
 AGT: AGT.gen AGT.bim AGT.ped AGT.pop
+dupli: dupli.gen dupli.bim dupli.ped
