@@ -1,6 +1,6 @@
 ########################### remove duplicated
 
-SNP.rm.duplicated <- function(x, by="chr:pos", na.keep=TRUE) {
+SNP.rm.duplicates <- function(x, by="chr:pos", na.keep=TRUE) {
   if(class(x) != "bed.matrix") stop("x should be a bed.matrix")
   
   b <- strsplit(by,':')[[1]]
