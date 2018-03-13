@@ -18,6 +18,10 @@
 }
 
 
-r_check_limit_cores <- function()
-  as.logical(tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", "false")))
+# note : Il se pourrait qu'au lieu de renvoyer "true" certains systèmes renvoient "true " ou quelque chose comme ça
+# le plus simple semble etre de tester que c'est défini (à autre chose que "false" au cas où, admettons)...
+r_check_limit_cores <- function() { 
+  Rcheck <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+  (length(Rcheck) > 0) & (Rcheck != "false")
+}
 
