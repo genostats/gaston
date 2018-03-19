@@ -4,6 +4,9 @@
 
 * regarder dans score_lmm.cpp si il y a des optimisations (diagonalisation...)
 
+* dans m4_stats.cpp on passe trois vecteurs de Logical pour les chr... -> passer directement le numero de chr...?
 
 ** si on utilise RcppArmadillo
    il faut installer sous linux le package libomp-dev pour que ça compile
+   
+   
