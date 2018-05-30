@@ -22,6 +22,6 @@
 # le plus simple semble etre de tester que c'est défini (à autre chose que "false" au cas où, admettons)...
 r_check_limit_cores <- function() { 
   Rcheck <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
-  (length(Rcheck) > 0) & (Rcheck != "false")
+  (nchar(Rcheck[1]) > 0) & (Rcheck != "false")
 }
 
