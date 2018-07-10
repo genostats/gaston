@@ -1,8 +1,17 @@
 
-SNP.match <- function(x, table) {
+SNP.match <- function(x, table, by = "chr:pos:alleles") {
+  # préparation de x = data frame avec les bonnes colonnes
+  b <- strsplit(by,':')[[1]]
+  if ('alleles' %in% b) 
+    b <- c(b[b!='alleles'], 'A1', 'A2')
+
   if(class(x) == "bed.matrix") {
     x <- x@snps
   }
+
+  x <- x[, b]
+  # c'est prêt
+
   if(class(table) == "bed.matrix") {
     table <- table@snps
   }
