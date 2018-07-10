@@ -60,9 +60,11 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   \deqn{ \mbox{logit}(P[Y=1| X, G, \omega])  = X\alpha + G\beta + \omega}{logit P(Y=1|X,G,omega)  = X alpha + G beta + omega}
   with \eqn{ \omega \sim N(0,\tau K) }{omega ~ N(0, tau K)}. 
   \eqn{G} is the genotype vector of the SNP, \eqn{K}{K} is a Genetic Relationship Matrix (GRM),
-  \eqn{X} the covariable matrix. A score test is performed, independantly of the value of \code{test}.
+  \eqn{X} the covariable matrix. A score test is performed, independently of the value of \code{test}.
   All parameters under null model are estimated with the same procedure as in \code{\link{logistic.mm.aireml}}.
-  It is possible to give a list in argument \code{K} for inclusion of several random effects in the model.
+  In case of convergence problems of the null problem, the user can try several starting values (in particular
+  with parameter \code{tau}, trying e.g. \code{tau = 0.1} or another value).
+  It is possible to give a list of matrices in parameter \code{K} for inclusion of several random effects in the model.
   If \code{p} is positive, the paramater \code{eigenK} needs to be given as well.
 
   Note: this function is not multithreaded. Wald test with Linear Mixed Models are computationally intensive, 
