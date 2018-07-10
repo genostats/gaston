@@ -58,3 +58,6 @@
        Temporarily disable TBB (UBSAN test) + function setThreadOptions
 1.5.3  Cast in log() function (fix compilation error on solaris)
        Modified plot thinning in qqplot.pvalues
+1.5.4  New functions SNP.rm.duplicates and set.dist
+       Argument 'by = ' in SNP.match
+       Reanabled TBB
