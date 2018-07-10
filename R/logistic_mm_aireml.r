@@ -16,17 +16,18 @@ logistic.mm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, min_tau, t
   
   if (sum(Y %in% c(0,1))<length(Y)) stop("Y should contain only '0' and '1' values")   
   n <- length(Y)
-  
+ 
+   
   # on s'occupe de tau et start_tau
   if(is.matrix(K)) {
     if(missing(tau)) {
       tau <- 0;
-      start_tau <- FALSE
+      start_tau <- TRUE      # !!! modifié par rv juillet 2018 : le tau calculé dans le code C++ ne marche pas bien
     } else start_tau <- TRUE
   } else if(is.list(K)) {
     if(missing(tau)) {
       tau <- rep(0, length(K))
-      start_tau <- FALSE
+      start_tau <- TRUE      # !!! idem ci-dessus
     } else start_tau <- TRUE
   } else stop("K should be a matrix or a list of matrices");
   
