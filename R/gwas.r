@@ -10,11 +10,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   
   X <- as.matrix(X)
   if(nrow(X) != nrow(x)) stop("Dimensions of Y and x mismatch")
-  X <- checkX(X, mean(Y))
 
-  response <- match.arg(response)
-  test <- match.arg(test)
-  
   # check dimensions before anything
   n <- nrow(x)
   if(!missing(K)) {
@@ -25,8 +21,21 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
       stop("eigenK and x dimensions don't match")
   }
 
-  # random effect
-  if(match.arg(method) == "lmm") { 
+  response <- match.arg(response)
+  test <- match.arg(test)
+  method <- match.arg(method)
+
+  # preparation de X  
+  if(p > 0 & ((method == "lmm" & response == "quantitative" & test == "score") | 
+              (method == "lmm" & response == "binary") |
+              (method == "lm"))) {
+    X <- cbind(X, eigenK$vectors[,seq_len(p)])
+  }
+  X <- trans.X(X, mean(Y))
+
+
+   # random effect
+  if(method == "lmm") { 
 
     # if(response == "binary" & test != "score") {
     #  warning('Binary phenotype and method = "lmm" force test = "score"')
@@ -52,8 +61,6 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 
     if(response == "quantitative") { # score (argument K), wald ou lrt (eigen K) possibles
       if(test == "score") {
-        if(p > 0) 
-          X <- cbind(X, eigenK$vectors[,seq_len(p)])
         model <- lmm.aireml(Y, X = X, K, get.P = TRUE, ... )
         t <- .Call("gg_GWAS_lmm_score_f", PACKAGE = "gaston", x@bed, model$Py, model$P, x@mu, beg-1, end-1)
         t$p <- pchisq( t$score, df = 1, lower.tail=FALSE)
@@ -67,8 +74,6 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
         t$p <- pchisq( t$LRT, df = 1, lower.tail=FALSE)
       }
     } else { # response == "binary", seulement le score test, avec argument K
-      if(p > 0) 
-        X <- cbind(X, eigenK$vectors[,seq_len(p)])
       if(test == "score") {
         model <- logistic.mm.aireml(Y, X = X, K, get.P = TRUE, ... )
         omega <- model$BLUP_omega
@@ -85,23 +90,15 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   }
 
   # only fixed effects
-  if(match.arg(method) == "lm") {
+  if(method == "lm") {
     if(test != "wald") warning('Method = "lm" force test = "wald"')
+    if( any(is.na(Y)) ) 
+      stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
     if(response == "quantitative") {
-      if( any(is.na(Y)) ) 
-        stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
-      if(p > 0)
-        Q <- qr.Q(qr(cbind(eigenK$vectors[,seq_len(p)], X)))
-      else
-        Q <- qr.Q(qr(X))
-      t <- .Call("gg_GWAS_lm_quanti", PACKAGE = "gaston", x@bed, x@mu, Y, Q, beg-1, end-1);
-      t$p <- pt( abs(t$beta/t$sd), df = length(Y) - ncol(Q) - 1, lower.tail=FALSE)*2
+      t <- .Call("gg_GWAS_lm_quanti", PACKAGE = "gaston", x@bed, x@mu, Y, X, beg-1, end-1);
+      t$p <- pt( abs(t$beta/t$sd), df = length(Y) - ncol(X) - 1, lower.tail=FALSE)*2
     }
     if(response == "binary") {
-      if( any(is.na(Y)) ) 
-        stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
-      if(p > 0) 
-        X <- cbind(X, eigenK$vectors[,seq_len(p)])
       X <- cbind(X,0)
       t <- .Call("gg_GWAS_logit_wald_f", PACKAGE = "gaston", x@bed, x@mu, Y, X, beg-1, end-1, tol);
       t$p <- pchisq( (t$beta/t$sd)**2, df = 1, lower.tail=FALSE)
@@ -115,18 +112,25 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 }
 
 
-checkX <- function(X, mean.y) {
-  X1 <- cbind(1,X)
-  n <- ncol(X1)
-  a <- crossprod(X1)
-  b <- a[ 2:n, 2:n, drop = FALSE ]
-  det.b <- det(b)
-  if( is.na(det.b) ) stop("Covariates can't be NA")
-  if( abs(det.b) < 1e-4 ) stop("Covariate matrix is (quasi) singular")
-  if( abs(det(a)) > 1e-4 & mean.y > 1e-4) {
-    warning("An intercept column was added to the covariate matrix X")
-    return(X1)
+# Check AND replaces by QR decomposition...
+trans.X <- function(X, mean.y) {
+  if(any(is.na(X)))
+    stop("Covariates can't be NA")
+
+  n <- ncol(X)
+  qr.X <- qr(X);
+  if(qr.X$rank < n) {
+    warning("Covariate matrix X with ", n, " cols is not full rank, removing col(s) ", qr.X$pivot[ seq(qr.X$rank+1,n) ] )
+    X <- X[ , qr.X$pivot[seq(1, qr.X$rank)] ]
   }
-  return(X)
+  if(mean.y > 1e-4) {
+    X1 <- cbind(1,X);
+    qr.X1 <- qr(X1);
+    if(qr.X1$rank == ncol(X1)) {
+      warning("An intercept column was added to the covariate matrix X")
+      qr.X <- qr.X1
+    }
+  }
+  qr.Q(qr.X)
 }
 
