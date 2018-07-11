@@ -6,8 +6,8 @@
 \description{ Select SNPs in LD below a given threshold. }
 \usage{
 LD.thin(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x),
-        which.snps, dist.unit = c("bases", "indices"), extract = TRUE,
-        keep = c("left", "right", "random"))
+        which.snps, dist.unit = c("bases", "indices", "cM"), 
+        extract = TRUE, keep = c("left", "right", "random"))
 }
 
 \arguments{
@@ -25,7 +25,8 @@ LD.thin(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x),
 
 \details{
   The SNPs to keep are selected by a greedy algorithm. The LD is computed only for SNP pairs for which distance is inferior to 
-  \code{max.dist}, expressed in number of bases if \code{dist.unit = "bases"}, or in number of SNPs if \code{dist.unit = "indices"}.
+  \code{max.dist}, expressed in number of bases if \code{dist.unit = "bases"}, in number of SNPs if \code{dist.unit = "indices"},
+  or in centiMorgan if \code{dist.unit = "cM"}. 
  
   The argument \code{which.snps} allows to consider only a subset of SNPs.
 
@@ -40,7 +41,7 @@ LD.thin(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x),
 
 \author{ Hervé Perdry and Claire Dandine-Roulland }
 
-\seealso{ \code{\link{LD}} }
+\seealso{ \code{\link{LD}}, \code{\link{set.dist}} }
 
 \examples{
 # Load data
