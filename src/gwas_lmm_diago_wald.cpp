@@ -84,7 +84,6 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
     // likelihood maximization
     h2 = (h2 > 0.9)?0.9:h2;
     A.newton_max( h2, 0, 0.99, tol, max_iter, false);
-    
     // CALCUL DES BLUPS 
     VECTOR beta, omega;
     A.blup(h2, beta, omega, false, true);
@@ -93,6 +92,7 @@ List GWAS_lmm_wald(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericM
 // Rcout << "v = " << A.v << "\n";
 // Rcout << "XViX = " << A.XViX << "\n";
 // Rcout << "XViX_i = " << A.XViX_i << "\n";
+// Rcout << "A.d = " << A.d << "\n";
     if(A.d != 0) {
       H2(i-beg) = h2;
       BETA(i-beg) = beta(r-1);

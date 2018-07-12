@@ -31,6 +31,9 @@ class diag_likelihood : public fun<scalar_t> {
        p(p), n(Sigma.rows()), r(X.cols()), Y(Y), X(X), Sigma(Sigma) {
          Deltab = Sigma.bottomRows(n-p) - VECTOR::Ones(n-p);
          XViX_i = MATRIX(r,r);
+         Rcout << "p = " << p << "\n";
+         Rcout << "n = " << n << "\n";
+         Rcout << "r = " << r << "\n";
     } ;
 
     void update(scalar_t h2) {

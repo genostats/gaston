@@ -122,6 +122,7 @@ trans.X <- function(X, mean.y) {
   if(qr.X$rank < n) {
     warning("Covariate matrix X with ", n, " cols is not full rank, removing col(s) ", qr.X$pivot[ seq(qr.X$rank+1,n) ] )
     X <- X[ , qr.X$pivot[seq(1, qr.X$rank)] ]
+    qr.X <- qr(X)
   }
   if(mean.y > 1e-4) {
     X1 <- cbind(1,X);
