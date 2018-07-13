@@ -25,14 +25,19 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   test <- match.arg(test)
   method <- match.arg(method)
 
-  # preparation de X  
-  if(p > 0 & ((method == "lmm" & response == "quantitative" & test == "score") | 
-              (method == "lmm" & response == "binary") |
-              (method == "lm"))) {
-    X <- cbind(X, eigenK$vectors[,seq_len(p)])
+  # preparation de X 
+  if(p > 0) {
+    if((method == "lmm" & response == "quantitative" & test == "score") | 
+       (method == "lmm" & response == "binary") |
+       (method == "lm")) { # il faut ajouter les PCs à X
+      X <- cbind(X, eigenK$vectors[,seq_len(p)])
+      X <- trans.X(X, mean.y = mean(Y))
+    } else { 
+      X <- trans.X(X, eigenK$vectors[,seq_len(p)], mean(Y))
+    }
+  } else {
+    X <- trans.X(X, mean.y = mean(Y))
   }
-  X <- trans.X(X, mean(Y))
-
 
    # random effect
   if(method == "lmm") { 
@@ -113,15 +118,19 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 
 
 # Check AND replaces by QR decomposition...
-trans.X <- function(X, mean.y) {
+trans.X <- function(X, PCs = matrix(0, nrow=nrow(X), ncol=0), mean.y = 1) {
   if(any(is.na(X)))
     stop("Covariates can't be NA")
 
-  n <- ncol(X)
-  qr.X <- qr(X);
+  PCs <- as.matrix(PCs) # cas où p = 1
+  n.X  <- ncol(X)
+  n.pc <- ncol(PCs)
+  n <- n.X + n.pc
+
+  qr.X <- qr( cbind(PCs, X) );
   if(qr.X$rank < n) {
-    warning("Covariate matrix X with ", n, " cols is not full rank, removing col(s) ", qr.X$pivot[ seq(qr.X$rank+1,n) ] )
-    X <- X[ , qr.X$pivot[seq(1, qr.X$rank)] ]
+    warning("Covariate matrix X is not full rank, removing col(s) ", paste(qr.X$pivot[ seq(qr.X$rank+1,n) ] - n.pc , collapse = ", "))
+    X <- X[ , qr.X$pivot[seq(n.pc+1, qr.X$rank)] - n.pc]
     qr.X <- qr(X)
   }
   if(mean.y > 1e-4) {
@@ -129,9 +138,13 @@ trans.X <- function(X, mean.y) {
     qr.X1 <- qr(X1);
     if(qr.X1$rank == ncol(X1)) {
       warning("An intercept column was added to the covariate matrix X")
+      X <- X1;
       qr.X <- qr.X1
     }
   }
-  qr.Q(qr.X)
+  if( qr.X$rank == ncol(X) )
+    qr.Q(qr.X)
+  else
+    qr.Q(qr(X))
 }
 
