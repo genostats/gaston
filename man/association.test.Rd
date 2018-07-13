@@ -74,8 +74,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 }
 
 \value{
-  A data frame, giving for each considered SNP, some of the following columns depending on the 
-  values of \code{method} and \code{test}:
+  A data frame, giving for each considered SNP, its position, id, alleles, and 
+  some of the following columns depending on the values of \code{method} and \code{test}:
   \item{score}{Score statistic for each SNP}
   \item{h2}{Estimated value of \eqn{\tau \over {\tau + \sigma^2}}{tau/(tau + sigma^2)}}
   \item{beta}{Estimated value of \eqn{\beta}{beta}}

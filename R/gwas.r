@@ -5,7 +5,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
                              tol = .Machine$double.eps^0.25, ...) {
 
   if(beg < 1 || end > ncol(x)) stop("range too wide")
-  if(is.null(x@mu)) stop("Need mu to be set in x")
+  if(is.null(x@mu) | is.null(x@p)) stop("Need p and mu to be set in x (use set.stats)")
   if(length(Y) != nrow(x)) stop("Dimensions of Y and x mismatch")
   
   X <- as.matrix(X)
@@ -98,7 +98,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   if(method == "lm") {
     if(test != "wald") warning('Method = "lm" force test = "wald"')
     if( any(is.na(Y)) ) 
-      stop("Can't handle missing data in Y, please recompute eigenK for the individuals with non-missing phenotype")
+      stop("Can't handle missing data in Y")
     if(response == "quantitative") {
       t <- .Call("gg_GWAS_lm_quanti", PACKAGE = "gaston", x@bed, x@mu, Y, X, beg-1, end-1);
       t$p <- pt( abs(t$beta/t$sd), df = length(Y) - ncol(X) - 1, lower.tail=FALSE)*2
@@ -109,7 +109,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
       t$p <- pchisq( (t$beta/t$sd)**2, df = 1, lower.tail=FALSE)
     }
   }
-  L <- data.frame(chr = x@snps$chr, pos = x@snps$pos, id  = x@snps$id)
+  L <- data.frame(chr = x@snps$chr, pos = x@snps$pos, id = x@snps$id, A1 = x@snps$A1, A2 = x@snps$A2, freqA2 = x@p)
   if(beg > 1 | end < ncol(x))  # avoid copy
     L <- L[beg:end,] 
 
