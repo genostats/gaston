@@ -61,3 +61,4 @@
 1.5.4  New functions SNP.rm.duplicates and set.dist
        Argument 'by = ' in SNP.match
        Re-enabled TBB
+       Improved logistic regression code / small improvements in association.test
