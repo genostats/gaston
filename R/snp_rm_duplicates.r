@@ -7,7 +7,7 @@ SNP.rm.duplicates <- function(x, by = "chr:pos", na.keep = TRUE, incomp.rm = TRU
   if ('alleles' %in% b) b <- c(b[b!='alleles'], 'A1', 'A2')
   
   # where are duplicated SNPs
-  dupli <- SNP.match(x@snps[,b], x@snps[SNP.duplicated(x, by=by),], by = by)$index
+  dupli <- SNP.match(x@snps[,b,drop=FALSE], x@snps[SNP.duplicated(x, by=by),], by = by)$index
 	
   a <- .Call("gg_alleles_duplicated",  PACKAGE = "gaston", x@snps, dupli)
   
