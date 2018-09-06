@@ -9,7 +9,7 @@ SNP.match <- function(x, table, by = "chr:pos:alleles") {
     x <- x@snps
   }
 
-  x <- x[, b]
+  x <- x[, b, drop = FALSE]
   # c'est prêt
 
   if(class(table) == "bed.matrix") {
