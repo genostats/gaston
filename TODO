@@ -1,3 +1,4 @@
+* allow K to be a list in association.test !!!!!
 
 * dans les ai-reml-logit-* : on peut optimiser un peu en évitant de stocker W(n,n)
   -> utiliser un vecteur W(n) avec W.asDiagonal() ...
