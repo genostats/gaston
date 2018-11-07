@@ -18,7 +18,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
       if(n != nrow(K) | n != ncol(K)) 
         stop("K and x dimensions don't match")
     } else {
-      if(any(!(n %in% sapply(K, nrow))) | any(!(n %in% sapply(K, ncol)))) 
+      if(any(n != sapply(K, nrow)) | any(n != sapply(K, ncol)))
         stop("K and x dimensions don't match")
     }
   }
