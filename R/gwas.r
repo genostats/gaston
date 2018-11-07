@@ -14,7 +14,13 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   # check dimensions before anything
   n <- nrow(x)
   if(!missing(K)) {
-    if(n != nrow(K) | n != ncol(K)) stop("K and x dimensions don't match")
+    if(!is.list(K)) { 
+      if(n != nrow(K) | n != ncol(K)) 
+        stop("K and x dimensions don't match")
+    } else {
+      if(any(!(n %in% sapply(K, nrow))) | any(!(n %in% sapply(K, ncol)))) 
+        stop("K and x dimensions don't match")
+    }
   }
   if(!missing(eigenK)) {
     if(n != nrow(eigenK$vectors) | n != ncol(eigenK$vectors) | n != length(eigenK$values)) 
