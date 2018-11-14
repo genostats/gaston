@@ -237,6 +237,12 @@ dim(x@snps)
 head(x@snps)
 @
 
+\textbf{Note:} We refer to the allele \verb!A1! as the \textit{reference allele} and
+to \verb!A2! as the \textit{alternative allele}. The choice of the reference allele is
+arbitrary, it doesn't to be e.g. the major allele. If the matrix is produced by 
+\verb!read.bed.matrix!, Gaston will keep them in the order they appear in the 
+\verb!.bim! file, their won"t be any reordering.
+
 \subsection{Basic statistics included in a bed.matrix}\label{stats}
 
   Some simple descriptive statistics can be added to a bed.matrix with \verb!set.stats!.
@@ -264,7 +270,8 @@ head(x@ped)
 @
 
 The columns \verb!N0!, \verb!N1!, \verb!N2! and \verb!NAs! give for each individual the number of
-autosomal SNPs with a genotype equal to 0, 1, 2 and missing, respectively. The homologous columns
+autosomal SNPs with a genotype equal to 0, 1, 2 (corresponding to \verb!A1A1!, \verb!A1A2! and \verb!A2A2!) 
+and missing, respectively. The homologous columns
 with names ending with \verb!.x!, \verb!.y! and \verb!.mt! give the same for SNPs on the X, Y, and mitochondria
 (this is why you get only 0s here).
 
@@ -277,7 +284,7 @@ head(x@snps)
 @
 
   The columns \verb!N0!, \verb!N1!, \verb!N2! and \verb!NAs! contain the number
-  of genotypes 0, 1, 2 and \verb!NA! for each SNP. For W linked SNPs only, the 
+  of genotypes 0, 1, 2 and \verb!NA! for each SNP. For X-linked SNPs only, the 
   homologous columns with names ending with \verb!.f! give the same, taking only 
   women into account.
   The callrate is the proportion of non-missing
@@ -292,7 +299,7 @@ str(x@p)
 str(x@mu)
 str(x@sigma)
 @
-  \verb!p! contains the alternate allele frequency; \verb!mu! is equal to \verb!2*p!
+  \verb!p! contains the alternative allele (\verb!A2!) frequency; \verb!mu! is equal to \verb!2*p!
   and is the expected value of the genotype (coded in 0, 1, 2); and \verb!sigma!
   is the genotype standard error. If the Hardy-Weinberg equilibrium holds, \verb!sigma!
   should be close to \verb!sqrt(2*p(1-p))!. This is illustrated on the figure below.
@@ -306,7 +313,7 @@ lines(t, sqrt(2*t*(1-t)), col="red")
 @
 %\end{center}
 
-  There are also function \verb!set.stats.snps! and \verb!set.stats.ped! which
+  There are also functions \verb!set.stats.snps! and \verb!set.stats.ped! to
   update only \verb!x@snps! and \verb!x@ped!.
 
   The option \verb!gaston.auto.set.stats! can be useful when extracting 
@@ -431,7 +438,7 @@ rbind(x3,x4)
 \begin{equation}
 X_{ij} - \mu_j \over \sigma_j
 \end{equation}
-  where $\mu_j = 2 p_j$ is the mean of the 0,1,2-coded genotype ($p_j$ being the alternate allele 
+  where $\mu_j = 2 p_j$ is the mean of the 0,1,2-coded genotype ($p_j$ being the alternative allele 
   frequency), and $\sigma_j$ is either its standard error, or the expected standard error under Hardy-Weinberg
   Equilibrium, that is $\sqrt{2p_j(1-p_j)}$.
 
@@ -859,43 +866,54 @@ fit10$tau/(fit10$tau+fit10$sigma2)
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill\eject
-\section{Association test}
+\section{Association tests}
 
-The function described here is rapidly evolving, and this description is incomplete. 
-Stay tuned!
+The function \verb!association.test! performs 
+genome-wide association tests with either (generalized) linear models, 
+or with generalized) linear (mixed) models, for quantitative or binary (0/1) traits.
 
 \subsection{Quantitative trait}
 
-  The function \verb!association.test! performs a test of association between SNPs 
-  and a quantitative trait $Y$ under the following model
+  When the function \verb!association.test! is called with parameter \verb!method = "lm"!
+  it performs a test of association between SNPs 
+  and a quantitative trait $Y$ under the model
 \begin{equation*}
-  Y = (X|PC)\alpha + G\beta + \omega + \varepsilon 
+  Y = (X|PC)\alpha + G\beta + \varepsilon 
 \end{equation*}
   where $X$ is the matrix of covariables with fixed effects (including a column 
   of ones for the intercept), $G$ is the vector of genotypes at the SNP under
-  consideration, and $\omega\sim\N(0,\tau K)$ where $K$ is a Genetic Relationship
-  Matrix (computed on the whole genome). A few PCs can be included in the model
-  with fixed effects (using parameter \verb!p! as above for \verb!lmm.diago!).
+  consideratione. 
+  A few PCs can be included in the model with fixed effects to correct for 
+  population stratification (the parameter \verb!p! gives the number of PCs to include).
+  The Wald test is performed to test for $\beta = 0$.
 
-  Three tests are proposed for $H_0: \beta = 0$: a score test, a Wald test on $\widehat\beta$,
+  When the function is called with parameter \verb!method = "lmm"! the following mixed model
+  is used instead:
+\begin{equation*}
+  Y = (X|PC)\alpha + G\beta + \omega + \varepsilon 
+\end{equation*}
+  where $X$ and $G$ are as above, and $\omega\sim\N(0,\tau K)$ where $K$ is a Genetic Relationship
+  Matrix (computed on the whole genome).
+
+  Three tests are proposed for $\beta = 0$: a score test, a Wald test on $\widehat\beta$,
   or a Likelihood Ratio Test.
 
   We illustrate this function on a simple example, built on the AGT data set:
 <<>>=
 data(AGT)
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
-standardize(x) <- 'mu'
+standardize(x) <- 'p'
 @
 
   As the whole genome is not available, we generate a random positive matrix to play the role of the GRM:
 <<>>=
-set.seed(1)
+set.seed(27)
 R <- random.pm(nrow(x))
 @
 
   And we simulate a phenotype with an effect of the SNP \#351, and a polygenic component:
 <<>>=
-y <- 2 + x %*% c(rep(0,350),0.25,rep(0,ncol(x)-351)) +
+y <- 2 + x %*% c(rep(0,350),0.35,rep(0,ncol(x)-351)) +
      lmm.simu(tau = 0.3, sigma2 = 1, eigenK=R$eigen)$y
 @
 
@@ -903,9 +921,10 @@ y <- 2 + x %*% c(rep(0,350),0.25,rep(0,ncol(x)-351)) +
   and compares the resulting $p$-values:
 %\begin{center}
 <<fig.mar=TRUE>>=
-t_score <- association.test(x, y, K = R$K, method = "lmm")
-t_wald <- association.test(x, y, eigenK = R$eigen, method = "lmm", test = "wald")
-plot( t_score$p, t_wald$p, log = "xy", xlab = "score", ylab = "wald")
+t_wald <- association.test(x, y, K = R$K, method = "lm", test = "wald")
+t_wald_mixed <- association.test(x, y, eigenK = R$eigen, method = "lmm", test = "wald")
+plot( t_wald$p, t_wald_mixed$p, log = "xy", xlab = "lm (wald)", ylab = "lmm (wald)")
+abline(0,1,lty=3)
 @
 %\end{center}
 
@@ -913,35 +932,38 @@ We can display the results under the form of a (mini) Manhattan plot:
 %\begin{center}
 %\setkeys{Gin}{width=0.7\textwidth}
 <<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
-plot(-log10(t_score$p), xlab="SNP index", ylab = "-log(p)",
-      col = c(rep(1,350),2,rep(1,ncol(x)-351)))
+manhattan(t_wald_mixed, col = ifelse(1:ncol(x) == 351, "red", "black"))
 @
 %\end{center}
 
-  We colored the point corresponding to the SNP \#351 in red. We see that there
-  are other SNPs with low association $p$-values: these are the SNPs in LD with
+  We colored the point corresponding to the SNP \#351 in red. Note that when
+  used on genome-wide data, the function \verb!manhattan! will draw a classical
+  Manhattan plot, alternating colors between chromosomes.
+
+  There are other SNPs with low association $p$-values: these are the SNPs in LD with
   SNP \#351. We can confirm this by plotting the $p$-values (again on log scale) 
   as a function of the LD (measured by $r^2$):
 %\begin{center}
 <<fig.mar=TRUE>>=
 lds <- LD(x, 351, c(1,ncol(x)))
-plot(lds, -log10(t_score$p), xlab="r^2", ylab="-log(p)")
+plot(lds, -log10(t_wald_mixed$p), xlab="r^2", ylab="-log(p)")
 @
 %\end{center}
 
 \subsection{Binary phenotype}
 
 We use the quantitative phenotype previously generated to construct a binary phenotype,
-and we perform the association test with a logistic mixed model (only the score test is 
-available). The baby Manhattan plot is plotted again.
+and we perform the association test with a logistic model (Wald test) or logistic mixed 
+model (score test). 
+
 %\begin{center}
 %\setkeys{Gin}{width=0.7\textwidth}
-<<fig.mar=TRUE, fig.width=12, out.width='0.7\\textwidth'>>=
+<<fig.mar=TRUE>>=
 y1 <- as.numeric(y > mean(y))
-t_binary <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
-# (mini) Manhattan plot
-plot(-log10(t_binary$p), xlab="SNP index", ylab = "-log(p)",
-      col = c(rep(1,350),2,rep(1,ncol(x)-351)))
+t_binary <- association.test(x, y1, K = R$K, method = "lm", response = "binary", test="wald")
+t_binary_mixed <- association.test(x, y1, K = R$K, method = "lmm", response = "binary")
+plot( t_binary$p, t_binary_mixed$p, log = "xy", xlab = "lm (wald)", ylab = "lmm (score)" )
+abline(0,1,lty=3)
 @
 %\end{center}
 
@@ -955,7 +977,6 @@ A few things that may be added to the package in the near future:
 \item Reading \verb!.ped! files
 \item Maximum Likelihood Linkage Disequilibrium estimation
 \item LMM models fitting written in equation form
-\item A faster version of \verb!association.test!
 \item More functions and models for association testing
 \item Anything you asked the maintainer for
 \end{itemize}

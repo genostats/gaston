@@ -64,7 +64,7 @@ Objects can be created by calls of the form \code{new("bed.matrix", ...)}.
            Can also contain SNPs statistic, for example: \code{N0}, \code{N1} and \code{N2} = Number of genotypes equal to 0, 1 and 2 repectively,
            \code{NAs} = Number of missing genotypes, \code{callrate} = SNP callrate, \code{maf} = Minor allele frequency), \code{hz} = heterozygosity}
     \item{\code{bed}:}{ \code{externalptr} (pointing to the genotype matrix). }
-    \item{\code{p}:}{ \code{vector} or \code{NULL} for allelic frequencies.}
+    \item{\code{p}:}{ \code{vector} or \code{NULL} for allelic frequencies (allèle \code{A2}).}
     \item{\code{mu}:}{ \code{vector} or \code{NULL} for genotype means (usually \code{mu = 2*p}).}
     \item{\code{sigma}:}{ \code{vector} or \code{NULL} for genotypic standard deviation}
     \item{\code{standardize_p}:}{ \code{logical}. If \code{TRUE}, the genotype matrix is standardized using means \code{2*p} 
@@ -72,6 +72,7 @@ Objects can be created by calls of the form \code{new("bed.matrix", ...)}.
     \item{\code{standardize_mu_sigma}:}{ \code{logical}. If \code{TRUE}, the genotype matrix is standardize using means
                 \code{mu} and genotypic standard deviation \code{sigma}.}
   }
+  For more details please check the vignette.
 }
 \section{Methods}{
   \describe{
