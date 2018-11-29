@@ -94,7 +94,7 @@ data(TTN)
 x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
 standardize(x) <- "p"
 
-# simulate quantitative phenotype with effect of SNP #631 and a polygenic component 
+# simulate quantitative phenotype with effect of SNP #631
 set.seed(1)
 y <- x \%*\% c(rep(0,630),0.5,rep(0,ncol(x)-631)) + rnorm(nrow(x))
 
