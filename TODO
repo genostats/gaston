@@ -1,3 +1,6 @@
+* set.dist devrait pouvoir travailler directement sur un data frame
+
+* exporter fonction(s) flip_strand... 
 
 * dans les ai-reml-logit-* : on peut optimiser un peu en évitant de stocker W(n,n)
   -> utiliser un vecteur W(n) avec W.asDiagonal() ...
