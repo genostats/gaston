@@ -5,7 +5,7 @@ setMethod("%*%", signature(x="bed.matrix",y="matrix"),
     else if(x@standardize_p)
       a <- .Call("gg_m4_loading_to_pc_p",  PACKAGE = "gaston", x@bed, x@p, y)
     else
-      stop("bed.matrix must be center/scaled for product")
+      stop("bed.matrix must be standardized for product")
     if(!is.null(x@ped$id)) {
       if(anyDuplicated(x@ped$id) == 0)
         rownames(a) <- x@ped$id
@@ -22,7 +22,7 @@ setMethod("%*%", signature(x="matrix",y="bed.matrix"),
     else if(y@standardize_p)
       a <- t(.Call("gg_m4_pc_to_loading_p",  PACKAGE = "gaston", y@bed, y@p, t(x)))
     else
-      stop("bed.matrix must be center/scaled for product")
+      stop("bed.matrix must be standardized for product")
     if(!is.null(y@snps$id)) {
       if(anyDuplicated(y@snps$id) == 0)
         colnames(a) <- y@snps$id
@@ -52,7 +52,7 @@ bed.loadings <- function(x, pc) {
   if(!x@standardize_mu_sigma & !x@standardize_p) {
     if(!is.null(x@p)) 
       x@standardize_p <- TRUE
-    else stop("Can't center/scale x for LD computation (use set.stat)\n")
+    else stop("Can't standardize x for LD computation (use set.stat)\n")
  }
 
   if(x@standardize_mu_sigma)

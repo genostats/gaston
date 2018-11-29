@@ -19,7 +19,7 @@ LD <- function(x, lim, lim2, measure = c("r2", "r", "D"), trim = TRUE) {
      if(!is.null(x@mu) & !is.null(x@sigma))
        x@standardize_mu_sigma <- TRUE
      else
-       stop("Can't center/scale x for LD computation (use set.stats(x))\n")
+       stop("Can't standardize x for LD computation (use set.stats(x))\n")
   }
 
   if(measure == "D") {
