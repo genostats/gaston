@@ -4,7 +4,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
                              K, eigenK, beg = 1, end = ncol(x), p = 0, 
                              tol = .Machine$double.eps^0.25, ...) {
 
-  if(beg < 1 || end > ncol(x)) stop("range too wide")
+  if(beg < 1 | end > ncol(x)) stop("range too wide")
   if(is.null(x@mu) | is.null(x@p)) stop("Need p and mu to be set in x (use set.stats)")
   if(length(Y) != nrow(x)) stop("Dimensions of Y and x mismatch")
   
@@ -39,7 +39,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
     X <- trans.X(X, mean.y = mean(Y))
   }
 
-   # random effect
+  # random effect
   if(method == "lmm") { 
 
     # if(response == "binary" & test != "score") {
