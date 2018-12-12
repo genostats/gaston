@@ -4,7 +4,7 @@ setMethod('p', signature =  'bed.matrix', def = function(x) x@p)
 
 setGeneric('p<-', function(x,value) standardGeneric('p<-'), package="gaston")
 setReplaceMethod('p', 'bed.matrix', function(x,value) {
-  if(length(p) != ncol(x)) stop("dimensions mismatch")
+  if(length(value) != ncol(x)) stop("dimensions mismatch")
   x@p <- value; 
   x} )
 
@@ -14,7 +14,7 @@ setMethod('mu', signature =  'bed.matrix', def = function(x) x@mu)
 
 setGeneric('mu<-', function(x,value) standardGeneric('mu<-'), package="gaston")
 setReplaceMethod('mu', 'bed.matrix', function(x,value) {
-  if(length(mu) != ncol(x)) stop("dimensions mismatch")
+  if(length(value) != ncol(x)) stop("dimensions mismatch")
   x@mu <- value; 
   x} )
 
