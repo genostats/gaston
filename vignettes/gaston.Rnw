@@ -702,7 +702,7 @@ str(fit)
   
   The component \verb!BLUP_omega! holds the BLUP for $\omega_1 = Z u_1$. The BLUP for $u_1$
   can be retrieved by the formula $\widehat{u_1} = \tau_1 Z_1' P y$, the value of $Py$ being
-  in the component \verb!BLUP_Py!. The plots below compare the true values of $\omega_1$ and
+  in the component \verb!Py!. The plots below compare the true values of $\omega_1$ and
   $u_1$ with their BLUPs.
    
 %\setkeys{Gin}{width=0.7\textwidth}
