@@ -74,8 +74,8 @@ association.test(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
 }
 
 \value{
-  A data frame, giving for each considered SNP, some of the following columns depending on the 
-  values of \code{method} and \code{test}:
+  A data frame, giving for each considered SNP, its position, id, alleles, and 
+  some of the following columns depending on the values of \code{method} and \code{test}:
   \item{score}{Score statistic for each SNP}
   \item{h2}{Estimated value of \eqn{\tau \over {\tau + \sigma^2}}{tau/(tau + sigma^2)}}
   \item{beta}{Estimated value of \eqn{\beta}{beta}}
@@ -94,7 +94,7 @@ data(TTN)
 x <- as.bed.matrix(TTN.gen, TTN.fam, TTN.bim)
 standardize(x) <- "p"
 
-# simulate quantitative phenotype with effect of SNP #631 and a polygenic component 
+# simulate quantitative phenotype with effect of SNP #631
 set.seed(1)
 y <- x \%*\% c(rep(0,630),0.5,rep(0,ncol(x)-631)) + rnorm(nrow(x))
 
