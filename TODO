@@ -1,6 +1,8 @@
 * lors de la fabrication d'une bed matrix, @snps$chr = facteur
   @snps$id = unique (sinon ajouter :chr:pos:alleles... )
 
+* test.snps(x, is.autosome) -> marche pas ?!
+
 * set.dist devrait pouvoir travailler directement sur un data frame
 
 * exporter fonction(s) flip_strand... 

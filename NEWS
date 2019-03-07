@@ -62,3 +62,4 @@
        Argument 'by = ' in SNP.match
        Re-enabled TBB
        Improved logistic regression code / small improvements in association.test
+1.5.5  Corrected code in logistic regression (in case of 20 iterations, still compute covariance matrix!)
