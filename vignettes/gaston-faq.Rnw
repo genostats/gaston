@@ -1,0 +1,186 @@
+%\VignetteIndexEntry{gaston faq}
+%\VignetteDepends{gaston}
+%\VignettePackage{gaston}
+%\VignetteEngine{knitr::knitr}
+
+\documentclass{article}
+%\usepackage[noae]{Sweave}
+\usepackage[top=35mm, bottom=40mm, left=25mm , right=25mm]{geometry}
+%\usepackage{moreverb}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{etoolbox}
+
+%\setkeys{Gin}{width=0.4\textwidth}
+%\SweaveOpts{echo=TRUE, eps=FALSE, pdf=TRUE}
+
+\raggedbottom
+\pagestyle{empty}
+\parindent0pt
+\parskip8pt
+\def\thesubsection{\arabic{subsection}}
+\def\theequation{\arabic{equation}}
+\let\epsilon\varepsilon
+
+%<<echo=FALSE>>=
+%options(continue=" ", prompt = " ", SweaveHooks=list(fig.mar=function() par(mar=c(5.1,4.1,3.1,2.1))), width=90)
+%@
+<<echo=FALSE, include=FALSE>>=
+require(knitr)
+options(width = 90, prompt="> ")
+knit_hooks$set(fig.mar=function() par(mar=c(5.1,4.1,3.1,2.1)))
+opts_chunk$set(out.width='0.4\\textwidth', fig.align='center', highlight=TRUE, comment=NA, fig.height=6, fig.width=6)
+opts_knit$set(unnamed.chunk.label='gaston')
+@
+
+%<<prompton, echo=FALSE>>=
+%options(prompt="> ", continue = " ");
+%@
+<<prompton, echo=FALSE>>=
+opts_chunk$set(prompt=TRUE, continue = " ");
+@
+
+%<<promptoff, echo=FALSE>>=
+%options(prompt=" ", continue=" ");
+%@
+<<promptoff, echo=FALSE>>=
+opts_chunk$set(prompt=FALSE, continue=" ");
+@
+
+<<echo=FALSE>>=
+<<prompton>>
+@
+
+<<desc, include=FALSE, echo=FALSE>>=
+require(gaston)
+desc <- packageDescription("gaston")
+@
+
+\title{{\bfseries Gaston FAQ}\\
+       {\large Version \Sexpr{desc$Version}}}
+\author{Hervé Perdry}
+
+
+%\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{}
+%\fvset{listparameters={\setlength{\topsep}{-0.5em}}}
+%\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+\makeatletter
+\preto{\@verbatim}{\topsep=2pt \partopsep=-10pt }
+\preto{\alltt}{\topsep=-3pt \partopsep=-10pt }
+\makeatother
+
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Which functions are multi-threaded?}
+
+For the moment, multithreading affects only \verb!GRM! computations and matrix products.
+
+\subsection{Which allele is the effect allele in association tests?} 
+
+The effect allele is \verb!A2!. This allele is left by Gaston as specified in the \verb!bim!
+file read by \verb!read.bed.matrix! ; in particular, nothing is done to ensure that one allele
+or the other is the minor allele.
+
+\subsection{Can I retrieve the SNP effects after fitting a linear mixed model?}
+
+Yes, although it usually does not give very good estimates. Hereafter an example code to compute Best 
+Linear Unbiased Predictors (BLUPs) of SNP effects. See \textit{C. Dandine-Roulland, H. Perdry, 
+The Use of the Linear Mixed Model in Human Genetics, 2015, Human Heredity 80:196-216} for some 
+theoretical considerations.
+
+
+<<fig.mar=TRUE, fig.width=14, fig.height = 7, out.width='0.55\\textwidth'>>=
+x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+standardize(x) <- "p"  # needed for matrix product below
+
+K <- GRM(x)
+set.seed(17); 
+# SNP effects, drown in a normal distribution
+u <- rnorm( ncol(x), sd = sqrt(1/ncol(x)) ); 
+# Simulated phenotype 
+y <- (x %*% u) + rnorm( nrow(x) , sd = 0.7)
+# fiting the linear model (note: above simulation is 
+# done with tau = sigma2 = 1)
+fit <- lmm.diago(y, eigenK = eigen(K), verbose=FALSE )
+str(fit)
+# retrieving BLUPs for u
+BLUP_u <- fit$tau * as.vector(fit$Py %*% x) / (ncol(x) - 1)
+# comparison with true effect values
+par(mfrow = c(1,2))
+plot(u, BLUP_u)
+abline(0, 1, col = "red", lty = 3)
+# these values allow to recompute the BLUP of omega
+plot(x %*% BLUP_u, fit$BLUP_omega)
+abline(0, 1, col = "red", lty = 3)
+@
+
+Note: If the number of individuals were (much) greater than the
+number of SNPs, the SNP effects would be retrieved well. Try to
+run the previous code with a $1000\times 5$ random SNP matrix 
+built as follows:
+
+<<>>=
+x <- as.bed.matrix(matrix( rbinom(1000*5, 2, 0.5), ncol = 5))
+x@snps$chr <- 1  # needed to compute the GRM
+@
+
+\subsection{Can I predict new phenotypes using a linear mixed model?}
+
+The previous question shows how to compute BLUPs for the SNP effects.
+They can be used in turn to predict new phenotypes. The only caveat is
+that you have to fix the \verb!@p! slot of all samples you use to the 
+same value. Indeed, this slot, which contains the frequency of alleles
+\verb!A2!, is used for matrix standardization.
+Hereafter is some example code.
+
+<<fig.mar=TRUE, fig.width=7, fig.height = 7, out.width='0.55\\textwidth'>>=
+x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+standardize(x) <- "p" 
+p <-x@p # save the frequency of alleles A2
+
+set.seed(17);
+u <- rnorm( ncol(x), sd = sqrt(1/ncol(x)) );
+y <- (x %*% u) + rnorm( nrow(x) , sd = 0.7)
+# training set : 403 first individuals
+I.tr <- 1:403
+x.tr <- x[I.tr, ]
+x.tr@p <- p # use allele frequencies computed on whole sample
+K.tr <- GRM(x.tr)
+y.tr <- y[I.tr]
+fit <- lmm.diago(y.tr, eigenK = eigen(K.tr), verbose = FALSE)
+BLUP_u <- fit$tau * as.vector(fit$Py %*% x.tr) / (ncol(x.tr) - 1)
+# prediction on remaining individuals
+x1 <- x[-I.tr,]
+x1@p <- p # use same allele frequenciesa
+# predicted values for y
+BLUP_y <- x1 %*% BLUP_u
+# compare with simulated value
+plot(BLUP_y, y[-I.tr])
+abline(0, 1, col = "red", lty = 3)
+@
+
+A few matrix identities leed to an equivalent (and simpler) code
+avoiding the computation of the BLUPs of the SNP effects:
+<<fig.mar=TRUE, fig.width=7, fig.height = 7, out.width='0.55\\textwidth'>>=
+K <- GRM(x)
+BLUP_y1 <- fit$tau * K[ -I.tr, I.tr ] %*% fit$Py
+plot(BLUP_y, y[-I.tr])
+abline(0, 1, col = "red", lty = 3)
+@
+
+Here again, see \textit{C. Dandine-Roulland, H. Perdry, 
+The Use of the Linear Mixed Model in Human Genetics, 2015, Human Heredity 80:196-216} 
+and its supplementary for mixed model theory and some considerations
+on phenotype prediction.
+
+\end{document}
+
+
+
+
