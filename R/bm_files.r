@@ -8,7 +8,7 @@ read.bed.matrix <- function(basename, bed = paste(basename, ".bed", sep=""), fam
       basename <- sub("\\.bed$", "", basename)
       bim <- paste(basename, ".bim", sep="")
       fam <- paste(basename, ".fam", sep="")
-      bed <- paste(basename, ".bed", sep="") 
+      bed <- path.expand(paste(basename, ".bed", sep=""))
       if(!is.null(rds)) rds <- paste(basename, ".rds", sep="")
     }
   }
