@@ -81,15 +81,25 @@ desc <- packageDescription("gaston")
 
 For the moment, multithreading affects only \verb!GRM! computations and matrix products.
 
+\subsection{Can I use Gaston with data non-human data, in particular with more than $22$ autosomes?}
+
+Most functions don't care about X/Y. When they take into account whether a SNP
+is autosomal, X or Y linked, or mitochondrial, they use the values of the options
+`gaston.autosomes`, `gaston.chr.x`, `gaston.chr.y`, `gaston.chr.mt`
+to determine (values can be modified using options).
+
+Note that currently, nothing special is done for association testing with sexual chromosomes --
+this may change in the future.
+
 \subsection{Which allele is the effect allele in association tests?} 
 
 The effect allele is \verb!A2!. This allele is left by Gaston as specified in the \verb!bim!
 file read by \verb!read.bed.matrix! ; in particular, nothing is done to ensure that one allele
 or the other is the minor allele.
 
-\subsection{Can I retrieve the SNP effects after fitting a linear mixed model?}
+\subsection{Can I retrieve estimates of the SNP random effects after fitting a linear mixed model?}
 
-Yes, although it usually does not give very good estimates. Hereafter an example code to compute Best 
+Yes, however the quality of the estimates is usually quite poor. Hereafter an example code to compute Best 
 Linear Unbiased Predictors (BLUPs) of SNP effects. See \textit{C. Dandine-Roulland, H. Perdry, 
 The Use of the Linear Mixed Model in Human Genetics, 2015, Human Heredity 80:196-216} for some 
 theoretical considerations.
@@ -121,8 +131,8 @@ abline(0, 1, col = "red", lty = 3)
 @
 
 Note: If the number of individuals were (much) greater than the
-number of SNPs, the SNP effects would be retrieved well. Try to
-run the previous code with a $1000\times 5$ random SNP matrix 
+number of SNPs, the SNP effects estimates would be of good quality. 
+Try to run the previous code with a $1000\times 5$ random SNP matrix 
 built as follows:
 
 <<>>=
@@ -165,7 +175,7 @@ plot(BLUP_y, y[-I.tr])
 abline(0, 1, col = "red", lty = 3)
 @
 
-A few matrix identities leed to an equivalent (and simpler) code
+A few matrix identities lead to an equivalent (and simpler) code
 avoiding the computation of the BLUPs of the SNP effects:
 <<fig.mar=TRUE, fig.width=7, fig.height = 7, out.width='0.55\\textwidth'>>=
 K <- GRM(x)
@@ -178,6 +188,32 @@ Here again, see \textit{C. Dandine-Roulland, H. Perdry,
 The Use of the Linear Mixed Model in Human Genetics, 2015, Human Heredity 80:196-216} 
 and its supplementary for mixed model theory and some considerations
 on phenotype prediction.
+
+
+\subsection{How to use parametric bootstrap to determine confidence regions for `lmm` estimates?}
+
+
+Assume you have some data with GRM and a phenotype:
+
+<<>>=
+x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+standardize(x) <- "p"  # needed for matrix product below
+
+K <- GRM(x)
+set.seed(17); 
+# SNP effects, drown in a normal distribution
+u <- rnorm( ncol(x), sd = sqrt(1/ncol(x)) ); 
+# Simulated phenotype 
+y <- (x %*% u) + rnorm( nrow(x) , sd = 0.7)
+@
+
+You can analyze it with a linear mixed model:
+
+<<>>=
+# fiting the linear model (note: above simulation is 
+# done with tau = sigma2 = 1)
+fit <- lmm.diago(y, eigenK = eigen(K), verbose=FALSE )
+@
 
 \end{document}
 
