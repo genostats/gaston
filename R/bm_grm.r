@@ -8,7 +8,7 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   
   if(!x@standardize_mu_sigma & !x@standardize_p) {
     if(!is.null(x@p)) x@standardize_p <- TRUE
-    else stop("Can't standardize x for LD computation (use set.stat)\n")
+    else stop("Can't standardize x for GRM computation (use set.stat)\n")
   }
 
   if(x@standardize_mu_sigma) {
