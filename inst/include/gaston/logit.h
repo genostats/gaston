@@ -87,7 +87,7 @@ void logistic_model_f(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T
 
     beta += XWX.llt().solve(U);
     U_norm = U.norm();
-    if(k++ > 10) return;
+    if(k++ > 30) break;
   }
   // Il nous faut l'inverse de XWX pour calculer l'écart type
   XWX_i = XWX.llt().solve( MatrixXf::Identity(p,p) );
