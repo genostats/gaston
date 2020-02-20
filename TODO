@@ -1,3 +1,13 @@
+* LD.plot : accepter les nan (ou NA) qui viennent de SNPs monomorphes !
+
+* read tped files ? (cf données elisa pour tester)
+
+* dans SNP.match il faudrait pouvoir faire by = "id:alleles"
+
+* bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
+
+* dans qqplot.pvalues ne pas supprimer les p = 0 mais faire comme dans milor
+
 * lors de la fabrication d'une bed matrix, @snps$chr = facteur
   @snps$id = unique (sinon ajouter :chr:pos:alleles... )
 
