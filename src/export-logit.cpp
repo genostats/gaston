@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 #include "matrix-varia.h"
-#include "logit.h"
+#include "logit_model.h"
 
 using namespace Rcpp;
 typedef Map<MatrixXd> Map_MatrixXd;
@@ -14,7 +14,7 @@ List logistic(NumericVector Y, NumericMatrix X, double eps) {
   MatrixXd varbeta(x.cols(),x.cols());
 
   beta.setZero();
-  logistic_model(y, x, eps, beta, varbeta);
+  logistic_model2<double>(y, x, beta, varbeta, eps);
 
   List L;
   L["beta"] = beta;

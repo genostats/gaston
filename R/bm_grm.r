@@ -19,8 +19,13 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   }
 
   if(!is.null(x@ped$id)) {
-    if(anyDuplicated(x@ped$id) == 0) 
+    if(anyDuplicated(x@ped$id) == 0)
       rownames(K) <- colnames(K) <- x@ped$id
+    else {
+      nn <- paste(x@ped$famid, x@ped$id, sep = ":")
+      if(anyDuplicated(nn) == 0)
+        rownames(K) <- colnames(K) <- nn
+    }
   }
 
   K
@@ -44,6 +49,11 @@ DM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   if(!is.null(x@ped$id)) {
     if(anyDuplicated(x@ped$id) == 0) 
       rownames(K) <- colnames(K) <- x@ped$id
+    else {
+      nn <- paste(x@ped$famid, x@ped$id, sep = ":")
+      if(anyDuplicated(nn) == 0)
+        rownames(K) <- colnames(K) <- nn
+    }
   }
 
   K

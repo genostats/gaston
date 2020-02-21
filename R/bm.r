@@ -55,7 +55,7 @@ setAs("bed.matrix", "matrix",
     else
       .Call('gg_m4_as012', PACKAGE = 'gaston', from@bed)
     colnames(to) <- from@snps$id
-    rownames(to) <- if(any(duplicated(from@ped$id))) paste(from@ped$fam, from@ped$id, sep="_")
+    rownames(to) <- if(any(duplicated(from@ped$id))) paste(from@ped$fam, from@ped$id, sep=":")
                     else from@ped$id
     to
   } );
@@ -108,7 +108,8 @@ setMethod(show, signature("bed.matrix"),
       } else 
         cat("snps stats are not set (or incomplete)\n")
       # ped stats et autres
-      if(anyDuplicated(object@ped$id)) cat("There are some duplicated individual id's\n")
+      if(anyDuplicated(object@ped[, c("famid", "id")])) 
+        cat("There are some duplicated individual id's\n")
       if(all(pedstatnames %in% names(object@ped))) {
         cat("ped stats are set\n");
         a <- sum(object@ped$NAs == ncol(object))

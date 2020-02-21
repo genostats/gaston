@@ -1,6 +1,6 @@
 #include <Rcpp.h>
-#include "logit.h"
 #include "matrix4.h"
+#include "logit_model.h"
 #include <ctime>
 #include <cmath>
 #include <iostream>
@@ -50,7 +50,7 @@ List GWAS_logit_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
     }
 
     MatrixXf varbeta(r,r);
-    logistic_model_f(y, x, tol, beta, varbeta);
+    logistic_model2<float>(y, x, beta, varbeta, tol);
 
     BETA(i-beg) = beta(r-1);
     SDBETA(i-beg) = sqrt(varbeta(r-1,r-1));
