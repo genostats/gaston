@@ -190,6 +190,7 @@ and its supplementary for mixed model theory and some considerations
 on phenotype prediction.
 
 
+\end{document}
 \subsection{How to use parametric bootstrap to determine confidence regions for `lmm` estimates?}
 
 

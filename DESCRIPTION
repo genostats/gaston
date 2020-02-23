@@ -5,7 +5,7 @@ Version: 1.5.6
 Date: 2020-02-21
 Encoding: UTF-8
 VignetteBuilder: knitr
-Authors@R: c( person("Hervé", "Perdry", role = c("cre", "aut", "cph"), email = "herve.perdry@protonmail.com"), 
+Authors@R: c( person("Hervé", "Perdry", role = c("cre", "aut", "cph"), email = "herve.perdry@u-psud.com"), 
               person("Claire", "Dandine-Roulland", role = c("aut", "cph")),
               person("Deepak", "Bandyopadhyay", role = "cph", comment = "C++ gzstream class" ), # Deepak & Lutz for gzstream class
               person("Lutz", "Kettner", role = "cph", comment = "C++ gzstream class" ) )
