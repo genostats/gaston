@@ -75,9 +75,11 @@ void AIREML1_logit_f(const MatrixXf & y, const MatrixXf & x, const MatrixXf & K,
     // update P
     V.noalias() = tau*K; V.diagonal().noalias() += W;
     sym_inverse(V,Vi,log_detV,detV,1e-7);
+    if(verbose) Rcout << "(log d1 = " << log_detV << ")\n";
     ViX.noalias() = Vi * x;
     XViX.noalias() = x.transpose() * ViX;
     sym_inverse(XViX, XViX_i, log_d, d, 1e-5);
+    if(verbose) Rcout << "(d2 = " << d << ")\n";
     P.noalias() = Vi - ViX * XViX_i * ViX.transpose();
  
     // gradient
