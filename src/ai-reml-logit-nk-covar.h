@@ -2,7 +2,7 @@
 #include <RcppEigen.h>
 #include <math.h>
 #include <iostream>
-#include "logit.h"
+#include "logit_model.h"
 #include "matrix-varia.h"
 #ifndef GASTONAIREMLn_logit
 #define GASTONAIREMLn_logit
@@ -49,7 +49,7 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
   
   // initialisation beta
-  if (!start_beta) logistic_model(y, x, 1e-3, beta, XViX_i);
+  if (!start_beta) logistic_model2<double>(y, x, beta, XViX_i, 1e-3);
   
   if(verbose) Rcout << "[Initialization] beta = " << beta.transpose() << "\n";    
    

@@ -15,7 +15,7 @@
 #include "gaston/diago2.h"
 #include "gaston/diago2_nocovar.h"
 #include "gaston/lmm_diago_min_max_h2.h"
-#include "gaston/logit.h"
+#include "gaston/logit_model.h"
 #include "gaston/m4_kinship_type.h"
 #include "gaston/matrix-varia.h"
 #include "gaston/optimize_2.h"

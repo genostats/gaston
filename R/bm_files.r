@@ -69,7 +69,9 @@ write.bed.matrix <- function(x, basename, bed = paste(basename, ".bed", sep=""),
   if(!is.null(rds))
     saveRDS(x, rds)
 
-  bed <- path.expand(bed)
-  invisible(.Call('gg_write_bed_file', x@bed, bed))
+  if(!is.null(bed)) {
+    bed <- path.expand(bed)
+    invisible(.Call('gg_write_bed_file', x@bed, bed))
+  }
 }
 

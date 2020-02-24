@@ -113,4 +113,7 @@ Hervé Perdry and Claire Dandine-Roulland
 Maintainer: Hervé Perdry
 }
 
-\keyword{Genetics, SNP, association study, linear mixed models}
+\keyword{Genetics}
+\keyword{SNP}
+\keyword{association study}
+\keyword{linear mixed models}
