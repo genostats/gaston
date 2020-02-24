@@ -18,7 +18,7 @@
 }
 
 \details{
-The vcf format is described in \url{http://www.1000genomes.org/wiki/Analysis/Variant\%20Call\%20Format/vcf-variant-call-format-version-41}
+The vcf format is described in \url{https://github.com/samtools/hts-specs}
 
 In addition to the usual data in the slot \code{@snps}, the bed.matrices produced by \code{read.vcf} have
 \code{@snps$quality} and \code{@snps$filter} columns corresponding to the QUAL and FILTER fields in the VCF

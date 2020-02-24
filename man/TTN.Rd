@@ -28,7 +28,7 @@
   }
 }
 
-\source{ The data were obtained from the 1000 Genomes project (see \url{http://www.1000genomes.org/}). }
+\source{ The data were obtained from the 1000 Genomes project (see \url{https://www.internationalgenome.org/}). }
 
 \references{McVean et al, 2012, \emph{An integrated map of genetic variation from 1,092 human genomes}, Nature \bold{491, 56-65} doi:10.1038/nature11632 }
 
