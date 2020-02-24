@@ -13,6 +13,16 @@ using VECTOR = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
 using namespace Rcpp;
 using namespace Eigen;
 
+// on ne peut pas utiliser a.log().sum() parce qu'avec scalar_t = float ça donne un warning de compilation.
+// -> workaround....
+template<typename scalar_t>
+inline scalar_t sum_of_log(const VECTOR<scalar_t> & a) {
+  scalar_t S(0);
+  int n = a.rows();
+  for(Eigen::Index i = 0; i < n; ++i) S += std::log(a(i));
+  return S;
+}
+
 template<typename scalar_t>
 void logistic_model2(const VECTOR<scalar_t> & y, const MATRIX<scalar_t> & x, VECTOR<scalar_t> & beta, MATRIX<scalar_t> & XWX_i, 
                      scalar_t eps = 1.0e-8, int max_iter = 25) {
@@ -23,7 +33,6 @@ void logistic_model2(const VECTOR<scalar_t> & y, const MATRIX<scalar_t> & x, VEC
 
   W.setZero();
 
-  scalar_t U_norm(1);
   beta.setZero();
   for(int k = 0; k < max_iter; k++) {
     Xbeta.noalias() = x * beta;
@@ -39,7 +48,8 @@ void logistic_model2(const VECTOR<scalar_t> & y, const MATRIX<scalar_t> & x, VEC
 
     // deviance
     dev_old = dev;
-    dev = y.dot(Xbeta) + (VECTOR<scalar_t>::Ones(n) - pi).log().sum();
+    // dev = y.dot(Xbeta) + (VECTOR<scalar_t>::Ones(n) - pi).log().sum();
+    dev = y.dot(Xbeta) + sum_of_log<scalar_t>(VECTOR<scalar_t>::Ones(n) - pi);
 
     if(k > 0 && fabs(dev - dev_old)/(fabs(dev) + 0.1) < eps) 
       break; 
