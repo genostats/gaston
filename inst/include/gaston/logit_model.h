@@ -70,7 +70,6 @@ void logistic_model_offset(const VECTOR<scalar_t> & y, const VECTOR<scalar_t> & 
 
   W.setZero();
 
-  scalar_t U_norm(1);
   beta.setZero();
   for(int k = 0; k < max_iter; k++) {
     Xbeta.noalias() = x * beta + offset;
