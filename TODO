@@ -1,12 +1,15 @@
+* bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
+
+* dans SNP.match il faudrait pouvoir faire by = "id:alleles"
+
+* Dans snp_hash une nouvelle fonction fait le job de tester les alleles en swappant et flippant 
+  -> l'utiliser pour snp_match
+
 * de temps en temps vérifier si le workaround dans logit_model.h est tjs nécessaire
 
 * LD.plot : accepter les nan (ou NA) qui viennent de SNPs monomorphes !
 
 * read tped files ? (cf données elisa pour tester)
-
-* dans SNP.match il faudrait pouvoir faire by = "id:alleles"
-
-* bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
 
 * dans qqplot.pvalues ne pas supprimer les p = 0 mais faire comme dans milor
 

@@ -1,6 +1,6 @@
 
 snp.sq <- function(i, j, ld, write.ld.val, color, polygon.par, cex.ld) {
-  if(i == j) return; # pas de plot d'un SNP avec lui même
+  if(i == j) return(); # pas de plot d'un SNP avec lui même
   if(j < i) { tmp <- j; j <- i; i <- tmp } # i < j
   d <- (j-i)/2
   cx <- i+d

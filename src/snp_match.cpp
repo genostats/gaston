@@ -64,7 +64,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
     CharacterVector A2(as<CharacterVector>(x["A2"]));
 
     for(int i = 0; i < n; i++) {
-      int ii = h.lookup( ID[i], CHR[i], POS[i], A1[i], A2[i] );
+      int ii = h.lookup( (SEXP) ID[i], CHR[i], POS[i], (SEXP) A1[i], (SEXP) A2[i] );
       if(ii != NA_INTEGER) {
         I[i] = ii;
         Swap[i] = false;
@@ -72,7 +72,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
         continue;
       }
       // try swapping alleles
-      ii = h.lookup( ID[i], CHR[i], POS[i], A2[i], A1[i] );
+      ii = h.lookup( (SEXP) ID[i], CHR[i], POS[i], (SEXP) A2[i], (SEXP) A1[i] );
       if(ii != NA_INTEGER) {
         I[i] = ii;
         Swap[i] = true;
@@ -82,7 +82,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
       // try flipping strand
       std::string b1 = flip_strand(CHAR(A1[i]));
       std::string b2 = flip_strand(CHAR(A2[i]));
-      ii = h.lookup( ID[i], CHR[i], POS[i], b1, b2 );
+      ii = h.lookup( (SEXP) ID[i], CHR[i], POS[i], b1, b2 );
       if(ii != NA_INTEGER) {
         I[i] = ii;
         Swap[i] = false;
@@ -90,7 +90,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
         continue;
       }
       // try flipping strand + swapping alleles
-      ii = h.lookup( ID[i], CHR[i], POS[i], b2, b1);
+      ii = h.lookup( (SEXP) ID[i], CHR[i], POS[i], b2, b1);
       I[i] = ii;
       if(ii != NA_INTEGER) {
         Swap[i] = true;
@@ -110,7 +110,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
     IntegerVector CHR(as<IntegerVector>(x["chr"]));
     IntegerVector POS(as<IntegerVector>(x["pos"]));
     for(int i = 0; i < n; i++) {
-      I[i] = h.lookup( ID[i], CHR[i], POS[i]);
+      I[i] = h.lookup( (SEXP) ID[i], CHR[i], POS[i]);
     }
     // L["hash_index"] = wrap(h.index);
     L["index"] = I;
@@ -119,7 +119,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
     IntegerVector I(n);
     CharacterVector ID(as<CharacterVector>(x["id"]));
     for(int i = 0; i < n; i++) {
-      I[i] = h.lookup( ID[i]);
+      I[i] = h.lookup( (SEXP) ID[i]);
     }
     // L["hash_index"] = wrap(h.index);
     L["index"] = I;
@@ -137,7 +137,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
     CharacterVector A2(as<CharacterVector>(x["A2"]));
 
     for(int i = 0; i < n; i++) {
-      int ii = h.lookup(CHR[i], POS[i], A1[i], A2[i] );
+      int ii = h.lookup(CHR[i], POS[i], (SEXP) A1[i], (SEXP) A2[i] );
       if(ii != NA_INTEGER) {
         I[i] = ii;
         Swap[i] = false;
@@ -145,7 +145,7 @@ List SNPmatch(DataFrame x, DataFrame table) {
         continue;
       }
       // try swapping alleles
-      ii = h.lookup(CHR[i], POS[i], A2[i], A1[i] );
+      ii = h.lookup(CHR[i], POS[i], (SEXP) A2[i], (SEXP) A1[i] );
       if(ii != NA_INTEGER) {
         I[i] = ii;
         Swap[i] = true;

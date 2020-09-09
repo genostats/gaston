@@ -66,3 +66,6 @@
        (bug introduced in 1.5.4)
        Started to build an FAQ
 1.5.6  Corrected bug in gwas lmm wald (PQL) (was sending back NaNs only :/ )
+1.5.7  Corrected return; to return() as requested by the CRAN
+       Improved code for snp_hash.h (from gaston.utils)
+       

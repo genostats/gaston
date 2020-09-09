@@ -1,4 +1,8 @@
-#include <iostream>
+//#include <iostream>
+#include <string>
+#include "string_equal.h"
+#include "flip_strand.h"
+
 #ifndef GASTON_SNP_HASH
 #define GASTON_SNP_HASH
 //  inspiré par le code de Dirk Eddelbuettel, Romain Francois and Kevin Ushey
@@ -156,85 +160,50 @@ class SNPhash {
 
 
   // look up by snpid 
-  inline unsigned int lookup(SEXP ID) const {
+  template<typename T>
+  inline unsigned int lookup(T ID) const {
     if(htype != snpid)
       return NA_INTEGER;
-    const char * id_ = CHAR(ID);
-    unsigned int ad = djb2(id_);
+    unsigned int ad = djb2(ID);
     while(index[ad]) {
-      if(!std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1))))
+      if(string_equal(ID, id[index[ad] - 1]))
         return index[ad];
       ++ad %= m;
     }
     return NA_INTEGER;
   }
-
-  inline unsigned int lookup(std::string ID) const {
-    if(htype != snpid)
-      return NA_INTEGER;
-    const char * id_ = ID.c_str();
-    unsigned int ad = djb2(id_);
-    while(index[ad]) {
-      if(!std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1))))
-        return index[ad];
-      ++ad %= m;
-    }
-    return NA_INTEGER;
-  }
-
 
   // look up by snpid:chr:pos
-  inline unsigned int lookup(SEXP ID, int c, int p) const {
+  template<typename T>
+  inline unsigned int lookup(T ID, int c, int p) const {
     if(htype != snpid_chr_pos && htype != snpid_chr_pos_al)
       return NA_INTEGER;
-    const char * id_ = CHAR(ID);
-    unsigned int ad = hash_combine( djb2(id_), hash(32*p + c) );
-    while(index[ad]) {
-      if(pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
-         && !std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1))))
-        return index[ad];
-      ++ad %= m;
-    }
-    return NA_INTEGER;
-  }
-  // look up by snpid:chr:pos:alleles (two functions)
-  // 1 - alleles are SEXP
-  inline unsigned int lookup(SEXP ID, int c, int p, SEXP AL1, SEXP AL2) const {
-    if(htype != snpid_chr_pos_al)
-      return NA_INTEGER;
-    const char * id_ = CHAR(ID);
-    const char * a1 = CHAR(AL1);
-    const char * a2 = CHAR(AL2);
-    unsigned int ad = hash_combine( djb2(id_), hash(32*p + c) );
+    unsigned int ad = hash_combine( djb2(ID), hash(32*p + c) );
     while(index[ad]) {
       if( pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
-          && !std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1)))
-          && !std::strcmp(a1, CHAR(STRING_ELT(A1,index[ad] -1))) 
-	  && !std::strcmp(a2, CHAR(STRING_ELT(A2,index[ad] -1))) )
+)//          && string_equal<T, SEXP>(ID, id[index[ad] - 1])) 
         return index[ad];
       ++ad %= m;
     }
     return NA_INTEGER;
   }
 
-  // 2 - alleles are std::string
-  inline unsigned int lookup(SEXP ID, int c, int p, std::string AL1, std::string AL2) const {
+  // look up by snpid:chr:pos:alleles
+  template<typename T1, typename T2>
+  inline unsigned int lookup(T1 ID, int c, int p, T2 AL1, T2 AL2) const {
     if(htype != snpid_chr_pos_al)
       return NA_INTEGER;
-    const char * id_ = CHAR(ID);
-    unsigned int ad = hash_combine( djb2(id_), hash(32*p + c) );
+    unsigned int ad = hash_combine( djb2(ID), hash(32*p + c) );
     while(index[ad]) {
-      if(pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
-          && !std::strcmp(id_, CHAR(STRING_ELT(id, index[ad] - 1)))
-          && AL1 == CHAR(STRING_ELT(A1,index[ad] -1)) 
-	  && AL2 == CHAR(STRING_ELT(A2,index[ad] -1)) )
+      if( pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
+          && string_equal(ID, id[index[ad] - 1]) 
+          && string_equal(AL1, A1[index[ad] - 1])
+          && string_equal(AL2, A2[index[ad] - 1]))
         return index[ad];
       ++ad %= m;
     }
     return NA_INTEGER;
   }
-
-
 
   // look up by chr:pos
   inline unsigned int lookup(int c, int p) const {
@@ -247,39 +216,58 @@ class SNPhash {
     return NA_INTEGER;
   }
 
-  // look up by chr:pos:alleles (two functions)
-  // 1 - alleles are SEXP
-  inline unsigned int lookup(int c, int p, SEXP AL1, SEXP AL2) const {
+  // look up by chr:pos:alleles 
+  template<typename T>
+  inline unsigned int lookup(int c, int p, T AL1, T AL2) const {
     if(htype != chr_pos_al && htype != snpid_chr_pos_al)
       return NA_INTEGER;
-    const char * a1 = CHAR(AL1);
-    const char * a2 = CHAR(AL2);
     unsigned int ad = hash(32*p + c) ;
     while(index[ad]) {
       if( pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
-          && !std::strcmp(a1, CHAR(STRING_ELT(A1,index[ad] -1))) 
-	  && !std::strcmp(a2, CHAR(STRING_ELT(A2,index[ad] -1))) )
+          && string_equal(AL1, A1[index[ad] - 1])
+          && string_equal(AL2, A2[index[ad] - 1]))
         return index[ad];
       ++ad %= m;
     }
     return NA_INTEGER;
   }
 
-  // 2 - alleles are std::string
-  inline unsigned int lookup(int c, int p, std::string AL1, std::string AL2) const {
+  // look up by chr:pos:alleles 
+  // trying strand flip or allele swap
+  template<typename T>
+  inline unsigned int lookup(int c, int p, T AL1, T AL2, bool & flip, bool & swap) const {
     if(htype != chr_pos_al && htype != snpid_chr_pos_al)
       return NA_INTEGER;
     unsigned int ad = hash(32*p + c) ;
     while(index[ad]) {
-      if(pos[index[ad] - 1] == p && chr[index[ad] -1] == c 
-          && AL1 == CHAR(STRING_ELT(A1,index[ad] -1)) 
-	  && AL2 == CHAR(STRING_ELT(A2,index[ad] -1)) )
-        return index[ad];
+      if( pos[index[ad] - 1] == p && chr[index[ad] -1] == c) {
+        if(string_equal(AL1, A1[index[ad] - 1]) && string_equal(AL2, A2[index[ad] - 1])) {
+          flip = false; 
+          swap = false;
+          return index[ad];
+        }
+        std::string AL1_f = flip_strand(AL1);
+        std::string AL2_f = flip_strand(AL2);
+        if(string_equal(AL1_f, A1[index[ad] - 1]) && string_equal(AL2_f, A2[index[ad] - 1])) {
+          flip = true; 
+          swap = false;
+          return index[ad];
+        }
+        if(string_equal(AL2, A1[index[ad] - 1]) && string_equal(AL1, A2[index[ad] - 1])) {
+          flip = false; 
+          swap = true;
+          return index[ad];
+        }
+        if(string_equal(AL2_f, A1[index[ad] - 1]) && string_equal(AL1_f, A2[index[ad] - 1])) {
+          flip = true; 
+          swap = true;
+          return index[ad];
+        }
+      }
       ++ad %= m;
     }
     return NA_INTEGER;
   }
-
 
 
 
@@ -295,6 +283,14 @@ class SNPhash {
       h = (h << 5) + h + c; /*  33h + c */
     // Rcout << "djb2 value for string " << str << " = " << h << "\n";
     return hash(h);
+  }
+
+  inline unsigned int djb2(const std::string & str) const {
+    return djb2(str.c_str());
+  }
+
+  inline unsigned int djb2(const SEXP str) const {
+    return djb2(CHAR(str));
   }
 
   inline unsigned int hash_combine(unsigned int x, unsigned y) const {
