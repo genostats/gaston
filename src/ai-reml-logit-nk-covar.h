@@ -21,7 +21,7 @@ template<typename T1, typename T2, typename A, typename T3, typename T4>
 void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, const std::vector<T2,A> & K, bool constraint, 
                const Eigen::MatrixBase<T3> & min_tau, int max_iter, double eps, bool verbose, VectorXd & tau,
 			   int & niter, MatrixXd & P, VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i,
-			   bool & start_tau, bool & start_beta) {
+			   bool & start_tau, bool & start_beta, bool EM) {
 
   int n(y.rows()), p(x.cols()), s(K.size()), i(0);
   int j;
@@ -119,19 +119,28 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
       gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
     }
 
-    // updating tau (AI)
-    tau0 = tau;
 
-    AI.setZero();
-    for(int j = 0; j < s; j++)
-      AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
-    for(int j1 = 1; j1 < s; j1++) {
-      for(int j2 = 0; j2 < j1; j2++) {
-        AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
-      }
+    // UPDATE tau
+    tau0 = tau;
+    if(EM) {  
+      // updating tau with EM
+      for (j = 0; j < s; j++)
+        tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
+    } else { 
+      // updating tau with AIREML
+      // Compute Average Information
+      AI.setZero();
+      for(int j = 0; j < s; j++)
+        AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
+      for(int j1 = 1; j1 < s; j1++) {
+        for(int j2 = 0; j2 < j1; j2++) {
+          AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
+        }
+      } 
+      // update tau
+      sym_inverse(AI,pi_AI,d,ld,1e-5);
+      tau += pi_AI * gr;
     }
-    sym_inverse(AI,pi_AI,d,ld,1e-5);
-    tau += pi_AI * gr;
 
     if(constraint) {
       for(int j = 0; j < s; j++) {

@@ -10,8 +10,8 @@ typedef Map<MatrixXd> Map_MatrixXd;
 
 //[[Rcpp::export]]
 List AIREMLn_logit_nofix(NumericVector Y, List K_, bool constraint, NumericVector min_tau_, int max_iter, double eps, bool verbose,
-                         NumericVector tau0, bool start_tau, bool get_P) {
-						 
+                         NumericVector tau0, bool start_tau, bool get_P, bool EM) {
+
   Map_MatrixXd y(as<Map_MatrixXd>(Y));
 
   int s = K_.length();
@@ -26,7 +26,7 @@ List AIREMLn_logit_nofix(NumericVector Y, List K_, bool constraint, NumericVecto
   
   for(int i=0; i < s; i++) tau(i) = tau0(i);
   
-  AIREMLn_logit_nofix(y, K, constraint, min_tau, max_iter, eps, verbose, tau, niter, P, omega, start_tau);
+  AIREMLn_logit_nofix(y, K, constraint, min_tau, max_iter, eps, verbose, tau, niter, P, omega, start_tau, EM);
 
   List L;
 
@@ -38,8 +38,10 @@ List AIREMLn_logit_nofix(NumericVector Y, List K_, bool constraint, NumericVecto
   return L;
 }
 
+//[[Rcpp::export]]
 List AIREMLn_logit(NumericVector Y, NumericMatrix X, List K_, bool constraint, NumericVector min_tau_, int max_iter, double eps, bool verbose,
-                   NumericVector tau0, NumericVector beta0, bool start_tau, bool start_beta, bool get_P) {
+                   NumericVector tau0, NumericVector beta0, bool start_tau, bool start_beta, bool get_P, bool EM) {
+
   Map_MatrixXd y(as<Map<MatrixXd> >(Y));
   Map_MatrixXd x(as<Map<MatrixXd> >(X));
 
@@ -56,7 +58,7 @@ List AIREMLn_logit(NumericVector Y, NumericMatrix X, List K_, bool constraint, N
   for(int i=0; i < s; i++) tau(i) = tau0(i);
   for(int i=0; i < x.cols(); i++) beta(i) = beta0(i);
 
-  AIREMLn_logit(y, x, K, constraint, min_tau, max_iter, eps, verbose, tau, niter, P, omega, beta, varbeta, start_tau, start_beta);
+  AIREMLn_logit(y, x, K, constraint, min_tau, max_iter, eps, verbose, tau, niter, P, omega, beta, varbeta, start_tau, start_beta, EM);
 
   List L;
 
@@ -70,53 +72,48 @@ List AIREMLn_logit(NumericVector Y, NumericMatrix X, List K_, bool constraint, N
   return L;
 }
 
-
-RcppExport SEXP gg_AIREMLn_logit_nofix(SEXP YSEXP, SEXP K_SEXP, SEXP constraintSEXP, SEXP min_tau_SEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP tau0SEXP, SEXP start_tauSEXP, SEXP get_PSEXP) {
+// AIREMLn_logit_nofix
+RcppExport SEXP gg_AIREMLn_logit_nofix(SEXP YSEXP, SEXP K_SEXP, SEXP constraintSEXP, SEXP min_tau_SEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP tau0SEXP, SEXP start_tauSEXP, SEXP get_PSEXP, SEXP EMSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< List >::type K_(K_SEXP );
-        Rcpp::traits::input_parameter< bool >::type constraint(constraintSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type min_tau_(min_tau_SEXP );
-        Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP );
-        Rcpp::traits::input_parameter< double >::type eps(epsSEXP );
-        Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP );
-		Rcpp::traits::input_parameter< NumericVector >::type tau0(tau0SEXP );
-        Rcpp::traits::input_parameter< bool >::type start_tau(start_tauSEXP );
-	Rcpp::traits::input_parameter< bool >::type get_P( get_PSEXP );
-        List __result = AIREMLn_logit_nofix(Y, K_, constraint, min_tau_, max_iter, eps, verbose, tau0, start_tau, get_P);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< List >::type K_(K_SEXP);
+    Rcpp::traits::input_parameter< bool >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type min_tau_(min_tau_SEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type tau0(tau0SEXP);
+    Rcpp::traits::input_parameter< bool >::type start_tau(start_tauSEXP);
+    Rcpp::traits::input_parameter< bool >::type get_P(get_PSEXP);
+    Rcpp::traits::input_parameter< bool >::type EM(EMSEXP);
+    rcpp_result_gen = Rcpp::wrap(AIREMLn_logit_nofix(Y, K_, constraint, min_tau_, max_iter, eps, verbose, tau0, start_tau, get_P, EM));
+    return rcpp_result_gen;
 END_RCPP
 }
 
-RcppExport SEXP gg_AIREMLn_logit(SEXP YSEXP, SEXP XSEXP, SEXP K_SEXP, SEXP constraintSEXP, SEXP min_tau_SEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP tau0SEXP, SEXP beta0SEXP, SEXP start_tauSEXP, SEXP start_betaSEXP, SEXP get_PSEXP) {
+// AIREMLn_logit
+RcppExport SEXP gg_AIREMLn_logit(SEXP YSEXP, SEXP XSEXP, SEXP K_SEXP, SEXP constraintSEXP, SEXP min_tau_SEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP tau0SEXP, SEXP beta0SEXP, SEXP start_tauSEXP, SEXP start_betaSEXP, SEXP get_PSEXP, SEXP EMSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP );
-        Rcpp::traits::input_parameter< List >::type K_(K_SEXP );
-        Rcpp::traits::input_parameter< bool >::type constraint(constraintSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type min_tau_(min_tau_SEXP );
-        Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP );
-        Rcpp::traits::input_parameter< double >::type eps(epsSEXP );
-        Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP );
-		Rcpp::traits::input_parameter< NumericVector >::type tau0(tau0SEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type beta0(beta0SEXP );
-        Rcpp::traits::input_parameter< bool >::type start_tau(start_tauSEXP );
-        Rcpp::traits::input_parameter< bool >::type start_beta(start_betaSEXP );
-	Rcpp::traits::input_parameter< bool >::type get_P(get_PSEXP );
-        List __result = AIREMLn_logit(Y, X, K_, constraint, min_tau_, max_iter, eps, verbose, tau0, beta0, start_tau, start_beta, get_P);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< List >::type K_(K_SEXP);
+    Rcpp::traits::input_parameter< bool >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type min_tau_(min_tau_SEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type tau0(tau0SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type beta0(beta0SEXP);
+    Rcpp::traits::input_parameter< bool >::type start_tau(start_tauSEXP);
+    Rcpp::traits::input_parameter< bool >::type start_beta(start_betaSEXP);
+    Rcpp::traits::input_parameter< bool >::type get_P(get_PSEXP);
+    Rcpp::traits::input_parameter< bool >::type EM(EMSEXP);
+    rcpp_result_gen = Rcpp::wrap(AIREMLn_logit(Y, X, K_, constraint, min_tau_, max_iter, eps, verbose, tau0, beta0, start_tau, start_beta, get_P, EM));
+    return rcpp_result_gen;
 END_RCPP
 }
 
