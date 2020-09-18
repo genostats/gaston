@@ -4,6 +4,8 @@
 #include <iostream>
 #include "logit_model.h"
 #include "matrix-varia.h"
+#include "any_nan.h"
+
 #ifndef GASTONAIREMLn_logit
 #define GASTONAIREMLn_logit
 
@@ -68,6 +70,7 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   // first update tau
   V.noalias() = W;
   for (int j = 0; j < s; j++) V.noalias() += tau(j)*K[j];
+
   sym_inverse(V,Vi,log_detV,detV,1e-7);
   ViX.noalias() = Vi * x;
   XViX.noalias() = x.transpose() * ViX;
@@ -105,6 +108,9 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
    // Calcul de Vi = inverse(V)
     sym_inverse(V,Vi,log_detV,detV,1e-7);
 
+    // if(verbose) Rcout << "[Iteration " << i+1 << "] det V = " << detV << "\n";
+
+
     // Calcul de P
     ViX.noalias() = Vi * x;
     XViX.noalias() = x.transpose() * ViX;
@@ -118,15 +124,12 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
       PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
       gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
     }
+    //  if(verbose) Rcout << "[Iteration " << i+1 << "] gradient = " << gr.transpose() << "\n";
 
 
     // UPDATE tau
     tau0 = tau;
-    if(EM) {  
-      // updating tau with EM
-      for (j = 0; j < s; j++)
-        tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
-    } else { 
+    if(!EM) {
       // updating tau with AIREML
       // Compute Average Information
       AI.setZero();
@@ -136,10 +139,21 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
         for(int j2 = 0; j2 < j1; j2++) {
           AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
         }
-      } 
+      }
       // update tau
       sym_inverse(AI,pi_AI,d,ld,1e-5);
       tau += pi_AI * gr;
+    }
+    // did it fail?
+    bool failed = any_nan(tau);
+    if(failed) {
+      if(verbose) Rcout << "[Iteration " << i+1 << "] AIREML step failed, falling back to an EM step\n";  
+      tau = tau0;
+    }
+    if(EM || failed) {  
+      // updating tau with EM
+      for (j = 0; j < s; j++)
+        tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
     }
 
     if(constraint) {
