@@ -10,7 +10,8 @@ typedef Map<MatrixXd> Map_MatrixXd;
 
 template<typename T1, typename T2>
 void AIREML1_logit_nofix(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T2> & K, bool constraint, double min_tau,
-                         int max_iter, double eps, bool verbose, double & tau, int & niter, MatrixXd & P, VectorXd & omega, bool start_theta) {
+                         int max_iter, double eps, bool verbose, double & tau, int & niter, MatrixXd & P, VectorXd & omega, 
+                         bool start_theta, bool EM) {
   int n(y.rows()), i(0);  
   MatrixXd V(n,n), W(n,n);
   VectorXd pi(n), z(n), Pz(n), KPz(n), PKPz(n);
@@ -54,17 +55,32 @@ void AIREML1_logit_nofix(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBas
     V.noalias() = W + tau*K;
     sym_inverse(V,P,log_detV,detV,1e-7);
  
-	// gradient
+    // gradient
     Pz.noalias()   =  P.selfadjointView<Lower>() * z;
     KPz.noalias()  = K * Pz; // le .selfadjointView ne compile pas avec le template !!
-    PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
     gr = -0.5*(trace_of_product(K,P) - Pz.dot(KPz));
-	if(verbose) Rcout << "[Iteration " << i+1 << "] gr = " << gr << "\n";
+    if(verbose) Rcout << "[Iteration " << i+1 << "] gr = " << gr << "\n";
 	  
-    // update tau Average Information
-	tau0 = tau;
-    AI = 0.5*PKPz.dot(KPz);
-    tau += gr/AI;
+    // UPDATE tau
+    tau0 = tau;
+    if(!EM) {
+      // updating tau with AIREML
+      // Compute Average Information
+      PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
+      AI = 0.5*PKPz.dot(KPz);
+      // update tau
+      tau += gr/AI;
+    }
+    // did it fail?
+    bool failed = std::isnan(tau);
+    if(failed) {
+      if(verbose) Rcout << "[Iteration " << i+1 << "] AIREML step failed, falling back to an EM step\n";
+      tau = tau0;
+    }
+    if(EM || failed) {
+      // updating tau with EM
+      tau += 2*tau*tau*gr/n;
+    }
     
     if(constraint && tau < min_tau) {
         tau = min_tau;

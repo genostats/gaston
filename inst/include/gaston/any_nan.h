@@ -1,5 +1,8 @@
 #include <RcppEigen.h>
 
+#ifndef GASTONANYNAN
+#define GASTONANYNAN
+
 template<typename scalar_t>
 using VECTOR = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
 
@@ -11,3 +14,4 @@ inline bool any_nan(VECTOR<T> x) {
   }
   return false;
 }
+#endif

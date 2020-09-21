@@ -13,8 +13,8 @@ extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, 
 /* .Call calls */
 extern SEXP gg_AIREML1(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_contrast(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gg_AIREML1_logit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP gg_AIREML1_logit_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_AIREML1_logit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP gg_AIREML1_logit_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_nofix(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREMLn(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREMLn_contrast(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -100,8 +100,8 @@ static const R_CMethodDef CEntries[] = {
 static const R_CallMethodDef CallEntries[] = {
     {"gg_AIREML1",                             (DL_FUNC) &gg_AIREML1,                             15},
     {"gg_AIREML1_contrast",                    (DL_FUNC) &gg_AIREML1_contrast,                    15},
-    {"gg_AIREML1_logit",                       (DL_FUNC) &gg_AIREML1_logit,                       13},
-    {"gg_AIREML1_logit_nofix",                 (DL_FUNC) &gg_AIREML1_logit_nofix,                 10},
+    {"gg_AIREML1_logit",                       (DL_FUNC) &gg_AIREML1_logit,                       14},
+    {"gg_AIREML1_logit_nofix",                 (DL_FUNC) &gg_AIREML1_logit_nofix,                 11},
     {"gg_AIREML1_nofix",                       (DL_FUNC) &gg_AIREML1_nofix,                       14},
     {"gg_AIREMLn",                             (DL_FUNC) &gg_AIREMLn,                             15},
     {"gg_AIREMLn_contrast",                    (DL_FUNC) &gg_AIREMLn_contrast,                    15},
@@ -186,5 +186,6 @@ void R_init_gaston(DllInfo *dll)
     R_registerRoutines(dll, CEntries, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
+
 
 

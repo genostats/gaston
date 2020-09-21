@@ -2,7 +2,7 @@
 #include <RcppEigen.h>
 #include <math.h>
 #include <iostream>
-#include "any.h"
+#include "any_nan.h"
 #ifndef GASTONAIREMLn_logit_nofix
 #define GASTONAIREMLn_logit_nofix
 
@@ -14,8 +14,10 @@ typedef Map<MatrixXd> Map_MatrixXd;
 
 // AI REML avec n matrices de Kinship
 template<typename T1, typename T2, typename A, typename T3>
-void AIREMLn_logit_nofix(const Eigen::MatrixBase<T1> & y, const std::vector<T2,A> & K, bool constraint, const Eigen::MatrixBase<T3> & min_tau, int max_iter, 
-                   double eps, bool verbose, VectorXd & tau, int & niter, MatrixXd & P, VectorXd & omega, bool start_tau) {
+void AIREMLn_logit_nofix(const Eigen::MatrixBase<T1> & y, const std::vector<T2,A> & K, bool constraint, 
+                         const Eigen::MatrixBase<T3> & min_tau, int max_iter, 
+                         double eps, bool verbose, VectorXd & tau, int & niter, MatrixXd & P, VectorXd & omega, 
+                         bool start_tau, bool EM) {
 
   int n(y.rows()), s(K.size()), i(0);
   int j;  
@@ -82,24 +84,38 @@ void AIREMLn_logit_nofix(const Eigen::MatrixBase<T1> & y, const std::vector<T2,A
     // gradient
     for(int j = 0; j < s; j++) {
       KPz[j].noalias() = K[j] * Pz;
-      PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
-	  gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
+      if(!EM) PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
+      gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
     }
 
-    // updating tau
-    // Average Information
+    // UPDATE tau
     tau0 = tau;
-    AI.setZero();
-    for(int j = 0; j < s; j++) 
-      AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
-    for(int j1 = 1; j1 < s; j1++) {
-      for(int j2 = 0; j2 < j1; j2++) {
-        AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
+    if(!EM) {
+      // updating tau with AIREML
+      // Compute Average Information
+      AI.setZero();
+      for(int j = 0; j < s; j++)
+        AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
+      for(int j1 = 1; j1 < s; j1++) {
+        for(int j2 = 0; j2 < j1; j2++) {
+          AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
+        }
       }
+      // update tau
+      sym_inverse(AI,pi_AI,d,ld,1e-5);
+      tau += pi_AI * gr;
     }
-	
-    sym_inverse(AI,pi_AI,d,ld,1e-5);
-    tau += pi_AI * gr;
+    // did it fail?
+    bool failed = any_nan(tau);
+    if(failed) {
+      if(verbose) Rcout << "[Iteration " << i+1 << "] AIREML step failed, falling back to an EM step\n";
+      tau = tau0;
+    }
+    if(EM || failed) {
+      // updating tau with EM
+      for (j = 0; j < s; j++)
+        tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
+    }
 
     if(constraint) {
       for(int j = 0; j < s; j++) {
