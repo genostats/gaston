@@ -1,3 +1,8 @@
+* dans association test : laisser la possibilité de passer un data.frame comme phéno
+  avec un argument col.pheno pour choisir la colonne. Ceci peut permettre de faire
+  l'appariemment sur famid / id. On pourrait aussi considérer le cas ou le pheno est
+  un vecteur nommé.
+
 * bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
 
 * dans SNP.match il faudrait pouvoir faire by = "id:alleles"
