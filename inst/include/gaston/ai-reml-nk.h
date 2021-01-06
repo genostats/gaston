@@ -1,6 +1,7 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <RcppEigen.h>
 #include <iostream>
+#include "any.h"
 // #define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 
 
 using namespace Rcpp;
