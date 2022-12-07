@@ -1,3 +1,16 @@
+* il faudrait pouvoir inverser les allèles en fonction de leur MAF
+
+* autosomes / chr Y / etc... possibilité de donner tout un vecteur pour les chr x et y ?
+
+* dans vignettes !!! ne pas modifier @ped @snps pour faire de la sélection !!!
+
+* introduire des R check user interrupt
+
+* set.stats pourrait se dispenser de créer les colonnes mt/y/x quand ça n'est pas nécessaire
+
+* la GRM avec autosomes.only = TRUE -> informer l'utilisateur du nombre de variants conservés
+  (avec un warning) ; erreur si aucun
+
 * bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
 
 * dans SNP.match il faudrait pouvoir faire by = "id:alleles"
