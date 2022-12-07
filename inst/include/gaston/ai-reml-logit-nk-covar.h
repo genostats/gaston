@@ -4,6 +4,8 @@
 #include <iostream>
 #include "logit_model.h"
 #include "matrix-varia.h"
+#include "any_nan.h"
+
 #ifndef GASTONAIREMLn_logit
 #define GASTONAIREMLn_logit
 
@@ -21,7 +23,7 @@ template<typename T1, typename T2, typename A, typename T3, typename T4>
 void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> & x, const std::vector<T2,A> & K, bool constraint, 
                const Eigen::MatrixBase<T3> & min_tau, int max_iter, double eps, bool verbose, VectorXd & tau,
 			   int & niter, MatrixXd & P, VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i,
-			   bool & start_tau, bool & start_beta) {
+			   bool & start_tau, bool & start_beta, bool EM) {
 
   int n(y.rows()), p(x.cols()), s(K.size()), i(0);
   int j;
@@ -49,7 +51,7 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   sym_inverse(xtx0, xtxi, ldet_xtx, det_xtx, 1e-5); // détruit xtx0
   
   // initialisation beta
-  if (!start_beta) logistic_model2(y, x, beta, XViX_i, 1e-3);
+  if (!start_beta) logistic_model2<double>(y, x, beta, XViX_i, 1e-3);
   
   if(verbose) Rcout << "[Initialization] beta = " << beta.transpose() << "\n";    
    
@@ -68,6 +70,7 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
   // first update tau
   V.noalias() = W;
   for (int j = 0; j < s; j++) V.noalias() += tau(j)*K[j];
+
   sym_inverse(V,Vi,log_detV,detV,1e-7);
   ViX.noalias() = Vi * x;
   XViX.noalias() = x.transpose() * ViX;
@@ -105,6 +108,9 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
    // Calcul de Vi = inverse(V)
     sym_inverse(V,Vi,log_detV,detV,1e-7);
 
+    // if(verbose) Rcout << "[Iteration " << i+1 << "] det V = " << detV << "\n";
+
+
     // Calcul de P
     ViX.noalias() = Vi * x;
     XViX.noalias() = x.transpose() * ViX;
@@ -115,23 +121,40 @@ void AIREMLn_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T4> 
     Pz.noalias()   =  P.selfadjointView<Lower>() * z;
     for(int j = 0; j < s; j++) {
       KPz[j].noalias() = K[j] * Pz;
-      PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
+      if(!EM) PKPz[j].noalias() = P.selfadjointView<Lower>() * KPz[j];
       gr(j) = -0.5*(trace_of_product(K[j], P) - Pz.dot(KPz[j]));
     }
+    //  if(verbose) Rcout << "[Iteration " << i+1 << "] gradient = " << gr.transpose() << "\n";
 
-    // updating tau (AI)
+
+    // UPDATE tau
     tau0 = tau;
-
-    AI.setZero();
-    for(int j = 0; j < s; j++)
-      AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
-    for(int j1 = 1; j1 < s; j1++) {
-      for(int j2 = 0; j2 < j1; j2++) {
-        AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
+    if(!EM) {
+      // updating tau with AIREML
+      // Compute Average Information
+      AI.setZero();
+      for(int j = 0; j < s; j++)
+        AI(j,j) = 0.5*PKPz[j].dot(KPz[j]);
+      for(int j1 = 1; j1 < s; j1++) {
+        for(int j2 = 0; j2 < j1; j2++) {
+          AI(j1,j2) = AI(j2,j1) = 0.5*PKPz[j1].dot(KPz[j2]);
+        }
       }
+      // update tau
+      sym_inverse(AI,pi_AI,d,ld,1e-5);
+      tau += pi_AI * gr;
     }
-    sym_inverse(AI,pi_AI,d,ld,1e-5);
-    tau += pi_AI * gr;
+    // did it fail?
+    bool failed = any_nan(tau);
+    if(failed) {
+      if(verbose) Rcout << "[Iteration " << i+1 << "] AIREML step failed, falling back to an EM step\n";  
+      tau = tau0;
+    }
+    if(EM || failed) { 
+      // updating tau with EM
+      for (j = 0; j < s; j++)
+        tau(j) += 2*tau(j)*tau(j)*gr(j)/n;
+    }
 
     if(constraint) {
       for(int j = 0; j < s; j++) {

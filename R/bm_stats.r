@@ -1,6 +1,6 @@
 ## Basic Statistics
 set.stats <- function(x, set.p = TRUE, set.mu_sigma = TRUE, verbose = getOption("gaston.verbose",TRUE)) {
-  if( is(x)!='bed.matrix' ) stop('x must be an object of class bed.matrix')
+  if (!is(x, "bed.matrix")) stop('x must be an object of class bed.matrix')
   if(!is.logical(set.p) | !is.logical(set.mu_sigma)) 
     stop('set.* arguments must be logical')
 
@@ -83,7 +83,7 @@ set.stats <- function(x, set.p = TRUE, set.mu_sigma = TRUE, verbose = getOption(
 
 ## Basic Statistics, only individuals ---------------------------------------------------------
 set.stats.ped <- function(x, verbose = getOption("gaston.verbose",TRUE)) {
-  if( is(x)!='bed.matrix' ) stop('x must be an object of class bed.matrix')
+  if (!is(x, "bed.matrix")) stop('x must be an object of class bed.matrix')
 
   w.a  <- is.autosome(x@snps$chr)
   w.x  <- is.chr.x(x@snps$chr)

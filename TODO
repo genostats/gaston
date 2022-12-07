@@ -11,6 +11,18 @@
 * la GRM avec autosomes.only = TRUE -> informer l'utilisateur du nombre de variants conservés
   (avec un warning) ; erreur si aucun
 
+* set.genomic.sex devrait être capable d'utiliser une autre méthode quand il n'y a
+  pas de chromosome X
+
+* read bed matrix devrait prévenir quand les chr ne sont pas 1 à 22 + etc
+  Faire une fonction pour les options de gaston ? (tout en les laissant 
+  dans options())
+
+* dans association test : laisser la possibilité de passer un data.frame comme phéno
+  avec un argument col.pheno pour choisir la colonne. Ceci peut permettre de faire
+  l'appariemment sur famid / id. On pourrait aussi considérer le cas ou le pheno est
+  un vecteur nommé.
+
 * bug dans lmm.aireml pas de composante varbeta quand on donne une liste de matrice
 
 * dans SNP.match il faudrait pouvoir faire by = "id:alleles"

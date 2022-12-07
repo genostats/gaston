@@ -1,7 +1,7 @@
 ########################### remove duplicated
 
 SNP.rm.duplicates <- function(x, by = "chr:pos", na.keep = TRUE, incomp.rm = TRUE) {
-  if(class(x) != "bed.matrix") stop("x should be a bed.matrix")
+  if (!is(x, "bed.matrix")) stop("x should be a bed.matrix")
   
   b <- strsplit(by,':')[[1]]
   if ('alleles' %in% b) b <- c(b[b!='alleles'], 'A1', 'A2')

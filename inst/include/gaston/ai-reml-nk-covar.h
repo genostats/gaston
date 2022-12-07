@@ -1,6 +1,8 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <RcppEigen.h>
 #include <iostream>
+#include "any.h"
+#include "matrix-varia.h"
 #ifndef GASTONAIREMLn
 #define GASTONAIREMLn
 //#define ANY(_X_) (std::any_of(_X_.begin(), _X_.end(), [](bool x) {return x;})) 

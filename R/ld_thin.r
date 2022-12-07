@@ -10,7 +10,8 @@ LD.thin <- function(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x), whic
     stop("LD.thin needs mu and sigma to be set for LD computation (use set.stats)")
 
   # ne pas considérer les SNPs monomorphes ou qui ont un callrate nul
-  which.snps <- which.snps & (x@snps$callrate > 0) & (x@snps$maf > 0)
+  I <- beg:end
+  which.snps <- which.snps & (x@snps$callrate[I] > 0) & (x@snps$maf[I] > 0)
 
   dist.unit <- match.arg(dist.unit)
   if(dist.unit == "bases") {

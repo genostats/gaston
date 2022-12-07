@@ -9,8 +9,8 @@ Quasi-Likelihood with an AIREML step for the linear model.
 }
 \usage{
 logistic.mm.aireml(Y, X = matrix(1, nrow = length(Y)), K, 
-                   min_tau, tau, beta, constraint = TRUE, max_iter = 50L, eps = 1e-5,
-                   verbose = getOption("gaston.verbose",TRUE), get.P = FALSE)
+                   min_tau, tau, beta, constraint = TRUE, max.iter = 50L, eps = 1e-5,
+                   verbose = getOption("gaston.verbose",TRUE), get.P = FALSE, EM = FALSE)
 }
 \arguments{
   \item{Y}{ Binary phenotype vector }
@@ -20,10 +20,11 @@ logistic.mm.aireml(Y, X = matrix(1, nrow = length(Y)), K,
   \item{tau}{ (Optional) Optimization starting point for variance component(s) \code{tau} }
   \item{beta}{ (Optional) Optimization starting point for fixed effect(s) \code{beta} }
   \item{constraint}{ If \code{TRUE}, the model parameters respect the contraints given by \code{min_tau} }
-  \item{max_iter}{ Maximum number of iterations }
+  \item{max.iter}{ Maximum number of iterations }
   \item{eps}{ The algorithm stops when the gradient norm is lower than this parameter }
   \item{verbose}{ If \code{TRUE}, display information on the algorithm progress }
   \item{get.P}{If \code{TRUE}, the function sends back the last matrix \eqn{P} computed in the optimization process}
+  \item{EM}{If \code{TRUE}, the AIREML step is replaced by an EM step}
 }
 
 \details{
@@ -33,7 +34,9 @@ logistic.mm.aireml(Y, X = matrix(1, nrow = length(Y)), K,
   with \eqn{ \omega_i \sim N(0,\tau_i K_i) }{omega_i ~ N(0, tau_i K_i)} for \eqn{ i \in 1, \dots,k }.
   
   The estimation is based on the Penalized Quasi-Likelihood with an AIREML step for the linear model
-  (the algorithm is similar to the algorithm described in Chen et al 2016).
+  (the algorithm is similar to the algorithm described in Chen et al 2016). If \code{EM = TRUE}
+  the AIREML step is replaced by an EM step. In this case the convergence will be much slower, 
+  you're advised to use a large value of \code{max.iter}.
 
   The variance matrices \eqn{K_1}{K_1}, ..., \eqn{K_k}{K_k}, are specified through the parameter \code{K}.
 

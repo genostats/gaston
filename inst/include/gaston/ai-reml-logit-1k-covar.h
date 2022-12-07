@@ -15,7 +15,7 @@ typedef Map<MatrixXd> Map_MatrixXd;
 template<typename T1, typename T2, typename T3>
 void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> & x, const Eigen::MatrixBase<T2> & K, 
               bool constraint, double min_tau, int max_iter, double eps, bool verbose, double & tau, int & niter, MatrixXd & P,
-			  VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i, bool start_tau, bool start_beta) {
+			  VectorXd & omega, VectorXd & beta, MatrixXd & XViX_i, bool start_tau, bool start_beta, bool EM) {
 
   int n(y.rows()), p(x.cols()), i(0);
   MatrixXd V(n,n), Vi(n,n);
@@ -94,13 +94,27 @@ void AIREML1_logit(const Eigen::MatrixBase<T1> & y, const Eigen::MatrixBase<T3> 
     gr = -0.5*(trace_of_product(K,P) - Pz.dot(KPz));
     if(verbose) Rcout << "[Iteration " << i+1 << "] gr = " << gr << "\n";
 	
-    //update tau
-    // Average Information
+   // UPDATE tau
     tau0 = tau;
-    PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
-    AI = 0.5*PKPz.dot(KPz);
-    tau += gr/AI;
-    
+    if(!EM) {
+      // updating tau with AIREML
+      // Compute Average Information
+      PKPz.noalias() = P.selfadjointView<Lower>() * KPz;   
+      AI = 0.5*PKPz.dot(KPz);
+      // update tau
+      tau += gr/AI;
+    }
+    // did it fail?
+    bool failed = std::isnan(tau);
+    if(failed) {
+      if(verbose) Rcout << "[Iteration " << i+1 << "] AIREML step failed, falling back to an EM step\n";
+      tau = tau0;
+    }
+    if(EM || failed) {
+      // updating tau with EM
+      tau += 2*tau*tau*gr/n;
+    }
+ 
     if(constraint && tau < min_tau) {
       tau = min_tau;
       if(verbose) Rcout << "[Iteration " << i+1 << "] Constraining tau\n";

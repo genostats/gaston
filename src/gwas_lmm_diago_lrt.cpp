@@ -15,7 +15,7 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
 
   int n = Sigma.size();
   int r = X.ncol();
-  int max_iter = 10;
+  int max_iter = 25;
 
   if(Y.size() != n || X.nrow() != n || U.nrow() != n || U.ncol() != n)
     stop("Dimensions mismatch");
