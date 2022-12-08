@@ -1,3 +1,5 @@
+* ld clump = on n'a pas le choix des unités pour la distance...
+
 * il faudrait pouvoir inverser les allèles en fonction de leur MAF
 
 * autosomes / chr Y / etc... possibilité de donner tout un vecteur pour les chr x et y ?
