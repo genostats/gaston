@@ -1,8 +1,8 @@
 Package: gaston
 Type: Package
 Title: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models
-Version: 1.5.7
-Date: 2020-09-18
+Version: 1.5.8
+Date: 2022-11-08
 Encoding: UTF-8 
 VignetteBuilder: knitr
 Authors@R: c( person("Hervé", "Perdry", role = c("cre", "aut", "cph"), email = "herve.perdry@u-psud.fr"), 
