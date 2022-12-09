@@ -48,7 +48,7 @@ standardize(x) <- "p"
 beta <- numeric(ncol(x))
 beta[c(108,631)] <- 0.5
 set.seed(1)
-y <- x %*% beta + rnorm(nrow(x))
+y <- x \%*\% beta + rnorm(nrow(x))
      
 # association test with linear model 
 test <- association.test(x, y, method="lm", response = "quanti")
