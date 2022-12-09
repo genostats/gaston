@@ -69,3 +69,4 @@
 1.5.7  Corrected return; to return() as requested by the CRAN
        Improved code for snp_hash.h (from gaston.utils)
        Argument EM in logistic-mm-aireml 
+1.5.8  + LD.clump
