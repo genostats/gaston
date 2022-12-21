@@ -2,6 +2,8 @@
 #include "matrix4.h"
 #include "m4_ld.h"
 
+#include <iostream>
+
 using namespace Rcpp;
 
 // un matrice de génotypes, les deux vecteurs nécessaires à centrer/réduire
@@ -19,6 +21,7 @@ IntegerVector ld_clump(XPtr<matrix4> pA, NumericVector mu, NumericVector sd, dou
 
   IntegerVector Index(pA->nrow, -1);
   threshold = sqrt(threshold); //!!!!!!!!!!!!! on passe de r² à |r| !!!!!!!!!!!!!!!!
+  int M = chr.size();
 
   for(int i : order) {
     if( Index[i] >= 0 ) // déjà indexé
@@ -33,7 +36,7 @@ IntegerVector ld_clump(XPtr<matrix4> pA, NumericVector mu, NumericVector sd, dou
     double sd_i = sd[i];
     // on balaie le chr vers la gauche
     int j = i-1;
-    while(chr[j] == c && pos[j] > min_pos) {
+    while(j > 0 && chr[j] == c && pos[j] > min_pos) {
       if(Index[j] < 0) { // SNP pas encore indexé
         double ld = LD_colxx(*pA, mu_i, mu[j], sd_i*sd[j], i, j);
         if(fabs(ld) >= threshold) // si il est en LD avec SNP i
@@ -43,7 +46,7 @@ IntegerVector ld_clump(XPtr<matrix4> pA, NumericVector mu, NumericVector sd, dou
     }
     // puis vers la droite
     j = i+1;
-    while(chr[j] == c && pos[j] < max_pos) {
+    while(j < M && chr[j] == c && pos[j] < max_pos) {
       if(Index[j] < 0) {
         double ld = LD_colxx(*pA, mu_i, mu[j], sd_i*sd[j], i, j);
         if(fabs(ld) >= threshold)

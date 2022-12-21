@@ -232,3 +232,7 @@
 
 * Default argument max.dist = 500e3 in LD.thin
 
+## Bug fixes
+
+* Corrected bug in ld clump, thanks to valgrind and Pr Ripley <3
+
