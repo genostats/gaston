@@ -1,3 +1,5 @@
+* ld clump = on n'a pas le choix des unités pour la distance...
+
 * bed.order <- fonction(x) x[ , order( x@snps$chr, x@snps$pos ) ]
   -- si la bed matrix n'est pas triée LD thin (et ld clump) feront n'importe 
   quoi. Emettre warning après toute création (cbind, extraction) ou lecture
@@ -12,25 +14,20 @@
 
 * pi hat de plink
 
-* la régression logistique est merdique pour certains cas
-  cf par exemple dans le QC-geno.Rnw des données PestiBG
-  avec la matrice x4
-  
-  table( as.matrix(x4[, 152860]), x4@ped$batch )
-  glm( (x4@ped$batch-1) ~ I( as.matrix(x4[, 152860]) ), family=binomial() )
-  summary( glm( (x4@ped$batch-1) ~ I( as.matrix(x4[, 152860]) ), family=binomial() ) )
-  a <- association.test(x4, x4@ped$batch-1, response="bin", method="lm")
-  a[152860,]
-
-  Alors qu'avec le test du score (fait dans le QC) l'effet batch est parfaitement
-  détecté.
-
-  !!!! Inversement la régression logistique de gaston part complètement en vrille
-  avec le SNP 531757 alors que qu'il n'y a pas de raison ?! (après imputation 
-  des SNPs manquant par la moyenne, on a un beau 'glm.fit: fitted probabilities numerically 0 or 1 occurred'
-  avec glm)
-
 * dans lmm.aireml lmm.diago standardiser Y avant les analyses.
+
+* il faudrait pouvoir inverser les allèles en fonction de leur MAF
+
+* autosomes / chr Y / etc... possibilité de donner tout un vecteur pour les chr x et y ?
+
+* dans vignettes !!! ne pas modifier @ped @snps pour faire de la sélection !!!
+
+* introduire des R check user interrupt
+
+* set.stats pourrait se dispenser de créer les colonnes mt/y/x quand ça n'est pas nécessaire
+
+* la GRM avec autosomes.only = TRUE -> informer l'utilisateur du nombre de variants conservés
+  (avec un warning) ; erreur si aucun
 
 * set.genomic.sex devrait être capable d'utiliser une autre méthode quand il n'y a
   pas de chromosome X

@@ -69,4 +69,5 @@
 1.5.7  Corrected return; to return() as requested by the CRAN
        Improved code for snp_hash.h (from gaston.utils)
        Argument EM in logistic-mm-aireml 
-1.5.8  Default argument max.dist = 500e3 in LD.thin
+1.5.8  + LD.clump
+1.5.9  Default argument max.dist = 500e3 in LD.thin

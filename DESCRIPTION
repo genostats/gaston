@@ -2,10 +2,10 @@ Package: gaston
 Type: Package
 Title: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models
 Version: 1.5.8
-Date: 2020-09-18
+Date: 2022-11-08
 Encoding: UTF-8 
 VignetteBuilder: knitr
-Authors@R: c( person("Hervé", "Perdry", role = c("cre", "aut", "cph"), email = "herve.perdry@u-psud.fr"), 
+Authors@R: c( person("Hervé", "Perdry", role = c("cre", "aut", "cph"), email = "herve.perdry@universite-paris-saclay.fr"), 
               person("Claire", "Dandine-Roulland", role = c("aut", "cph")),
               person("Deepak", "Bandyopadhyay", role = "cph", comment = "C++ gzstream class" ), # Deepak & Lutz for gzstream class
               person("Lutz", "Kettner", role = "cph", comment = "C++ gzstream class" ) )

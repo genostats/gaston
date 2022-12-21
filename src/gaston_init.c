@@ -91,6 +91,7 @@ extern SEXP gg_which_duplicated_id_chr_pos(SEXP, SEXP, SEXP);
 extern SEXP gg_which_duplicated_id_chr_pos_alleles(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_write_bed_file(SEXP, SEXP);
 extern SEXP isnullptr(SEXP);
+extern SEXP ld_clump(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CMethodDef CEntries[] = {
     {"qfc", (DL_FUNC) &qfc, 11},
@@ -177,6 +178,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"gg_which_duplicated_id_chr_pos",         (DL_FUNC) &gg_which_duplicated_id_chr_pos,          3},
     {"gg_which_duplicated_id_chr_pos_alleles", (DL_FUNC) &gg_which_duplicated_id_chr_pos_alleles,  5},
     {"gg_write_bed_file",                      (DL_FUNC) &gg_write_bed_file,                       2},
+    {"ld_clump",                               (DL_FUNC) &ld_clump,                                8},
     {"isnullptr",                              (DL_FUNC) &isnullptr,                               1},
     {NULL, NULL, 0}
 };
