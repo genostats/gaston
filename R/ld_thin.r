@@ -1,4 +1,4 @@
-LD.thin <- function(x, threshold, max.dist = 250e3, beg = 1, end = ncol(x), which.snps,
+LD.thin <- function(x, threshold, max.dist = 500e3, beg = 1, end = ncol(x), which.snps,
                     dist.unit = c("bases", "indices", "cM"), extract = TRUE, keep = c("left", "right", "random")) {
 
   if(missing(which.snps)) which.snps <- rep(TRUE, end-beg+1)
