@@ -81,15 +81,58 @@ desc <- packageDescription("gaston")
 
 For the moment, multithreading affects only \verb!GRM! computations and matrix products.
 
-\subsection{Can I use Gaston with data non-human data, in particular with more than $22$ autosomes?}
+\subsection{Can I use Gaston with non-human data, in particular with more than $22$ autosomes?}
 
 Most functions don't care about X/Y. When they take into account whether a SNP
 is autosomal, X or Y linked, or mitochondrial, they use the values of the options
 `gaston.autosomes`, `gaston.chr.x`, `gaston.chr.y`, `gaston.chr.mt`
-to determine (values can be modified using options).
+to determine (values can be modified using `options`).
 
 Note that currently, nothing special is done for association testing with sexual chromosomes --
 this may change in the future.
+
+\subsection{Is it possible to include a legend at the side of a LD plot for the color scale?}
+
+There is no such option currentlly in in `LD.plot`, but this can be done using R plotting functions.
+Here is an example of code producing a pdf file.
+
+<<eval=FALSE>>=
+data(AGT)
+
+x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+
+# Compute LD
+ld.x <- LD(x, c(1,ncol(x)))
+
+# a color scheme 
+cs <- function(ld) rgb(1, 1 - abs(ld), 1 - abs(ld))
+
+# opening pdf file
+pdf("example-plot.pdf", width = 6, height = 4)
+
+# a layout to divide the plot in two
+layout( matrix(1:2, nrow = 1), widths = c(8,1) )
+
+# plotting the LD
+LD.plot( ld.x[1:20,1:20], snp.positions = x@snps$pos[1:20],
+         polygon.par = list(border = 1, lwd = .4), color.scheme = cs,
+         write.ld = NULL )
+
+# plotting the colour scale 
+plot.new()
+m <- 0.2 # margin
+par(usr = c(-m, 2+m, -m, 1+m))
+
+s <- 0.1
+S <- seq(0, 1-s, by = s)
+for(i in S) {
+  polygon( c(0,0,1,1), c(i,i+s,i+s,i), col = cs(i+s), border = cs(i+s) )
+  text(1.5, i + s/2, labels = sprintf("%.1f", i + s), cex = 0.5)
+}
+
+# closing pdf file
+dev.off()
+@
 
 \subsection{Which allele is the effect allele in association tests?} 
 
