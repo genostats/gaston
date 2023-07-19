@@ -1,3 +1,5 @@
+* as.bed.matrix : warning si x contient autre chose que des entiers
+
 * ld clump = on n'a pas le choix des unités pour la distance...
 
 * bed.order <- fonction(x) x[ , order( x@snps$chr, x@snps$pos ) ]
