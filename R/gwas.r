@@ -8,7 +8,7 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
   
   response <- match.arg(response)
   if(response == "binary") {
-    if(any(Y != 0 | Y != 1)) stop("Binary response should be 0 or 1")
+    if(any(Y != 0 & Y != 1)) stop("Binary response should be 0 or 1")
     Y <- as.integer(Y)
   }
 
