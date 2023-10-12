@@ -4,20 +4,22 @@
 using namespace Rcpp;
 
 double min_(NumericVector x) { // suite à problèmes avec na_omit qui ne reconnaît pas les -NA_real_ ... (Rcpp 0.12.14)
-  double m = std::numeric_limits<double>::infinity();
+  double infinity = std::numeric_limits<double>::infinity();
+  double m = infinity;
   int n = x.length();
   for(int i = 0; i < n; i++) {
-    if(x[i] < m) // false si x[i] est nan ..
+    if(x[i] < m && x[i] > -infinity) // false si x[i] est nan .. [ +éviter les range infinis]
       m = x[i];
   }
   return m;
 }
 
 double max_(NumericVector x) {
-  double m = -std::numeric_limits<double>::infinity();
+  double infinity = std::numeric_limits<double>::infinity();
+  double m = -infinity;
   int n = x.length();
   for(int i = 1; i < n; i++) {
-    if(x[i] > m) 
+    if(x[i] > m && x[i] < infinity) // idem
       m = x[i];
   }
   return m;
@@ -36,7 +38,7 @@ IntegerVector manhattan_thinning(NumericVector x, NumericVector y, int mx, int m
   
   std::vector<int> r;
   for(int i = 0; i < n; i++) {
-    if(std::isnan(x[i]) || std::isnan(y[i])) 
+    if( std::isnan(x[i]) || std::isinf(x[i]) || std::isnan(y[i]) || std::isinf(y[i]) ) 
       continue;
     int j = (y[i] - min_y)/dy;
     if( Y[j] == 0 || (x[i] - x[Y[j]-1]) > dx ) {
@@ -59,4 +61,3 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-
