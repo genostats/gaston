@@ -1,5 +1,8 @@
+
 * il faut un argument autosomes.only = TRUE dans bed.loadings sinon on calcule
   des loadings qui n'ont aucun sens !! [et probablement dans LD.thin aussi]
+
+* as.bed.matrix : warning si x contient autre chose que des entiers
 
 * ld clump = on n'a pas le choix des unités pour la distance...
 
