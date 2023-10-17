@@ -4,6 +4,14 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
                              K, eigenK, beg = 1, end = ncol(x), p = 0, 
                              tol = .Machine$double.eps^0.25, ...) {
 
+  if(any(is.na(Y))) stop("This function does not accomodate missing phenotypes")
+  
+  response <- match.arg(response)
+  if(response == "binary") {
+    if(any(Y != 0 & Y != 1)) stop("Binary response should be 0 or 1")
+    Y <- as.integer(Y)
+  }
+
   if(beg < 1 | end > ncol(x)) stop("range too wide")
   if(is.null(x@mu) | is.null(x@p)) stop("Need p and mu to be set in x (use set.stats)")
   if(length(Y) != nrow(x)) stop("Dimensions of Y and x mismatch")
@@ -27,7 +35,6 @@ association.test <- function(x, Y = x@ped$pheno, X = matrix(1, nrow(x)),
       stop("eigenK and x dimensions don't match")
   }
 
-  response <- match.arg(response)
   test <- match.arg(test)
   method <- match.arg(method)
 
@@ -139,7 +146,7 @@ trans.X <- function(X, PCs = matrix(0, nrow=nrow(X), ncol=0), mean.y = 1) {
     X <- X[ , qr.X$pivot[seq(n.pc+1, qr.X$rank)] - n.pc]
     qr.X <- qr(X)
   }
-  if(mean.y > 1e-4) {
+  if(abs(mean.y) > 1e-4) {
     X1 <- cbind(1,X);
     qr.X1 <- qr(X1);
     if(qr.X1$rank == ncol(X1)) {
