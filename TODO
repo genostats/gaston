@@ -1,3 +1,5 @@
+* phenotype : codage plink 1/2, conversion auto ?!
+
 * as.bed.matrix : warning si x contient autre chose que des entiers
 
 * ld clump = on n'a pas le choix des unités pour la distance...
