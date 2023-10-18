@@ -6,7 +6,7 @@ manhattan <- function(x, bty="n", chrom.col = c("black", "gray50"), thinning = T
 
 
   tp0 <- (x$p == 0)
-  if(any(tp0)) warning("There are ", sum(tp0, na.rm = TRUE), " null p-values that won't appear on the plot")
+  if(any(tp0, na.rm = TRUE)) warning("There are ", sum(tp0, na.rm = TRUE), " null p-values that won't appear on the plot")
 
   chr <- as.factor(x$chr)
   if(nrow(x) < 1e5) thinning <- FALSE # disable thinning for 'small' sets
