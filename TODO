@@ -1,3 +1,7 @@
+* dans le code C++ des choses comme VectorXd V = MapMatrixXd( ... ) ou = Eigen::Map<Eigen::VectorXd>( ... )
+  doivent appeler un constructeur par copie... à nettoyer (pas clair que ça apparaissen à des endroits critiques
+  cependant)
+
 * phenotype : codage plink 1/2, conversion auto ?!
 
 * il faut un argument autosomes.only = TRUE dans bed.loadings sinon on calcule
