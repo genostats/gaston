@@ -1,6 +1,6 @@
 # pour vérifier les rs id... / famid id
 # le as.character() sert à éviter des soucis si il y a des facteurs
-all.eq <- function(L) {
+all_eq <- function(L) {
   a <- lapply(L[-1], function(x) all(as.character(x) == as.character(L[[1]])))
   Reduce("&" ,a)
 }

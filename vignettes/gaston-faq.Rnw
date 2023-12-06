@@ -236,8 +236,7 @@ on phenotype prediction.
 \end{document}
 \subsection{How to use parametric bootstrap to determine confidence regions for `lmm` estimates?}
 
-
-Assume you have some data with GRM and a phenotype:
+Assuming you have some data with a GRM and a phenotype:
 
 <<>>=
 x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)

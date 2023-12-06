@@ -29,8 +29,7 @@ logistic.mm.aireml(Y, X = matrix(1, nrow = length(Y)), K,
 
 \details{
   Estimate the parameters of the following logistic mixed model:
-  \deqn{ \mbox{logit}(P[Y=1|X,\omega_1,\ldots,\omega_k])  = X\beta + \omega_1 + \ldots + \omega_k}
-  {logit P(Y=1|X,omega_1,...,omega_k)  = X beta  + omega_1 + ... + omega_k}
+  \deqn{ \mbox{logit}(P[Y=1|X,\omega_1,\ldots,\omega_k])  = X\beta + \omega_1 + \ldots + \omega_k}{logit P(Y=1|X,omega_1,...,omega_k)  = X beta  + omega_1 + ... + omega_k}
   with \eqn{ \omega_i \sim N(0,\tau_i K_i) }{omega_i ~ N(0, tau_i K_i)} for \eqn{ i \in 1, \dots,k }.
   
   The estimation is based on the Penalized Quasi-Likelihood with an AIREML step for the linear model

@@ -236,3 +236,9 @@
 
 * Corrected bug in ld clump, thanks to valgrind and Pr Ripley <3
 
+# gaston 1.6
+
+## Bug fixes
+
+* Corrected (minor) bugs in manhattan plot / qqplot functions
+

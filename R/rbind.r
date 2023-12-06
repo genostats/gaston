@@ -5,7 +5,7 @@ bed_rbind <- function(..., deparse.level = 1) {
   M <- lapply(L, function(x) x@snps)
 
   # ici il faudrait faire un truc un peu plus fin ... (plutôt vérifier chr:pos:alleles...)
-  if(!all.eq( lapply(M, function(x) x$id))) 
+  if(!all_eq( lapply(M, function(x) x$id))) 
     stop("SNP ids are not identical, can't bind matrices")
 
   common_colnames <- Reduce(intersect, lapply(L, function(x) colnames(x@ped)))

@@ -5,7 +5,7 @@ bed_cbind <- function(..., deparse.level=1) {
   L <- list(...)
   M <- lapply(L, function(x) x@bed)
 
-  if(!all.eq( lapply(L, function(x) x@ped$famid)) | !all.eq( lapply(L, function(x) x@ped$id)) )
+  if(!all_eq( lapply(L, function(x) x@ped$famid)) | !all_eq( lapply(L, function(x) x@ped$id)) )
     stop("Individuals famids / ids are not identical, can't bind matrices")
 
   common_colnames <- Reduce(intersect, lapply(L, function(x) colnames(x@snps)))
