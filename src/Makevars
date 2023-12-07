@@ -1,8 +1,2 @@
-# required by  RcppParallel
-CXX_STD = CXX11 
-
-# link zlib
 PKG_LIBS = -lz	
-
 PKG_CPPFLAGS = -I ../inst/include/gaston/ 
-
