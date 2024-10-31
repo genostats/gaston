@@ -9,12 +9,12 @@ SNP.rm.duplicates <- function(x, by = "chr:pos", na.keep = TRUE, incomp.rm = TRU
   # where are duplicated SNPs
   dupli <- SNP.match(x@snps[,b,drop=FALSE], x@snps[SNP.duplicated(x, by=by),], by = by)$index
 	
-  a <- .Call("gg_alleles_duplicated",  PACKAGE = "gaston", x@snps, dupli)
+  a <- .Call(`_gaston_alleles_duplicated`, PACKAGE = "gaston", x@snps, dupli)
   
   if (incomp.rm) w <- which(a$keep == TRUE)
   else  w <- which(is.na(a$keep) | a$keep == TRUE)
   
-  bed <- .Call("gg_duplicated_remove",  PACKAGE = "gaston", x@bed, dupli, a$keep, a$swap_reference, length(w), na.keep, incomp.rm)
+  bed <- .Call(`_gaston_duplicated_remove`, PACKAGE = "gaston", x@bed, dupli, a$keep, a$swap_reference, length(w), na.keep, incomp.rm)
 
   new <- new("bed.matrix", bed = bed, snps = x@snps[w,], ped = x@ped,
            p = NULL, mu = NULL, sigma = NULL,

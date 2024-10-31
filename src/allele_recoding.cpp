@@ -8,6 +8,7 @@ using namespace Rcpp;
 // ci-dessous il faut vérifier en amont que
 // * tous les data frames ont des composantes A1 et A2
 // * il n'y a que des allèles A C G T
+// [[Rcpp::export]]
 List alleles_recoding(List L) {
   int s = L.size();
   if(s < 2) stop("Can't bind less than two matrices!");
@@ -70,14 +71,3 @@ List alleles_recoding(List L) {
   return LL;
 }
 
-// -----------------------------------------------------------------
-
-RcppExport SEXP gg_alleles_recoding(SEXP LSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type L(LSEXP);
-    __result = Rcpp::wrap(alleles_recoding(L));
-    return __result;
-END_RCPP
-}

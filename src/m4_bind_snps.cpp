@@ -27,17 +27,3 @@ XPtr<matrix4> bind_snps(List L) {
   return r;
 }
 
-RcppExport SEXP gg_bind_snps(SEXP LSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< List >::type L(LSEXP );
-        XPtr<matrix4> __result = bind_snps(L);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-

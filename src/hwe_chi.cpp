@@ -23,20 +23,3 @@ Rcpp::NumericVector hwe_chi(Rcpp::IntegerVector N0, Rcpp::IntegerVector N1, Rcpp
   return p;
 }
 
-RcppExport SEXP gg_hwe_chi(SEXP N0SEXP, SEXP N1SEXP, SEXP N2SEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type N0(N0SEXP );
-        Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type N1(N1SEXP );
-        Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type N2(N2SEXP );
-        Rcpp::NumericVector __result = hwe_chi(N0, N1, N2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-

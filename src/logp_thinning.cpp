@@ -21,13 +21,3 @@ IntegerVector logp_thinning(NumericVector logp, double step) {
   return wrap(r);
 }
 
-RcppExport SEXP gg_logp_thinning(SEXP logpSEXP, SEXP stepSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type logp(logpSEXP);
-    Rcpp::traits::input_parameter< double >::type step(stepSEXP);
-    rcpp_result_gen = Rcpp::wrap(logp_thinning(logp, step));
-    return rcpp_result_gen;
-END_RCPP
-}

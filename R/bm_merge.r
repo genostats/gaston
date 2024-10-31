@@ -15,10 +15,10 @@ bed.merge.inds <- function(x1, x2) {
   w1 <- match(ids, x1_ids, 0L)
   w2 <- match(ids, x2_ids, 0L)
 
-  bed1 <- .Call('gg_extract_inds_indices', x1@bed, w1) 
-  bed2 <- .Call('gg_extract_inds_indices', x2@bed, w2) 
+  bed1 <- .Call(`_gaston_extract_inds_indices`, x1@bed, w1) 
+  bed2 <- .Call(`_gaston_extract_inds_indices`, x2@bed, w2) 
 
-  bed <- .Call("gg_bind_snps",  PACKAGE = "gaston", list(bed1, bed2))
+  bed <- .Call(`_gaston_bind_snps`, PACKAGE = "gaston", list(bed1, bed2))
 
   snps <- rbind(x1@snps, x2@snps)
 

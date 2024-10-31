@@ -36,33 +36,4 @@ XPtr<matrix4> extract_snps_indices(XPtr<matrix4> pA, IntegerVector w) {
   return pB;
 }
 
-RcppExport SEXP gg_extract_snps_bool(SEXP pASEXP, SEXP wSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
-        Rcpp::traits::input_parameter< LogicalVector >::type w(wSEXP );
-        XPtr<matrix4> __result = extract_snps_bool(pA, w);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_extract_snps_indices(SEXP pASEXP, SEXP wSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP );
-        XPtr<matrix4> __result = extract_snps_indices(pA, w);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
 

@@ -62,20 +62,3 @@ List GWAS_lm_quanti(XPtr<matrix4> pA, NumericVector mu, NumericVector Y,
   L["sd"] = sd_beta;
   return L;
 }
-
-
-RcppExport SEXP gg_GWAS_lm_quanti(SEXP pASEXP, SEXP muSEXP, SEXP YSEXP, SEXP Q_SEXP, SEXP begSEXP, SEXP endSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Q_(Q_SEXP);
-    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    __result = Rcpp::wrap(GWAS_lm_quanti(pA, mu, Y, Q_, beg, end));
-    return __result;
-END_RCPP
-}
-

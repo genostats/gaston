@@ -24,7 +24,7 @@ lmm.profile.restricted.likelihood <- function(Y, X = matrix(1, nrow = length(Y))
   if(is.null(X)) {
     if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
       stop("Dimensions of Y and K mismatch")
-    return( .Call("gg_pre_likelihood_nofix", PACKAGE = "gaston", Y, K, h2) );
+    return( .Call(`_gaston_pre_likelihood_nofix`, PACKAGE = "gaston", Y, K, h2) );
   }
 
   # sinon, X = matrice d'effets fixes
@@ -32,6 +32,6 @@ lmm.profile.restricted.likelihood <- function(Y, X = matrix(1, nrow = length(Y))
   if(ncol(X) >= n) stop("Too many columns in X")
   if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
     stop("Dimensions of Y and K mismatch")
-  return( .Call("gg_pre_likelihood", PACKAGE = "gaston", Y, X, K, h2) );
+  return( .Call(`_gaston_pre_likelihood`, PACKAGE = "gaston", Y, X, K, h2) );
 }
 

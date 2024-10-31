@@ -22,7 +22,7 @@ bed_cbind <- function(..., deparse.level=1) {
   if(anyDuplicated(snps[, c("chr", "pos")]))
     warning("Duplicated SNPs positions")
 
-  bed <- .Call("gg_bind_snps",  PACKAGE = "gaston", M)
+  bed <- .Call(`_gaston_bind_snps`, PACKAGE = "gaston", M)
   x <- new("bed.matrix", bed = bed, snps = snps, ped = L[[1]]@ped,
            p = p, mu = mu, sigma = si, 
            standardize_p = FALSE, standardize_mu_sigma = FALSE )

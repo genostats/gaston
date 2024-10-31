@@ -269,39 +269,3 @@ NumericMatrix LD_chunk_p(XPtr<matrix4> p_A, NumericVector p, int c1, int c2, int
   return LD;
 }
 
-RcppExport SEXP gg_LD_p(SEXP p_ASEXP, SEXP pSEXP, SEXP c1SEXP, SEXP c2SEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP );
-        Rcpp::traits::input_parameter< int >::type c1(c1SEXP );
-        Rcpp::traits::input_parameter< int >::type c2(c2SEXP );
-        NumericMatrix __result = LD_p(p_A, p, c1, c2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_LD_chunk_p(SEXP p_ASEXP, SEXP pSEXP, SEXP c1SEXP, SEXP c2SEXP, SEXP d1SEXP, SEXP d2SEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP );
-        Rcpp::traits::input_parameter< int >::type c1(c1SEXP );
-        Rcpp::traits::input_parameter< int >::type c2(c2SEXP );
-        Rcpp::traits::input_parameter< int >::type d1(d1SEXP );
-        Rcpp::traits::input_parameter< int >::type d2(d2SEXP );
-        NumericMatrix __result = LD_chunk_p(p_A, p, c1, c2, d1, d2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-

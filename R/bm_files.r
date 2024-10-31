@@ -28,7 +28,7 @@ read.bed.matrix <- function(basename, bed = paste(basename, ".bed", sep=""), fam
     colnames(snp) <- snpnames
 
     if(verbose) cat("Reading", bed, "\n")
-    bed <- .Call('gg_read_bed_file', bed, nrow(ped), nrow(snp))
+    bed <- .Call(`_gaston_read_bed_file`, bed, nrow(ped), nrow(snp))
     x <- new("bed.matrix", bed = bed, snps = snp, ped = ped,                            
       p = NULL, mu = NULL, sigma = NULL, standardize_p = FALSE,
       standardize_mu_sigma = FALSE )
@@ -42,7 +42,7 @@ read.bed.matrix <- function(basename, bed = paste(basename, ".bed", sep=""), fam
   if ( is(x) != "bed.matrix" ) stop("The object in file ", rds, " is not a bed.matrix")
 
   if(verbose) cat("Reading", bed, "\n")
-  x@bed <- .Call('gg_read_bed_file', bed, nrow(x@ped), nrow(x@snps))
+  x@bed <- .Call(`_gaston_read_bed_file`, bed, nrow(x@ped), nrow(x@snps))
 
   x
 }
@@ -71,7 +71,7 @@ write.bed.matrix <- function(x, basename, bed = paste(basename, ".bed", sep=""),
 
   if(!is.null(bed)) {
     bed <- path.expand(bed)
-    invisible(.Call('gg_write_bed_file', x@bed, bed))
+    invisible(.Call(`_gaston_write_bed_file`, x@bed, bed))
   }
 }
 

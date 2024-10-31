@@ -9,20 +9,20 @@ all_eq <- function(L) {
 alleles.recoding <- function(...) {
   L <- list(...)
   M <- lapply(L, function(x) x@snps)
-  .Call("gg_alleles_recoding",  PACKAGE = "gaston", M)
+  .Call(`_gaston_alleles_recoding`, PACKAGE = "gaston", M)
 }
 
 
 # ! inplace modifications
 invert_snp_coding <- function(x, snp) {
-  .Call("gg_invert_snp_coding",  PACKAGE = "gaston", x@bed, snp)
+  .Call(`_gaston_invert_snp_coding`, PACKAGE = "gaston", x@bed, snp)
 }
 
 snp_hz_to_na <- function(x, snp) {
-  .Call("gg_snp_hz_to_na",  PACKAGE = "gaston", x@bed, snp)
+  .Call(`_gaston_snp_hz_to_na`, PACKAGE = "gaston", x@bed, snp)
 }
 
 set_snp_to_na <- function(x, snp) {
-  .Call("gg_set_snp_to_na",  PACKAGE = "gaston", x@bed, snp)
+  .Call(`_gaston_set_snp_to_na`, PACKAGE = "gaston", x@bed, snp)
 }
 

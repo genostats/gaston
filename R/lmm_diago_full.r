@@ -16,14 +16,14 @@ lmm.diago.profile.likelihood <- function(tau, s2, h2, Y, X = matrix(1, nrow=leng
 
   if(!missing(tau) & !missing(s2)) 
     if(is.null(X))
-      .Call("gg_diago_full_likelihood2_nocovar", PACKAGE = "gaston", tau, s2, p, Y, Sigma, eigenK$vectors)
+      .Call(`_gaston_diago_full_likelihood2_nocovar`, PACKAGE = "gaston", tau, s2, p, Y, Sigma, eigenK$vectors)
     else
-      .Call("gg_diago_full_likelihood2", PACKAGE = "gaston", tau, s2, p, Y, X, Sigma, eigenK$vectors)
+      .Call(`_gaston_diago_full_likelihood2`, PACKAGE = "gaston", tau, s2, p, Y, X, Sigma, eigenK$vectors)
   else if(!missing(h2))
     if(is.null(X))
-      .Call("gg_diago_full_likelihood1_nocovar", PACKAGE = "gaston", h2, p, Y, Sigma, eigenK$vectors)
+      .Call(`_gaston_diago_full_likelihood1_nocovar`, PACKAGE = "gaston", h2, p, Y, Sigma, eigenK$vectors)
     else
-      .Call("gg_diago_full_likelihood1", PACKAGE = "gaston", h2, p, Y, X, Sigma, eigenK$vectors)
+      .Call(`_gaston_diago_full_likelihood1`, PACKAGE = "gaston", h2, p, Y, X, Sigma, eigenK$vectors)
   else
     stop("To compute likelihood, provide tau and s2 values, or h2 value")
 }

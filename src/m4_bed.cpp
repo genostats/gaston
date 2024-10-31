@@ -58,7 +58,7 @@ uint8_t tobed[256] = {
  80,  82,  83,  81,  88,  90,  91,  89,  92,  94,  95,  93,  84,  86,  87,  85};
 
 // bed magic numbers : 108 27 1
-
+// [[Rcpp::export]]
 XPtr<matrix4> read_bed_file(CharacterVector filename, int n_ind, int n_snp) {
   std::ifstream file(filename[0], std::ifstream::binary);
   if(!file.is_open()) {
@@ -129,36 +129,4 @@ void write_bed_file(XPtr<matrix4> p_A, CharacterVector filename) {
 }
 
 
-
-
-
-RcppExport SEXP gg_read_bed_file(SEXP filenameSEXP, SEXP n_indSEXP, SEXP n_snpSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< CharacterVector >::type filename(filenameSEXP );
-        Rcpp::traits::input_parameter< int >::type n_ind(n_indSEXP );
-        Rcpp::traits::input_parameter< int >::type n_snp(n_snpSEXP );
-        XPtr<matrix4> __result = read_bed_file(filename, n_ind, n_snp);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-
-
-RcppExport SEXP gg_write_bed_file(SEXP p_ASEXP, SEXP filenameSEXP) {
-BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< CharacterVector >::type filename(filenameSEXP );
-        write_bed_file(p_A, filename);
-    }
-    return R_NilValue;
-END_RCPP
-}
 

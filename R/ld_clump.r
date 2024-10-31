@@ -19,7 +19,7 @@ LD.clump <- function(x, p, r2.threshold, p.threshold, max.dist = 500e3) {
     if(length(or) == 0) stop("too stringent p.threshold ?")
   }
 
-  I <- .Call("ld_clump", PACKAGE = "gaston", x@bed, x@mu, x@sigma, r2.threshold, x@snps$pos, x@snps$chr, max.dist, or);
+  I <- .Call(`_gaston_ld_clump`, PACKAGE = "gaston", x@bed, x@mu, x@sigma, r2.threshold, x@snps$pos, x@snps$chr, max.dist, or);
 
   if(is.null(a))
     a <- data.frame( chr = x@snps$chr, id = x@snps$id, pos = x@snps$pos, p = p, cluster = I+1)

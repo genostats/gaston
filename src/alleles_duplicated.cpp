@@ -11,6 +11,7 @@ using namespace Rcpp;
 // [HP] flip_strand les laisse invariantes, eg flip_strand("ACZ") = "TGZ"
 // [HP] donc ça fait pas grand mal
 // [HP] D = indices des dupliqués
+// [[Rcpp::export]]
 List alleles_duplicated(DataFrame snps, NumericVector D) {
   int n = snps.nrows();
 
@@ -237,13 +238,3 @@ List alleles_duplicated(DataFrame snps, NumericVector D) {
 }
 
 
-RcppExport SEXP gg_alleles_duplicated(SEXP snpsSEXP, SEXP DSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< DataFrame >::type snps(snpsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type D(DSEXP);
-    __result = Rcpp::wrap(alleles_duplicated(snps, D));
-    return __result;
-END_RCPP
-}

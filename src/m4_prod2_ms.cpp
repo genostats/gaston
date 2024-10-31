@@ -86,21 +86,3 @@ NumericMatrix m4_loading_to_pc_ms(XPtr<matrix4> p_A, const std::vector<double> &
 
   return R;
 }
-
-RcppExport SEXP gg_m4_loading_to_pc_ms(SEXP p_ASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP vSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< const std::vector<double>& >::type mu(muSEXP );
-        Rcpp::traits::input_parameter< const std::vector<double>& >::type sd(sdSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix& >::type v(vSEXP );
-        NumericMatrix __result = m4_loading_to_pc_ms(p_A, mu, sd, v);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-

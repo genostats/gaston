@@ -37,13 +37,13 @@ logistic.mm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, min_tau, t
     if(is.matrix(K)) {
       if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")
       if(missing(min_tau)) min_tau <- 1e-6
-      return( .Call("gg_AIREML1_logit_nofix",  PACKAGE = "gaston", Y, K, constraint, min_tau, max.iter, eps, verbose, tau, start_tau, get.P, EM) )
+      return( .Call(`_gaston_AIREML1_logit_nofix`, PACKAGE = "gaston", Y, K, constraint, min_tau, max.iter, eps, verbose, tau, start_tau, get.P, EM) )
     } 
     else if(is.list(K)) {
       if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
         stop("Dimensions of Y and K mismatch")
       if(missing(min_tau)) min_tau <- rep(1e-6, length(K))
-      return( .Call("gg_AIREMLn_logit_nofix", PACKAGE = "gaston", Y, K, constraint, min_tau, max.iter, eps, verbose, tau, start_tau, get.P, EM) )
+      return( .Call(`_gaston_AIREMLn_logit_nofix`, PACKAGE = "gaston", Y, K, constraint, min_tau, max.iter, eps, verbose, tau, start_tau, get.P, EM) )
     }
   }
 
@@ -77,13 +77,13 @@ logistic.mm.aireml <- function(Y, X = matrix(1, nrow = length(Y)), K, min_tau, t
   if(is.matrix(K)) {
     if(nrow(K) != n | ncol(K) != n) stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- 1e-6
-    return( .Call("gg_AIREML1_logit",  PACKAGE = "gaston", Y, X, K, constraint, min_tau, max.iter, eps, verbose, tau, beta, start_tau, start_beta, get.P, EM) )
+    return( .Call(`_gaston_AIREML1_logit`, PACKAGE = "gaston", Y, X, K, constraint, min_tau, max.iter, eps, verbose, tau, beta, start_tau, start_beta, get.P, EM) )
   }
   else if(is.list(K)) {
     if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
       stop("Dimensions of Y and K mismatch")
     if(missing(min_tau)) min_tau <- rep(1e-6, length(K))
-    return( .Call("gg_AIREMLn_logit", PACKAGE = "gaston", Y, X, K, constraint, min_tau, max.iter, eps, verbose, tau, beta, start_tau, start_beta, get.P, EM) )
+    return( .Call(`_gaston_AIREMLn_logit`, PACKAGE = "gaston", Y, X, K, constraint, min_tau, max.iter, eps, verbose, tau, beta, start_tau, start_beta, get.P, EM) )
   }
 }
 

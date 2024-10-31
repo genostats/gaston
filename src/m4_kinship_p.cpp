@@ -144,17 +144,3 @@ NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, Logic
 }
 
 
-RcppExport SEXP gg_Kinship_pw(SEXP p_ASEXP, SEXP pSEXP, SEXP snpsSEXP, SEXP domiSEXP, SEXP chunkSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type p(pSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type snps(snpsSEXP);
-    Rcpp::traits::input_parameter< bool >::type domi(domiSEXP);
-    Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP);
-    __result = Rcpp::wrap(Kinship_pw(p_A, p, snps, domi, chunk));
-    return __result;
-END_RCPP
-}
-

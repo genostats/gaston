@@ -14,9 +14,9 @@ bed_rbind <- function(..., deparse.level = 1) {
   if(anyDuplicated(ped[, c("famid", "id")]))
     warning("There are duplicated individuals (same family and individual id)")
 
-  a <- .Call("gg_alleles_recoding",  PACKAGE = "gaston", M)
+  a <- .Call(`_gaston_alleles_recoding`, PACKAGE = "gaston", M)
   M <- lapply(L, function(x) x@bed)
-  bed <- .Call("gg_bind_inds2",  PACKAGE = "gaston", M, a$flip)
+  bed <- .Call(`_gaston_bind_inds2`, PACKAGE = "gaston", M, a$flip)
 
   x <- new("bed.matrix", bed = bed, snps = L[[1]]@snps, ped = ped,
            p = NULL, mu = NULL, sigma = NULL,
