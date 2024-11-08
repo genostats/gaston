@@ -15,6 +15,7 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
     w <- ifelse(x@sigma == 0, 0, 1/x@sigma/sqrt(sum(which.snps)-1))   ### BEWARE q-1 !!!
     K <- .Call(`_gaston_Kinship_w`, PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
   } else { 
+    # TODO JU : replace this call with mine !
     K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
   }
 

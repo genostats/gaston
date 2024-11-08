@@ -20,4 +20,6 @@
 #include "gaston/matrix-varia.h"
 #include "gaston/optimize_2.h"
 #include "gaston/snp_hash.h"
+#include "gaston/mmatrix.h"
+#include "gaston/mmatrix_methods.h"
 #endif

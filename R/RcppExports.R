@@ -229,6 +229,10 @@ Kinship_pw <- function(p_A, p, snps, dominance, chunk) {
     .Call(`_gaston_Kinship_pw`, p_A, p, snps, dominance, chunk)
 }
 
+Kinship_pw_on_disk <- function(p_A, p, snps, dominance, chunk) {
+    .Call(`_gaston_Kinship_pw_on_disk`, p_A, p, snps, dominance, chunk)
+}
+
 LD <- function(p_A, mu, sd, c1, c2) {
     .Call(`_gaston_LD`, p_A, mu, sd, c1, c2)
 }

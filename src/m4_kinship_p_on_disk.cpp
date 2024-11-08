@@ -3,6 +3,8 @@
 #include <iostream>
 #include "matrix4.h"
 #include "m4_kinship_type.h"
+#include "mmatrix.h"
+#include "mmatrix_methods.h"
 
 using namespace Rcpp;
 using namespace Parallel;
@@ -27,10 +29,12 @@ struct paraKin_p : public Worker {
   paraKin_p(uint8_t ** data, const size_t ncol, const size_t true_ncol, const Ktype n, const double * p, const bool dominance) :
           data(data), ncol(ncol), true_ncol(true_ncol), n(n), p(p), sizeK((4*true_ncol)*(4*true_ncol+1)/2) , dominance(dominance) { 
           K = new Ktype[sizeK];  // K is padded to a multiple of 4...
+          // TODO JU : add handling of K on disk
           std::fill(K, K+sizeK, 0);
         }
   paraKin_p(paraKin_p & Q, Split) : data(Q.data), ncol(Q.ncol), true_ncol(Q.true_ncol), n(Q.n), p(Q.p), sizeK(Q.sizeK), dominance(Q.dominance) {
           K = new Ktype[sizeK];
+          // TODO JU : add handling of K on disk
           std::fill(K, K+sizeK, 0);
         }
 
@@ -108,7 +112,7 @@ struct paraKin_p : public Worker {
 };
 
 //[[Rcpp::export]]
-NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, bool dominance, int chunk) {
+NumericMatrix Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, bool dominance, int chunk) {
   int nb_snps = sum(snps);
 
   if(snps.length() != p_A->nrow || p.size() != nb_snps)
@@ -120,11 +124,13 @@ NumericMatrix Kinship_pw(XPtr<matrix4> p_A, const std::vector<double> & p, Logic
     if(snps[i]) data[k++] = p_A->data[i];
   }
   paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
+  // TODO JU : add handling of x on disk ? 
   parallelReduce(0, nb_snps, X, chunk);
 
   delete [] data;
 
   NumericMatrix Y(p_A->ncol,p_A->ncol);
+  // TODO JU : add handling of Y on disk
   k = 0;
   for(size_t i = 0; i < p_A->ncol; i++) {
     for(size_t j = 0; j <= i; j++) {

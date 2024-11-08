@@ -913,6 +913,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Kinship_pw_on_disk
+NumericMatrix Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double>& p, LogicalVector snps, bool dominance, int chunk);
+RcppExport SEXP _gaston_Kinship_pw_on_disk(SEXP p_ASEXP, SEXP pSEXP, SEXP snpsSEXP, SEXP dominanceSEXP, SEXP chunkSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type snps(snpsSEXP);
+    Rcpp::traits::input_parameter< bool >::type dominance(dominanceSEXP);
+    Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP);
+    rcpp_result_gen = Rcpp::wrap(Kinship_pw_on_disk(p_A, p, snps, dominance, chunk));
+    return rcpp_result_gen;
+END_RCPP
+}
 // LD
 NumericMatrix LD(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2);
 RcppExport SEXP _gaston_LD(SEXP p_ASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP c1SEXP, SEXP c2SEXP) {
@@ -1430,6 +1445,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gaston_Kinship", (DL_FUNC) &_gaston_Kinship, 4},
     {"_gaston_Kinship_w", (DL_FUNC) &_gaston_Kinship_w, 5},
     {"_gaston_Kinship_pw", (DL_FUNC) &_gaston_Kinship_pw, 5},
+    {"_gaston_Kinship_pw_on_disk", (DL_FUNC) &_gaston_Kinship_pw_on_disk, 5},
     {"_gaston_LD", (DL_FUNC) &_gaston_LD, 5},
     {"_gaston_LD_chunk", (DL_FUNC) &_gaston_LD_chunk, 7},
     {"_gaston_LD_p", (DL_FUNC) &_gaston_LD_p, 4},
