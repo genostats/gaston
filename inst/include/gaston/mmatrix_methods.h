@@ -202,7 +202,6 @@ inline std::string get_type_name()
 #    include <unistd.h>
 #endif
 
-//TODO : add inline for it to not be defined multiple times ? 
 inline std::string get_path()
 {
     char buffer[PATH_MAX]; // PATH_MAX defined in limits.h

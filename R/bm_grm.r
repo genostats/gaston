@@ -16,7 +16,8 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
     K <- .Call(`_gaston_Kinship_w`, PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
   } else { 
     # TODO JU : replace this call with mine !
-    K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    .Call(`_gaston_Test_print_begining_mat_JU`, PACKAGE = "gaston", x@bed)
+    # K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
   }
 
   if(!is.null(x@ped$id)) {
@@ -75,3 +76,7 @@ reshape.GRM <- function(K, include = c(-Inf, +Inf), exclude) {
   data.frame(i = i, j = j, id_i = rownames(K)[i], id_j = colnames(K)[j], k = R[ww])
 }
 
+
+Testju_on_disk_harcode <- function(){
+  .Call(`_gaston_Test_print_begining_mat_JU`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+}

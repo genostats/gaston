@@ -111,42 +111,66 @@ struct paraKin_p : public Worker {
 
 };
 
+// //[[Rcpp::export]]
+// XPtr<MMatrix<double>> Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, bool dominance, int chunk) {
+//   // TODO JU :
+
+//     int nb_snps = sum(snps);
+
+//     if (snps.length() != p_A->nrow || p.size() != nb_snps)
+//         stop("Dimensions mismatch");
+
+//     uint8_t **data = new uint8_t *[nb_snps];
+//     size_t k = 0;
+//     for (size_t i = 0; i < p_A->nrow; i++)
+//     {
+//         if (snps[i])
+//             data[k++] = p_A->data[i];
+//   }
+//   paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
+//   // TODO JU : add handling of x on disk ? 
+//   parallelReduce(0, nb_snps, X, chunk);
+
+//   delete [] data;
+
+//   // hardcoded double type because of the casting in the for loop after
+//   MMatrix<double> Y_disk("Kinship_matrix", p_A->ncol, p_A->ncol);
+
+//   // TODO JU : add handling of Y on disk
+//   k = 0;
+//   for(size_t i = 0; i < p_A->ncol; i++) {
+//     for(size_t j = 0; j <= i; j++) {
+//       Y_disk(j,i) = (double) X.K[k++];
+//     }
+//   }
+
+//   //XPtr<MMatrix<double>> Kinship_disk = as<XPtr<MMatrix<double>>> Y_disk;
+//   //XPtr<MMatrix<double>> ptr_mmat(&Y_disk);
+//   //return Kinship_disk;
+// }
+
 //[[Rcpp::export]]
-NumericMatrix Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double> & p, LogicalVector snps, bool dominance, int chunk) {
-  int nb_snps = sum(snps);
+void Test_print_begining_mat_JU(XPtr<matrix4> ref) {
+  // After first test, make it give back an XPtr<MMatrix>> to keep it and print it in R session
+  printf("this is the first el : %f", ref->data[0][0]);
+  printf("\nthis is the tenth el : %f", ref->data[0][9]);
+  printf("\nthis is the 100th el : %f", ref->data[0][99]);
+  
+  // 2eme test possible, utiliser KType pour le template de MMatrix (et read des floats par ex) XPtr<MMatrix<KType>>
+  MMatrix<double> Test_disk("Test_disk", ref->ncol, ref->nrow);
 
-  if(snps.length() != p_A->nrow || p.size() != nb_snps)
-    stop("Dimensions mismatch");
-
-  uint8_t ** data = new uint8_t * [nb_snps];
-  size_t k = 0;
-  for(size_t i = 0; i < p_A->nrow; i++) {
-    if(snps[i]) data[k++] = p_A->data[i];
-  }
-  paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
-  // TODO JU : add handling of x on disk ? 
-  parallelReduce(0, nb_snps, X, chunk);
-
-  delete [] data;
-
-  NumericMatrix Y(p_A->ncol,p_A->ncol);
-  // TODO JU : add handling of Y on disk
-  k = 0;
-  for(size_t i = 0; i < p_A->ncol; i++) {
-    for(size_t j = 0; j <= i; j++) {
-      Y(j,i) = (double) X.K[k++];
-    }
+  double k = 0;
+  for (size_t i = 0; i < ref->ncol; i++)
+  {
+      for (size_t j = 0; j < ref->nrow; j++)
+      {
+          Test_disk(j, i) = ref->data[j][i];
+      }
   }
 
-  // symmetriser
-  k = 0;
-  for(size_t i = 0; i < p_A->ncol; i++) {
-    for(size_t j = 0; j <= i; j++) {
-      Y(i,j) = (double) X.K[k++]; // ou Y(j,i)
-    }
-  }
+  printf("\nthis is the first el : %f", Test_disk[0]);
+  printf("\nthis is the tenth el : %f", Test_disk(0, 9));
+  printf("\nthis is the 100th el : %f", Test_disk(0,99));
 
-  return Y;
+  // I have a function sum(), could be helpful to test more
 }
-
-
