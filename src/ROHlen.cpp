@@ -28,7 +28,7 @@ List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int
         uint8_t g = (x&3);
         x >>= 2;
         // le (i+1) ci cessous pour obtenir des résultats avec "R index"
-        R[k].update(i+1, pos[i], g, minROHLength, minDistHet, NAsAreHet, k == ncol-1);
+        R[k].update(i+1, pos[i], g, minROHLength, minDistHet, NAsAreHet, false);
         k++;
       }
     }
