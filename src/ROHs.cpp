@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // pos is either positions in kb or distance from beginning in cM...
 // [[Rcpp::export]]
-List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
+List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
   size_t ncol = pA->ncol;
   std::vector<ROH<ROHsegments>> R(ncol);
 
@@ -15,7 +15,7 @@ List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int e
   double current_pos = pos[beg];
   for(unsigned int i = beg; i < end; i++) {
     if(chr[i] != current_chr || pos[i] > current_pos + maxGapLength) {
-      for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minROHLength, minDistHet);
+      for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minNbSNPs, minROHLength, minDistHet);
       current_chr = chr[i];
     }
     current_pos = pos[i];
@@ -25,14 +25,14 @@ List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int e
       for(unsigned int ss = 0; ss < 4 && 4*j + ss < ncol; ss++) {
         uint8_t g = (x&3);
         x >>= 2;
-        // le (i+1) ci cessous pour obtenir des résultats avec "R index"
-        R[k].update(i+1, pos[i], g, minROHLength, minDistHet, NAsAreHet, false);
+        // (le i+1 n'est pas nécessaire ici mais je le laisse par cohérence avec l'autre fct)
+        R[k].update(i+1, pos[i], g, minNbSNPs, minROHLength, minDistHet, NAsAreHet);
         k++;
       }
     }
   }
   // il faut cloturer à la fin du dernier chromosome considéré
-  for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minROHLength, minDistHet);
+  for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minNbSNPs, minROHLength, minDistHet);
 
   // wrapping the result
   List L(ncol);

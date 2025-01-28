@@ -1,9 +1,10 @@
 # NAs = should missing data be treated as heterozygous or homozygous ?
+# minNbSNPs    = minimal number of SNPS in a ROH
 # minROHlength = minimal length of a ROH
 # minDistHet   = minimal distance between hetorozygous SNPs
 # maxGapLength = maximal distance between two SNPs in a ROH
 
-fROH <- function(x, dist.units = c("bases", "cM"), NAs = c("het", "hom"), minROHlength, minDistHet, maxGapLength, beg = 1L, end = ncol(x)) {
+fROH <- function(x, dist.units = c("bases", "cM"), NAs = c("het", "hom"), minNbSNPs = 100L, minROHlength, minDistHet, maxGapLength, beg = 1L, end = ncol(x)) {
   dist.units <- match.arg(dist.units)
   if(dist.units == "bases") {
     positions <- x@snps$pos
@@ -23,7 +24,7 @@ fROH <- function(x, dist.units = c("bases", "cM"), NAs = c("het", "hom"), minROH
       maxGapLength <- 1
   }
   NAs <- match.arg(NAs)
-  A <- ROHlen(x@bed, x@snps$chr, positions, beg - 1L, end - 1L, minROHlength, minDistHet, maxGapLength, NAs == "het")
+  A <- ROHlen(x@bed, x@snps$chr, positions, beg - 1L, end - 1L, minNbSNPs, minROHlength, minDistHet, maxGapLength, NAs == "het")
   # compute total length
   chrs <- unique(x@snps$chr)
   total.len <- 0

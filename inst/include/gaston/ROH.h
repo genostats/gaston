@@ -38,7 +38,8 @@ class ROHlength {
     }
 };
 
-// ROH are defined sequences of homozygous, with a minimal length (minROHLength in update)
+// ROH are defined sequences of homozygous, with a minimal number of SNPs (minNbSNPs in update)
+// a minimal length (minROHLength in update)
 // they can contain heterozygous SNPs, if they are are at a distance > minDistHet from the 
 // extremeties of the ROH and of the others heterozygous SNPs
 // NAs can be treated as homozygous or heterozygous (bool NAsAreHet)
@@ -65,10 +66,11 @@ class ROH {
 
     ROH() : inROH(false), het(0) {}
 
-    void update(unsigned int i, double pos, unsigned char gen, double minROHLength, double minDistHet, bool NAsAreHet, bool debug) {
+    void update(unsigned int i, double pos, unsigned char gen, unsigned int minNbSNPs, double minROHLength, double minDistHet, bool NAsAreHet) {
       if(gen == 3) {
         gen = NAsAreHet?1:0;
       }
+      /*
       if(debug) {
         SHOW(i);
         SHOW((int) gen);
@@ -82,7 +84,7 @@ class ROH {
         // SHOW(previousPos);
         SHOW(previousIndex);
         SHOWn(het);
-      }
+      }*/
       if(gen == 1) { // heterozygote
         // pas dans ROH : rien à faire
         if(!inROH) return;
@@ -110,8 +112,8 @@ class ROH {
         pos1 = previousPos;
         het--;
         // si c'est assez long on stocke
-        if(pos1 - pos0 > minROHLength) {
-          if(debug) Rcout << "****************** push ********************\n\n";
+        if( (pos1 - pos0 > minROHLength) && (i1 - i0 > minNbSNPs) ) {
+          // if(debug) Rcout << "****************** push ********************\n\n";
           summary.record(i0, i1, pos0, pos1, het);
         }
         // dans tous les cas on sort du ROH courant...
@@ -135,7 +137,7 @@ class ROH {
     }
     // à appeler arrivé à la fin d'un chromosome ou d'un gap trop long entre les SNPs
     // la fonction clôture le ROH s'il est assez long
-    void endChromosome(double minROHLength, double minDistHet) {
+    void endChromosome(unsigned int minNbSNPs, double minROHLength, double minDistHet) {
       if(!inROH) return;
       // si le dernier heteroz est trop prêt du bord il faut retourner à la position précédente
       if(het > 0 && pos1 < lastHetPos + minDistHet) {
@@ -144,7 +146,8 @@ class ROH {
         het--;
       }
       // si c'est assez long on stocke
-      if(pos1 - pos0 > minROHLength) {
+      if( (pos1 - pos0 > minROHLength) && (i1 - i0 > minNbSNPs) ) {
+        // if(debug) Rcout << "****************** push ********************\n\n";
         summary.record(i0, i1, pos0, pos1, het);
       }
       // on sort du ROH !

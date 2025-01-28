@@ -9,7 +9,7 @@ using namespace Rcpp;
 // The function will send back a list with two, the total length of ROHs in number SNPs and on the 'pos' scale
 // This function is very similar to ROH except for the ROH<ROHlength> at the beginning and the final wrapping of the result
 // [[Rcpp::export]]
-List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
+List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
   size_t ncol = pA->ncol;
   std::vector<ROH<ROHlength>> R(ncol);
 
@@ -17,7 +17,7 @@ List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int
   double current_pos = pos[beg];
   for(unsigned int i = beg; i < end; i++) {
     if(chr[i] != current_chr || pos[i] > current_pos + maxGapLength) {
-      for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minROHLength, minDistHet);
+      for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minNbSNPs, minROHLength, minDistHet);
       current_chr = chr[i];
     }
     current_pos = pos[i];
@@ -28,13 +28,13 @@ List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int
         uint8_t g = (x&3);
         x >>= 2;
         // le (i+1) ci cessous pour obtenir des résultats avec "R index"
-        R[k].update(i+1, pos[i], g, minROHLength, minDistHet, NAsAreHet, false);
+        R[k].update(i+1, pos[i], g, minNbSNPs, minROHLength, minDistHet, NAsAreHet);
         k++;
       }
     }
   }
   // il faut cloturer à la fin du dernier chromosome considéré
-  for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minROHLength, minDistHet);
+  for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minNbSNPs, minROHLength, minDistHet);
 
   // Wrapping the result
   NumericVector nbSNPs(ncol);
