@@ -12,6 +12,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// ROHlen
+List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet);
+RcppExport SEXP _gaston_ROHlen(SEXP pASEXP, SEXP chrSEXP, SEXP posSEXP, SEXP begSEXP, SEXP endSEXP, SEXP minROHLengthSEXP, SEXP minDistHetSEXP, SEXP maxGapLengthSEXP, SEXP NAsAreHetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pos(posSEXP);
+    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    Rcpp::traits::input_parameter< double >::type minROHLength(minROHLengthSEXP);
+    Rcpp::traits::input_parameter< double >::type minDistHet(minDistHetSEXP);
+    Rcpp::traits::input_parameter< double >::type maxGapLength(maxGapLengthSEXP);
+    Rcpp::traits::input_parameter< bool >::type NAsAreHet(NAsAreHetSEXP);
+    rcpp_result_gen = Rcpp::wrap(ROHlen(pA, chr, pos, beg, end, minROHLength, minDistHet, maxGapLength, NAsAreHet));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ROHs
+List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet);
+RcppExport SEXP _gaston_ROHs(SEXP pASEXP, SEXP chrSEXP, SEXP posSEXP, SEXP begSEXP, SEXP endSEXP, SEXP minROHLengthSEXP, SEXP minDistHetSEXP, SEXP maxGapLengthSEXP, SEXP NAsAreHetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pos(posSEXP);
+    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    Rcpp::traits::input_parameter< double >::type minROHLength(minROHLengthSEXP);
+    Rcpp::traits::input_parameter< double >::type minDistHet(minDistHetSEXP);
+    Rcpp::traits::input_parameter< double >::type maxGapLength(maxGapLengthSEXP);
+    Rcpp::traits::input_parameter< bool >::type NAsAreHet(NAsAreHetSEXP);
+    rcpp_result_gen = Rcpp::wrap(ROHs(pA, chr, pos, beg, end, minROHLength, minDistHet, maxGapLength, NAsAreHet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // alleles_recoding
 List alleles_recoding(List L);
 RcppExport SEXP _gaston_alleles_recoding(SEXP LSEXP) {
@@ -1373,6 +1411,8 @@ END_RCPP
 RcppExport void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_gaston_ROHlen", (DL_FUNC) &_gaston_ROHlen, 9},
+    {"_gaston_ROHs", (DL_FUNC) &_gaston_ROHs, 9},
     {"_gaston_alleles_recoding", (DL_FUNC) &_gaston_alleles_recoding, 1},
     {"_gaston_alleles_duplicated", (DL_FUNC) &_gaston_alleles_duplicated, 2},
     {"_gaston_duplicated_remove", (DL_FUNC) &_gaston_duplicated_remove, 7},
