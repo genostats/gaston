@@ -17,6 +17,7 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   } else { 
     # TODO JU : replace this call with mine !
     .Call(`_gaston_Test_print_begining_mat_JU`, PACKAGE = "gaston", x@bed)
+    # JU : bcos I'm not using K, got an "object 'K' not found" warning
     # K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
   }
 

@@ -29,7 +29,7 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
             throw std::runtime_error("Failed to open the file;");
         }
         /* Writing a null byte to the end of the file
-        after using seefp to the before last byte will
+        after using seekp to the before last byte will
         ensure we have a non-empty file of the desired size
         without loading it into memory */
         file.seekp(matrix_size - 1);

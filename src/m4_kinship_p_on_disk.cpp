@@ -152,25 +152,71 @@ struct paraKin_p : public Worker {
 //[[Rcpp::export]]
 void Test_print_begining_mat_JU(XPtr<matrix4> ref) {
   // After first test, make it give back an XPtr<MMatrix>> to keep it and print it in R session
-  printf("this is the first el : %f", ref->data[0][0]);
-  printf("\nthis is the tenth el : %f", ref->data[0][9]);
-  printf("\nthis is the 100th el : %f", ref->data[0][99]);
-  
-  // 2eme test possible, utiliser KType pour le template de MMatrix (et read des floats par ex) XPtr<MMatrix<KType>>
-  MMatrix<double> Test_disk("Test_disk", ref->ncol, ref->nrow);
+  // printdf with %f cos accurate format for double
+  printf("this is the first el : %f\n", ref->get(0,0));
+  printf("this is the 2nd el : %f\n", ref->get(0,1));
+  printf("this is the tenth el : %f\n", ref->get(0,9));
+  printf("this is the 100th el : %f\n", ref->get(0,99));
 
-  double k = 0;
+  // 2eme test possible, utiliser KType pour le template de MMatrix (et read des floats par ex) XPtr<MMatrix<KType>>
+  MMatrix<uint8_t> Test_disk("Test_disk", ref->ncol, ref->nrow);
+
+  uint8_t k = 0;
   for (size_t i = 0; i < ref->ncol; i++)
   {
       for (size_t j = 0; j < ref->nrow; j++)
       {
-          Test_disk(j, i) = ref->data[j][i];
+        if (j == 0 && (i == 0 || i == 9 || i == 99))
+          {
+            printf("\nref data before writing= %f\n", ref->get(j,i));
+          }
+          k = ref->get(j, i);
+          //check if indices in the right order 
+          Test_disk.at(j, i) = k;
+          if (j == 0 && (i == 0 || i == 9 || i == 99))
+          {
+            printf("value got from ref->data = %f\n", k);
+            printf("ref data after getting that value = %f\n", ref->get(j,i));
+            printf("\nTest_disk after written = %f", Test_disk(j, i));
+          }
       }
   }
 
-  printf("\nthis is the first el : %f", Test_disk[0]);
-  printf("\nthis is the tenth el : %f", Test_disk(0, 9));
-  printf("\nthis is the 100th el : %f", Test_disk(0,99));
+  // this was the buggy part, to not mess with the ref mat data,
+  // I need to use uint8_t, or else double seems to cast ??
+  double kk = 0;
+  for (size_t i = 0; i < ref->ncol; i++)
+  {
+      for (size_t j = 0; j < ref->nrow; j++)
+      {
+        if (j == 0 && (i == 0 || i == 9 || i == 99))
+          {
+            printf("\nref data before writing= %f\n", ref->get(j,i));
+          }
+          kk = ref->get(j, i);
+          if (j == 0 && (i == 0 || i == 9 || i == 99))
+          {
+            printf("value got from ref->data = %f\n", kk);
+            printf("ref data after getting that value = %f\n", ref->get(j,i));
+          }
+      }
+  }
+
+
+  printf("\n\n----------After the loop :---------------\n\n");
+  printf("this is the first el : %f\n", ref->get(0,0));
+  printf("this is the 2nd el : %f\n", ref->get(0,1));
+  printf("this is the tenth el : %f\n", ref->get(0,9));
+  printf("this is the 100th el : %f\n", ref->get(0,99));
+  //Using .at to avoid unsafe calling.
+  printf("\nthis is the first el : %f", Test_disk.at(0));
+  printf("\nthis is the 2nd el []: %f", Test_disk.at(0));
+  printf("\nthis is the 2nd el (): %f", Test_disk.at(1, 0));
+  printf("\nthis is the tenth el : %f", Test_disk.at(0, 9));
+  printf("\nthis is the 100th el : %f", Test_disk.at(0,99));
 
   // I have a function sum(), could be helpful to test more
+
+  // NOW, how can I send back an object K
+
 }
