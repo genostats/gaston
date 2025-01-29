@@ -37,14 +37,17 @@ List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int
   for(unsigned k = 0; k < ncol; k++) R[k].endChromosome(minNbSNPs, minROHLength, minDistHet);
 
   // Wrapping the result
-  NumericVector nbSNPs(ncol);
+  IntegerVector nbSNPs(ncol);
+  IntegerVector nbSegments(ncol);
   NumericVector length(ncol);
   for(unsigned int i = 0; i < ncol; i++) {
     nbSNPs[i] = R[i].summary.nbSNPs;
+    nbSegments[i] = R[i].summary.nbSegments;
     length[i] = R[i].summary.length;
   }
   List L;
   L["nbSNPs"] = nbSNPs;
+  L["nbSegments"] = nbSegments;
   L["length"] = length;
   return L;
 }

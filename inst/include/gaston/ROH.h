@@ -30,10 +30,12 @@ class ROHsegments {
 class ROHlength {
   public:
     unsigned int nbSNPs = 0;
+    unsigned int nbSegments = 0;
     double length = 0;
 
     void record(unsigned int beg, unsigned int end, double begPo, double endPo, unsigned int het) {
       nbSNPs += (end - beg) + 1;
+      nbSegments++;
       length += (endPo - begPo);
     }
 };
