@@ -1,3 +1,5 @@
+* dans l'extraction avec des logical : virer les NA (mettre à FALSE + warning)
+
 * dans le code C++ des choses comme VectorXd V = MapMatrixXd( ... ) ou = Eigen::Map<Eigen::VectorXd>( ... )
   doivent appeler un constructeur par copie... à nettoyer (pas clair que ça apparaissen à des endroits critiques
   cependant)
