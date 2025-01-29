@@ -56,7 +56,7 @@ CharacterVector vcf_samples(igzstream & in) {
 }
 
 
-
+// [[Rcpp::export]]
 List read_vcf2(CharacterVector filename, int max_snps, bool get_info) {
 
   if(filename.length() != 1) stop("filename should be a CharacterVector of length 1");
@@ -315,33 +315,3 @@ List read_vcf_filtered(CharacterVector filename, List POS, int max_snps, bool ge
   L["samples"] = samples;
   return L;
 }
-
-RcppExport SEXP gg_read_vcf2(SEXP fSEXP, SEXP maxsnpSEXP, SEXP giSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< CharacterVector >::type f(fSEXP );
-        Rcpp::traits::input_parameter< int >::type maxsnp(maxsnpSEXP );
-        Rcpp::traits::input_parameter< bool >::type gi(giSEXP );
-        List __result = read_vcf2(f, maxsnp, gi);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_read_vcf_filtered(SEXP fSEXP, SEXP POSSEXP, SEXP max_snpsSEXP, SEXP get_infoSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< CharacterVector >::type f(fSEXP);
-    Rcpp::traits::input_parameter< List >::type POS(POSSEXP);
-    Rcpp::traits::input_parameter< int >::type max_snps(max_snpsSEXP);
-    Rcpp::traits::input_parameter< bool >::type get_info(get_infoSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_vcf_filtered(f, POS, max_snps, get_info));
-    return rcpp_result_gen;
-END_RCPP
-}
-

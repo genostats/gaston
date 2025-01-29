@@ -4,7 +4,7 @@ read.vcf <- function(file, max.snps, get.info = FALSE, convert.chr = TRUE, verbo
 
   if(missing(max.snps)) max.snps = -1L;
 
-  L <- .Call("gg_read_vcf2", PACKAGE = "gaston", filename, max.snps, get.info)
+  L <- .Call(`_gaston_read_vcf2`, PACKAGE = "gaston", filename, max.snps, get.info)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)
@@ -34,7 +34,7 @@ read.vcf.filtered <- function(file, positions, max.snps, get.info = FALSE, conve
 
   if(missing(max.snps)) max.snps = -1L;
 
-  L <- .Call("gg_read_vcf_filtered", PACKAGE = "gaston", filename, positions, max.snps, get.info)
+  L <- .Call(`_gaston_read_vcf_filtered`, PACKAGE = "gaston", filename, positions, max.snps, get.info)
 
   snp <- data.frame(chr = L$chr, id = L$id, dist = 0, pos = L$pos , A1 = L$A1, A2 = L$A2, 
                     quality = L$quality, filter = factor(L$filter), stringsAsFactors = FALSE)

@@ -53,6 +53,7 @@ uint8_t hzna[256] = {
 224, 227, 226, 227, 236, 239, 238, 239, 232, 235, 234, 235, 236, 239, 238, 239, 
 240, 243, 242, 243, 252, 255, 254, 255, 248, 251, 250, 251, 252, 255, 254, 255 };
 
+// [[Rcpp::export]]
 void invert_snp_coding(XPtr<matrix4> p_A, size_t snp) {
   if(snp >= p_A->nrow) stop("SNP index out of range");
   uint8_t * d = p_A->data[snp];
@@ -81,34 +82,4 @@ void set_snp_to_na(XPtr<matrix4> p_A, size_t snp) {
 }
 
 
-
-RcppExport SEXP gg_invert_snp_coding(SEXP p_ASEXP, SEXP snpSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
-    Rcpp::traits::input_parameter< size_t >::type snp(snpSEXP);
-    invert_snp_coding(p_A, snp);
-    return R_NilValue;
-END_RCPP
-}
-
-RcppExport SEXP gg_snp_hz_to_na(SEXP p_ASEXP, SEXP snpSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
-    Rcpp::traits::input_parameter< size_t >::type snp(snpSEXP);
-    snp_hz_to_na(p_A, snp);
-    return R_NilValue;
-END_RCPP
-}
-
-RcppExport SEXP gg_set_snp_to_na(SEXP p_ASEXP, SEXP snpSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
-    Rcpp::traits::input_parameter< size_t >::type snp(snpSEXP);
-    set_snp_to_na(p_A, snp);
-    return R_NilValue;
-END_RCPP
-}
 

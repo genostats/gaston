@@ -1,4 +1,4 @@
-LD.thin <- function(x, threshold, max.dist = 500e3, beg = 1, end = ncol(x), which.snps,
+LD.thin <- function(x, threshold, max.dist = 500e3, beg = 1L, end = ncol(x), which.snps,
                     dist.unit = c("bases", "indices", "cM"), extract = TRUE, keep = c("left", "right", "random")) {
 
   if(missing(which.snps)) which.snps <- rep(TRUE, end-beg+1)
@@ -29,15 +29,15 @@ LD.thin <- function(x, threshold, max.dist = 500e3, beg = 1, end = ncol(x), whic
 
   keep <- match.arg(keep)
   if(keep == "left") {
-    w <- .Call("gg_ld_thin_left", x@bed, x@mu, x@sigma, threshold, pos, 
+    w <- .Call(`_gaston_ld_thin_left`, x@bed, x@mu, x@sigma, threshold, pos, 
           as.integer(x@snps$chr), as.integer(max.dist), as.integer(beg)-1L, as.integer(end)-1L,
           which.snps)
   } else if (keep == "right"){
-    w <- .Call("gg_ld_thin_right", x@bed, x@mu, x@sigma, threshold, pos, 
+    w <- .Call(`_gaston_ld_thin_right`, x@bed, x@mu, x@sigma, threshold, pos, 
           as.integer(x@snps$chr), as.integer(max.dist), as.integer(beg)-1L, as.integer(end)-1L,
           which.snps)
   } else {
-    w <- .Call("gg_ld_thin_random", x@bed, x@mu, x@sigma, threshold, pos, 
+    w <- .Call(`_gaston_ld_thin_random`, x@bed, x@mu, x@sigma, threshold, pos, 
           as.integer(x@snps$chr), as.integer(max.dist), as.integer(beg)-1L, as.integer(end)-1L,
           which.snps)
   }

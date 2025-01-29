@@ -23,7 +23,7 @@ lmm.restricted.likelihood <- function(Y, X = matrix(1, nrow = length(Y)), K, tau
   if(is.null(X)) {
     if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
       stop("Dimensions of Y and K mismatch")
-    return( .Call("gg_re_likelihood_nofix", PACKAGE = "gaston", Y, K, theta) );
+    return( .Call(`_gaston_re_likelihood_nofix`, PACKAGE = "gaston", Y, K, theta) );
   }
 
   # sinon, X = matrice d'effets fixes
@@ -31,6 +31,6 @@ lmm.restricted.likelihood <- function(Y, X = matrix(1, nrow = length(Y)), K, tau
   if(ncol(X) >= n) stop("Too many columns in X")
   if(any(sapply(K,nrow) != n) | any(sapply(K,ncol) != n))
     stop("Dimensions of Y and K mismatch")
-  return( .Call("gg_re_likelihood", PACKAGE = "gaston", Y, X, K, theta) );
+  return( .Call(`_gaston_re_likelihood`, PACKAGE = "gaston", Y, X, K, theta) );
 }
 

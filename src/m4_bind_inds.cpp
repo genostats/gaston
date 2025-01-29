@@ -47,15 +47,3 @@ XPtr<matrix4> bind_inds2(List L, LogicalMatrix flip) {
 }
 
 
-
-RcppExport SEXP gg_bind_inds2(SEXP LSEXP, SEXP flipSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type L(LSEXP);
-    Rcpp::traits::input_parameter< LogicalMatrix >::type flip(flipSEXP);
-    __result = Rcpp::wrap(bind_inds2(L, flip));
-    return __result;
-END_RCPP
-}
-

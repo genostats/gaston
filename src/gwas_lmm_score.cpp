@@ -2,6 +2,7 @@
 #include "matrix-varia.h"
 #include "matrix4.h"
 
+// [[Rcpp::export]]
 List GWAS_lmm_score(XPtr<matrix4> pA, NumericVector PY, NumericMatrix P, NumericVector mu, int beg, int end) {
   Map_MatrixXd Py(as<Map<MatrixXd> >(PY));
   Map_MatrixXd PP(as<Map<MatrixXd> >(P));
@@ -99,38 +100,4 @@ List GWAS_lmm_score_f(XPtr<matrix4> pA, NumericVector PY, NumericMatrix P, Numer
   return S;
 }
 
-
-RcppExport SEXP gg_GWAS_lmm_score(SEXP pASEXP, SEXP PYSEXP, SEXP PSEXP, SEXP muSEXP, SEXP begSEXP, SEXP endSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type PY(PYSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP );
-	Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP );
-        Rcpp::traits::input_parameter< int >::type beg(begSEXP );
-        Rcpp::traits::input_parameter< int >::type end(endSEXP );
-        List __result = GWAS_lmm_score(pA, PY, P, mu, beg, end);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_GWAS_lmm_score_f(SEXP pASEXP, SEXP PYSEXP, SEXP PSEXP, SEXP muSEXP, SEXP begSEXP, SEXP endSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type PY(PYSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type P(PSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    rcpp_result_gen = Rcpp::wrap(GWAS_lmm_score_f(pA, PY, P, mu, beg, end));
-    return rcpp_result_gen;
-END_RCPP
-}
 

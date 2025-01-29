@@ -6,11 +6,9 @@
 /*
   generated with tools::package_native_routine_registration_skeleton
 */
-
-/* .C calls */
+/*
 extern void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
-/* .Call calls */
 extern SEXP gg_AIREML1(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_contrast(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP gg_AIREML1_logit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -190,4 +188,4 @@ void R_init_gaston(DllInfo *dll)
 }
 
 
-
+*/

@@ -1,5 +1,18 @@
 * dans l'extraction avec des logical : virer les NA (mettre à FALSE + warning)
 
+* dans les algos AIREML vérifier qu'on n'a pas des NaN, et revenir un 
+  pas en arrière pour switcher sur un EM si ça arrive (cf exemple Teresa)
+
+* !!!!!!!!!!!!!!!!!!!! A FAIRE !!!!!!!!!!!!!!!!!!!!!!
+  lors de la fabrication d'une bed matrix, x@snps$chr = factor(x@snps$chr, levels = unique(x@snps$chr))
+  vérifier @snps$id = unique (sinon ajouter :chr:pos:alleles... )
+  ordonner par chromosome / position
+
+* bed.reorder <- fonction(x) x[ , order( x@snps$chr, x@snps$pos ) ]
+  -- si la bed matrix n'est pas triée LD thin (et ld clump) feront n'importe 
+  quoi. Emettre warning après toute création (cbind, extraction) ou lecture
+  de matrice (voire à l'affichage ?)
+
 * dans le code C++ des choses comme VectorXd V = MapMatrixXd( ... ) ou = Eigen::Map<Eigen::VectorXd>( ... )
   doivent appeler un constructeur par copie... à nettoyer (pas clair que ça apparaissen à des endroits critiques
   cependant)
@@ -12,11 +25,6 @@
 * as.bed.matrix : warning si x contient autre chose que des entiers
 
 * ld clump = on n'a pas le choix des unités pour la distance...
-
-* bed.order <- fonction(x) x[ , order( x@snps$chr, x@snps$pos ) ]
-  -- si la bed matrix n'est pas triée LD thin (et ld clump) feront n'importe 
-  quoi. Emettre warning après toute création (cbind, extraction) ou lecture
-  de matrice (voire à l'affichage ?)
 
 * une fonction pour l'insertion d'un phénotype...
 
@@ -43,7 +51,7 @@
   (avec un warning) ; erreur si aucun
 
 * set.genomic.sex devrait être capable d'utiliser une autre méthode quand il n'y a
-  pas de chromosome X
+  pas de chromosome Y
 
 * read bed matrix devrait prévenir quand les chr ne sont pas 1 à 22 + etc
   Faire une fonction pour les options de gaston ? (tout en les laissant 
@@ -68,9 +76,6 @@
 * read tped files ? (cf données elisa pour tester)
 
 * dans qqplot.pvalues ne pas supprimer les p = 0 mais faire comme dans milor
-
-* lors de la fabrication d'une bed matrix, @snps$chr = facteur
-  @snps$id = unique (sinon ajouter :chr:pos:alleles... )
 
 * set.dist devrait pouvoir travailler directement sur un data frame
 

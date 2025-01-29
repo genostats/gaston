@@ -5,6 +5,7 @@
 
 using namespace Rcpp;
 
+// [[Rcpp::export]]
 List fit_diago(NumericVector Y, NumericMatrix X, IntegerVector p_, NumericVector Sigma, NumericMatrix U, double min_h2, double max_h2, double tol, double verbose, bool brent) {
   Map_MatrixXd y0(as<Map<MatrixXd> >(Y));
   Map_MatrixXd x0(as<Map<MatrixXd> >(X));
@@ -135,50 +136,5 @@ List fit_diago_nocovar(NumericVector Y, IntegerVector p_, NumericVector Sigma, N
     if(p_.length() > 1) R.push_back(L); else R = L;
   }
   return R;
-}
-
-RcppExport SEXP gg_fit_diago(SEXP YSEXP, SEXP XSEXP, SEXP p_SEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP min_h2_SEXP, SEXP max_h2_SEXP, SEXP tolSEXP, SEXP verbose_SEXP, SEXP brent_SEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type p_(p_SEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP );
-        Rcpp::traits::input_parameter< double >::type min_h2(min_h2_SEXP );
-        Rcpp::traits::input_parameter< double >::type max_h2(max_h2_SEXP );
-        Rcpp::traits::input_parameter< double >::type tol(tolSEXP );
-        Rcpp::traits::input_parameter< bool >::type verbose(verbose_SEXP );
-        Rcpp::traits::input_parameter< bool >::type brent(brent_SEXP );
-        List __result = fit_diago(Y, X, p_, Sigma, U, min_h2, max_h2, tol, verbose, brent);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_fit_diago_nocovar(SEXP YSEXP, SEXP p_SEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP min_h2_SEXP, SEXP max_h2_SEXP, SEXP tolSEXP, SEXP verbose_SEXP, SEXP brent_SEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type p_(p_SEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP );
-        Rcpp::traits::input_parameter< double >::type min_h2(min_h2_SEXP );
-        Rcpp::traits::input_parameter< double >::type max_h2(max_h2_SEXP );
-        Rcpp::traits::input_parameter< double >::type tol(tolSEXP );
-        Rcpp::traits::input_parameter< bool >::type verbose(verbose_SEXP );
-        Rcpp::traits::input_parameter< bool >::type brent(brent_SEXP );
-        List __result = fit_diago_nocovar(Y, p_, Sigma, U, min_h2, max_h2, tol, verbose, brent);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
 }
 

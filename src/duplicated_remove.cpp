@@ -63,20 +63,3 @@ XPtr<matrix4> duplicated_remove(XPtr<matrix4> x, NumericVector D, LogicalVector 
   }
   return r;
 }
-
-RcppExport SEXP gg_duplicated_remove(SEXP xSEXP, SEXP DSEXP, SEXP keepSEXP, SEXP flipSEXP, SEXP remSEXP, SEXP naSEXP, SEXP incompSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type x(xSEXP);
-  Rcpp::traits::input_parameter< NumericVector >::type D(DSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type keep(keepSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type flip(flipSEXP);
-    Rcpp::traits::input_parameter< int >::type rem(remSEXP);
-    Rcpp::traits::input_parameter< bool >::type na(naSEXP);
-    Rcpp::traits::input_parameter< bool >::type incomp(incompSEXP);
-    __result = Rcpp::wrap(duplicated_remove(x, D, keep, flip, rem, na, incomp));
-    return __result;
-END_RCPP
-}
-

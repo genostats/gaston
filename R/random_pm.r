@@ -17,5 +17,5 @@ grm.values <- function(n) {
 }
 
 random.ortho <- function(n)
-  return(.Call('gg_random_ortho', PACKAGE = "gaston", n))
+  return(.Call(`_gaston_random_ortho`, PACKAGE = "gaston", n))
 

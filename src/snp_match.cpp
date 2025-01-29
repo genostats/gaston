@@ -190,14 +190,3 @@ List SNPmatch(DataFrame x, DataFrame table) {
 }
 
 
-RcppExport SEXP gg_SNPmatch(SEXP xSEXP, SEXP tableSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type x(xSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type table(tableSEXP);
-    rcpp_result_gen = Rcpp::wrap(SNPmatch(x, table));
-    return rcpp_result_gen;
-END_RCPP
-}
-

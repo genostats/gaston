@@ -58,21 +58,3 @@ IntegerVector ld_clump(XPtr<matrix4> pA, NumericVector mu, NumericVector sd, dou
   return Index;
 }
 
-RcppExport SEXP ld_clump(SEXP pASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP thresholdSEXP, SEXP posSEXP, SEXP chrSEXP, SEXP max_distSEXP, SEXP orderSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sd(sdSEXP);
-    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type pos(posSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
-    Rcpp::traits::input_parameter< int >::type max_dist(max_distSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type order(orderSEXP);
-    rcpp_result_gen = Rcpp::wrap(ld_clump(pA, mu, sd, threshold, pos, chr, max_dist, order));
-    return rcpp_result_gen;
-END_RCPP
-}
-
-

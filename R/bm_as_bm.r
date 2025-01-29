@@ -1,6 +1,6 @@
 as.bed.matrix <- function(x, fam, bim) {
 
-  bed <- .Call('gg_as_matrix4', PACKAGE = "gaston", x)
+  bed <- .Call(`_gaston_as_matrix4`, PACKAGE = "gaston", x)
 
   ped <- if(!missing(fam)) {
             if ( !is.null(fam) & !is.data.frame(fam) ) stop('fam must be a data.frame or NULL.')

@@ -57,23 +57,3 @@ LogicalVector ld_thin_left(XPtr<matrix4> pA, NumericVector mu, NumericVector sd,
   }
   return w; 
 }
-
-RcppExport SEXP gg_ld_thin_left(SEXP pASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP thresholdSEXP, SEXP posSEXP, SEXP chrSEXP, SEXP max_distSEXP, SEXP begSEXP, SEXP endSEXP, SEXP w_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sd(sdSEXP);
-    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type pos(posSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
-    Rcpp::traits::input_parameter< int >::type max_dist(max_distSEXP);
-    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type w_(w_SEXP);
-    __result = Rcpp::wrap(ld_thin_left(pA, mu, sd, threshold, pos, chr, max_dist, beg, end, w_));
-    return __result;
-END_RCPP
-}
-

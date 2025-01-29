@@ -30,13 +30,3 @@ NumericMatrix random_ortho(int n) {
   return R;
 }
 
-RcppExport SEXP gg_random_ortho(SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(random_ortho(n));
-    return rcpp_result_gen;
-END_RCPP
-}
-

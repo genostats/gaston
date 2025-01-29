@@ -100,28 +100,3 @@ List GWAS_lmm_lrt(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, NumericMa
   return R;
 }
 
-
-RcppExport SEXP gg_GWAS_lmm_lrt(SEXP pASEXP, SEXP muSEXP, SEXP YSEXP, SEXP XSEXP, SEXP pSEXP, SEXP SigmaSEXP, SEXP USEXP, SEXP begSEXP, SEXP endSEXP, SEXP tolSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP );
-        Rcpp::traits::input_parameter< double >::type p(pSEXP );
-        Rcpp::traits::input_parameter< NumericVector >::type Sigma(SigmaSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type U(USEXP );
-        Rcpp::traits::input_parameter< int >::type beg(begSEXP );
-        Rcpp::traits::input_parameter< int >::type end(endSEXP );
-        Rcpp::traits::input_parameter< double >::type tol(tolSEXP );
-        List __result = GWAS_lmm_lrt(pA, mu, Y, X, p, Sigma, U, beg, end, tol);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-

@@ -99,6 +99,7 @@ struct paraKin : public Worker {
 };
 
 
+// [[Rcpp::export]]
 NumericMatrix Kinship(XPtr<matrix4> p_A, const std::vector<double> & mu, const std::vector<double> & w, int chunk) {
 
   if(mu.size() != p_A->nrow || w.size() != p_A->nrow) 
@@ -161,36 +162,5 @@ NumericMatrix Kinship_w(XPtr<matrix4> p_A, const std::vector<double> & mu, const
   }
   
   return Y;
-}
-
-RcppExport SEXP gg_Kinship(SEXP p_ASEXP, SEXP muSEXP, SEXP wSEXP, SEXP chunkSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP );
-        Rcpp::traits::input_parameter< const std::vector<double>& >::type mu(muSEXP );
-        Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP );
-        Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP );
-        NumericMatrix __result = Kinship(p_A, mu, w, chunk);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-
-RcppExport SEXP gg_Kinship_w(SEXP p_ASEXP, SEXP muSEXP, SEXP wSEXP, SEXP snpsSEXP, SEXP chunkSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type p_A(p_ASEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type snps(snpsSEXP);
-    Rcpp::traits::input_parameter< int >::type chunk(chunkSEXP);
-    __result = Rcpp::wrap(Kinship_w(p_A, mu, w, snps, chunk));
-    return __result;
-END_RCPP
 }
 

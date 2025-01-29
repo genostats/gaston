@@ -5,7 +5,8 @@
 using namespace Rcpp;
 typedef Map<MatrixXd> Map_MatrixXd;
 
-double gg_pre_likelihood(NumericVector Y, NumericMatrix X, List K_, NumericVector h2) {
+//[[Rcpp::export]]
+double pre_likelihood(NumericVector Y, NumericMatrix X, List K_, NumericVector h2) {
   Map_MatrixXd y(as<Map<MatrixXd> >(Y));
   Map_MatrixXd x(as<Map<MatrixXd> >(X));
 
@@ -41,7 +42,7 @@ double gg_pre_likelihood(NumericVector Y, NumericMatrix X, List K_, NumericVecto
 }
 
 //[[Rcpp::export]]
-double gg_pre_likelihood_nofix(NumericVector Y, List K_, NumericVector h2) {
+double pre_likelihood_nofix(NumericVector Y, List K_, NumericVector h2) {
   Map_MatrixXd y(as<Map<MatrixXd> >(Y));
 
   int s = K_.length();
@@ -65,30 +66,5 @@ double gg_pre_likelihood_nofix(NumericVector Y, List K_, NumericVector h2) {
   double logL = -0.5*(log_detV + n*log(Py.dot(y.col(0))) + n*(1-log((double)n)));
   return logL;
 
-}
-
-RcppExport SEXP gg_pre_likelihood(SEXP YSEXP, SEXP XSEXP, SEXP K_SEXP, SEXP h2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< List >::type K_(K_SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type h2(h2SEXP);
-    rcpp_result_gen = Rcpp::wrap(gg_pre_likelihood(Y, X, K_, h2));
-    return rcpp_result_gen;
-END_RCPP
-}
-
-RcppExport SEXP gg_pre_likelihood_nofix(SEXP YSEXP, SEXP K_SEXP, SEXP h2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< List >::type K_(K_SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type h2(h2SEXP);
-    rcpp_result_gen = Rcpp::wrap(gg_pre_likelihood_nofix(Y, K_, h2));
-    return rcpp_result_gen;
-END_RCPP
 }
 

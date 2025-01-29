@@ -39,7 +39,7 @@ setValidity('bed.matrix',
                 errors <- c(errors, "The length of 'mu' must be equal to the number of markers.")
              if ( !is.null(object@sigma) & length(object@sigma) != ncol(object) ) 
                 errors <- c(errors, "The length of 'sigma' must be equal to the number of markers.")
-             if(.Call("isnullptr",  PACKAGE = 'gaston', object@bed))
+             if(.Call(`_gaston_isnullptr`,  PACKAGE = 'gaston', object@bed))
                 errors <- c(errors, 'The externalptr is broken')
              if ( length(errors)==0 ) return(TRUE) else return(errors)
            } );
@@ -49,11 +49,11 @@ setAs("bed.matrix", "matrix",
   function(from) {
     validObject(from)
     to <- if(from@standardize_p) 
-      .Call('gg_m4_as_scaled_matrix_p', PACKAGE = 'gaston', from@bed, from@p)
+      .Call(`_gaston_m4_as_scaled_matrix_p`, PACKAGE = 'gaston', from@bed, from@p)
     else if(from@standardize_mu_sigma)
-      .Call('gg_m4_as_scaled_matrix_mu_sigma', PACKAGE = 'gaston', from@bed, from@mu, from@sigma)
+      .Call(`_gaston_m4_as_scaled_matrix_mu_sigma`, PACKAGE = 'gaston', from@bed, from@mu, from@sigma)
     else
-      .Call('gg_m4_as012', PACKAGE = 'gaston', from@bed)
+      .Call(`_gaston_m4_as012`, PACKAGE = 'gaston', from@bed)
     colnames(to) <- from@snps$id
     rownames(to) <- if(any(duplicated(from@ped$id))) paste(from@ped$fam, from@ped$id, sep=":")
                     else from@ped$id
@@ -65,7 +65,7 @@ setMethod("as.matrix", signature="bed.matrix", definition = function(x) as(x,"ma
 
 setAs("matrix", "bed.matrix", 
   function(from) {
-    bed <- .Call('gg_as_matrix4', PACKAGE = 'gaston', from)
+    bed <- .Call(`_gaston_as_matrix4`, PACKAGE = 'gaston', from)
 
     ped <- if(is.null(rownames(from))) 
              structure(list(), row.names = c(NA, -nrow(from)), class = "data.frame") # empty data frame with right number of lines
@@ -85,14 +85,14 @@ setAs("matrix", "bed.matrix",
 
 setGeneric('dim')
 setMethod("dim", signature = "bed.matrix", 
-    function(x) c(.Call('gg_ninds', PACKAGE = 'gaston', x@bed), .Call('gg_nsnps', PACKAGE = 'gaston', x@bed)))
+    function(x) c(.Call(`_gaston_ninds`, PACKAGE = 'gaston', x@bed), .Call(`_gaston_nsnps`, PACKAGE = 'gaston', x@bed)))
 
 setGeneric('head')
 setMethod( 'head', signature(x='bed.matrix'), function(x, nrow=10, ncol=10) print( as.matrix( x[1:min( nrow, nrow(x) ),1:min( ncol, ncol(x) )] ) ) )
 
 setMethod(show, signature("bed.matrix"), 
   function(object) {
-    if(.Call("isnullptr",  PACKAGE = 'gaston', object@bed))
+    if(.Call(`_gaston_isnullptr`,  PACKAGE = 'gaston', object@bed))
       cat("A bed.matrix with a broken externalptr!\nHint: don't save/load bed.matrices with other functions than write.bed.matrix and read.bed.matrix\n")
     else {
       cat('A bed.matrix with ', nrow(object), ' individuals and ', ncol(object), ' markers.\n', sep='')

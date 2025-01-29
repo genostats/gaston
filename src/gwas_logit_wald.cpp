@@ -63,19 +63,3 @@ List GWAS_logit_wald_f(XPtr<matrix4> pA, NumericVector mu, NumericVector Y, Nume
   return R;
 }
 
-RcppExport SEXP gg_GWAS_logit_wald_f(SEXP pASEXP, SEXP muSEXP, SEXP YSEXP, SEXP XSEXP, SEXP begSEXP, SEXP endSEXP, SEXP tolSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(GWAS_logit_wald_f(pA, mu, Y, X, beg, end, tol));
-    return rcpp_result_gen;
-END_RCPP
-}
-
