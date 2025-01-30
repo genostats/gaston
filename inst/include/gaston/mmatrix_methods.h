@@ -38,6 +38,9 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
         file.close();
         std::cout << "Done !" << std::endl;
     }
+    else {
+        std::cout << "Using and overwritting already existing file: " << path <<"...\n";
+    }
     // then opening the file
     std::error_code error;
 
@@ -64,6 +67,8 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
 template <typename T>
 MMatrix<T>::~MMatrix()
 {
+    //TO DEBUG
+    std::cout << "unmapping mmatrix " << path_ << "...\n";
     std::error_code error;
     if (matrix_file_.is_mapped())
     {
@@ -92,6 +97,7 @@ size_t MMatrix<T>::ncol() const
 template <typename T>
 std::string MMatrix<T>::path() const
 {
+    std::cout << "THIS IS THE " << path_ << "\n";
     return path_;
 }
 template <typename T>

@@ -14,14 +14,14 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
   if(x@standardize_mu_sigma) {
     w <- ifelse(x@sigma == 0, 0, 1/x@sigma/sqrt(sum(which.snps)-1))   ### BEWARE q-1 !!!
     K <- .Call(`_gaston_Kinship_w`, PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
-  } else { 
-    # TODO JU : replace this call with mine !
-    .Call(`_gaston_Test_print_begining_mat_JU`, PACKAGE = "gaston", x@bed)
-    # JU : bcos I'm not using K, got an "object 'K' not found" warning
-    # K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    Ju <- FALSE
+  } else {
+    K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    K_JU <- .Call(`_gaston_Kinship_pw_on_disk`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    JU <- TRUE
   }
 
-  if(!is.null(x@ped$id)) {
+  if(!is.null(x@ped$id) && JU == FALSE) {
     if(anyDuplicated(x@ped$id) == 0)
       rownames(K) <- colnames(K) <- x@ped$id
     else {
@@ -30,7 +30,11 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
         rownames(K) <- colnames(K) <- nn
     }
   }
-
+  # TO DO JU : add somathing to write K to a file and check if it differs
+  # from Kinship matrix
+  # if (JU == TRUE) {
+  #   stop("You can find the Kinship matrix in the file Kinship_matrix\n")
+  # }
   K
 }
 
@@ -75,9 +79,4 @@ reshape.GRM <- function(K, include = c(-Inf, +Inf), exclude) {
   i <- I[ww];
   j <- J[ww];
   data.frame(i = i, j = j, id_i = rownames(K)[i], id_j = colnames(K)[j], k = R[ww])
-}
-
-
-Testju_on_disk_harcode <- function(){
-  .Call(`_gaston_Test_print_begining_mat_JU`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
 }
