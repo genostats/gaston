@@ -928,6 +928,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// head_kinship_matrix_JU
+void head_kinship_matrix_JU(std::string path);
+RcppExport SEXP _gaston_head_kinship_matrix_JU(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    head_kinship_matrix_JU(path);
+    return R_NilValue;
+END_RCPP
+}
 // LD
 NumericMatrix LD(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2);
 RcppExport SEXP _gaston_LD(SEXP p_ASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP c1SEXP, SEXP c2SEXP) {
@@ -1446,6 +1456,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gaston_Kinship_w", (DL_FUNC) &_gaston_Kinship_w, 5},
     {"_gaston_Kinship_pw", (DL_FUNC) &_gaston_Kinship_pw, 5},
     {"_gaston_Kinship_pw_on_disk", (DL_FUNC) &_gaston_Kinship_pw_on_disk, 5},
+    {"_gaston_head_kinship_matrix_JU", (DL_FUNC) &_gaston_head_kinship_matrix_JU, 1},
     {"_gaston_LD", (DL_FUNC) &_gaston_LD, 5},
     {"_gaston_LD_chunk", (DL_FUNC) &_gaston_LD_chunk, 7},
     {"_gaston_LD_p", (DL_FUNC) &_gaston_LD_p, 4},

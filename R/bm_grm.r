@@ -11,17 +11,18 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
     else stop("Can't standardize x for GRM computation (use set.stat)\n")
   }
 
+
   if(x@standardize_mu_sigma) {
     w <- ifelse(x@sigma == 0, 0, 1/x@sigma/sqrt(sum(which.snps)-1))   ### BEWARE q-1 !!!
-    K <- .Call(`_gaston_Kinship_w`, PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk) 
-    Ju <- FALSE
+    K <- .Call(`_gaston_Kinship_w`, PACKAGE = "gaston", x@bed, x@mu[which.snps], w[which.snps], which.snps, chunk)
+    ON_DISK <- FALSE 
   } else {
     K <- .Call(`_gaston_Kinship_pw`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
-    K_JU <- .Call(`_gaston_Kinship_pw_on_disk`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
-    JU <- TRUE
+    K_FILE <- .Call(`_gaston_Kinship_pw_on_disk`, PACKAGE = "gaston", x@bed, x@p[which.snps], which.snps, FALSE, chunk)
+    ON_DISK <- TRUE
   }
 
-  if(!is.null(x@ped$id) && JU == FALSE) {
+  if(!is.null(x@ped$id)) {
     if(anyDuplicated(x@ped$id) == 0)
       rownames(K) <- colnames(K) <- x@ped$id
     else {
@@ -30,12 +31,17 @@ GRM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {
         rownames(K) <- colnames(K) <- nn
     }
   }
-  # TO DO JU : add somathing to write K to a file and check if it differs
-  # from Kinship matrix
-  # if (JU == TRUE) {
-  #   stop("You can find the Kinship matrix in the file Kinship_matrix\n")
-  # }
+
+  if (ON_DISK == TRUE) {
+    .Call(`_gaston_head_kinship_matrix_JU`, PACKAGE = "gaston", K_FILE)
+    #stop("You can find the rest of the Kinship matrix in the file Kinship_matrix\n")
+  }
   K
+}
+
+
+Print_head_kinship_matrix_JU <- function(K_FILE){
+  .Call(`_gaston_head_kinship_matrix_JU`, PACKAGE = "gaston", K_JU)
 }
 
 DM <- function(x, which.snps, autosome.only = TRUE, chunk = 1L) {

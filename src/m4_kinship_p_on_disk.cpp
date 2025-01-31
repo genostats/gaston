@@ -17,7 +17,7 @@ using namespace Parallel;
 
 // ************* [on ne symmétrise pas] ***********
 
-struct paraKin_p : public Worker {
+struct paraKin_p_on_disk : public Worker {
   // input and others
   uint8_t ** data;
   const size_t ncol;
@@ -32,44 +32,35 @@ struct paraKin_p : public Worker {
   Ktype * K;
   
   // constructeurs
-  paraKin_p(uint8_t ** data, const size_t ncol, const size_t true_ncol, const Ktype n, const double * p, const bool dominance) :
+  paraKin_p_on_disk(uint8_t ** data, const size_t ncol, const size_t true_ncol, const Ktype n, const double * p, const bool dominance) :
           data(data), ncol(ncol), true_ncol(true_ncol), n(n), p(p), sizeK((4*true_ncol)*(4*true_ncol+1)/2) , dominance(dominance) { 
           //generate a random name for K
-          std::cout << "sizeK = " << sizeK << std::endl;
           std::string path = "paraKin_worker1_" + std::to_string(rand());
-          // TO DEBUG
-          std::cout << "creating a K with 1st constructor, called " << path << "\n";
+
           K_file = new MMatrix<Ktype>(path, sizeK, 1); // K is padded to a multiple of 4...
           K = K_file->data();
           //no need for std::fill, mmatrix already full of zeroes
         }
-  paraKin_p(paraKin_p & Q, Split) : data(Q.data), ncol(Q.ncol), true_ncol(Q.true_ncol), n(Q.n), p(Q.p), sizeK(Q.sizeK), dominance(Q.dominance) {
-          //TODO JU : add handling of K on disk (un pointeur vers une array de Ktype dynamically allocated)
-          //generate a random name for K
-          std::cout << "sizeK = " << sizeK << std::endl;
+  paraKin_p_on_disk(paraKin_p_on_disk & Q, Split) : data(Q.data), ncol(Q.ncol), true_ncol(Q.true_ncol), n(Q.n), p(Q.p), sizeK(Q.sizeK), dominance(Q.dominance) {
           std::string path = "paraKin_worker2_" + std::to_string(rand());
-          // TO DEBUG
-          std::cout << "creating a K with 2nd constructor, called " << path << "\n";
           K_file = new MMatrix<Ktype>(path, sizeK, 1);
           K = K_file->data();
         }
 
   // destructeur
   // TODO JU : remove the K files also !
-  ~paraKin_p() { 
-    std::cout << "Trying to DELETE a paraKIn_p\n";
+  ~paraKin_p_on_disk() { 
     if (K_file) {
-      std::cout << "K_file exists, checking path...\n";
       try {
         std::string  path = K_file->path();
-        std::cout << "Deleting file: " << path << "\n";
+        delete K_file;// will flush before unmapping
+
+        // now deleting the file
+        int result = std::remove(path.c_str());
+        if (result != 0) printf( "%s\n", strerror( errno ) );
       } catch (...) {
-            std::cerr << "Error accessing K_file->path()\n";
-      }
-      //std::cout << "Deleting file: " << path << "\n";
-      delete K_file;// will flush before unmapping
-      //int result = std::remove(path.c_str());// so deleting file after matrix
-      //if (result != 0) printf( "%s\n", strerror( errno ) );
+            std::cerr << "Error accessing K_file from paraKin_worker for deletion\n";
+      }      
     }
   }
 
@@ -134,7 +125,7 @@ struct paraKin_p : public Worker {
   }
 
   // recoller
-  void join(const paraKin_p & Q) {
+  void join(const paraKin_p_on_disk & Q) {
     std::transform(K, K + sizeK, Q.K, K, std::plus<Ktype>());
     // autrement dit : K += Q.K;
   }
@@ -158,14 +149,13 @@ std::string Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double> & p,
             data[k++] = p_A->data[i];
     }
 
-  // TODO JU : add handling of K in x on disk (generate new_names)
-  paraKin_p X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
+  paraKin_p_on_disk X(data, p_A->ncol, p_A->true_ncol, (Ktype) (nb_snps - 1), &p[0], dominance);
   parallelReduce(0, nb_snps, X, chunk);
 
   delete [] data;
 
   // hardcoded double type because of the casting in the for loop after
-  MMatrix<double> Y_disk("Kinship_matrix", p_A->ncol, p_A->ncol);
+  MMatrix<double> Y_disk("Kinship_matrix", p_A->ncol, p_A->ncol, true);
 
   k = 0;
   for(size_t i = 0; i < p_A->ncol; i++) {
@@ -182,7 +172,25 @@ std::string Kinship_pw_on_disk(XPtr<matrix4> p_A, const std::vector<double> & p,
     }
   }
 
+  // TODO JU : trouver un autre return type ?
   return "Kinship_matrix";
+}
+
+
+//[[Rcpp::export]]
+void head_kinship_matrix_JU(std::string path)
+{
+  size_t lim_head = 6;
+  MMatrix<double> ref(path, 503, 503);
+
+  for (size_t j = 0; j < lim_head; j++)
+    {
+      printf("\nRow %zu : ", j + 1);
+      for (size_t i = 0; i < lim_head; i++)
+      {
+        printf("%f  ", ref.at(i,j));
+      }
+    }
 }
 
 void populate_bed_matrix_JU(XPtr<matrix4> ref) {
@@ -192,9 +200,6 @@ void populate_bed_matrix_JU(XPtr<matrix4> ref) {
         for (size_t j = 0; j < ref->ncol; j++) {
             ref->set(i, j, new_data);
             new_data = (new_data + 1) % 256;
-            // TO DEBUVG
-            //uint8_t k = ref->data[i][j];
-            //printf("value got from ref->data at indices i = %zu, j = %zu , %u\n",i,j,k);
         }
     }
 }

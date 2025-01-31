@@ -18,7 +18,7 @@ class MMatrix
 public:
     // Constructor opening the file containing the matrix
     // if path exists else creating one.
-    MMatrix(std::string path, size_t ncol, size_t nrow);
+    MMatrix(std::string path, size_t ncol, size_t nrow, bool verbose = false);
     // Destructor flushing changes to disk before unmapping
     ~MMatrix();
 
@@ -26,6 +26,7 @@ public:
     size_t ncol() const;
     std::string path() const;
     T *data() const;
+    bool verbose() const;
 
     // IN BASE 0 :
     T &operator[](size_t ind);
@@ -52,6 +53,9 @@ protected:
     mio::mmap_sink matrix_file_;
     // type T pointer to the first byte of data in matrix_file_
     T *data_ptr_;
+    // Boolean used to silence the class 
+    //(useful when doing multithreading for example)
+    bool verbose_;
 };
 
 #endif // MMATRIX_H

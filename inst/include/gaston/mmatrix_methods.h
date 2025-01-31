@@ -11,10 +11,10 @@
 // Constructor opening the file containing the matrix if path exists, else
 // creating one.
 template <typename T>
-MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
+MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow, bool verbose)
     : ncol_(ncol)
     , nrow_(nrow)
-    , path_(path)
+    , path_(path), verbose_(verbose)
 {
     size_ = ncol * nrow;
     size_t matrix_size = size_ * sizeof(T);
@@ -22,7 +22,7 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
     std::ifstream file(path, std::ifstream::binary);
     if (!file.good())
     {
-        std::cout << "This file does not exist, creating one ...  ";
+        if (verbose_ == true) std::cout << "The file " << path << " does not exist, creating one ...  ";
         std::ofstream file(path, std::ios::binary); // to load with \0
         if (!file || !file.is_open())
         {
@@ -36,10 +36,10 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
         file.put('\0');
         // mio will reopen it
         file.close();
-        std::cout << "Done !" << std::endl;
+        if (verbose_ == true) std::cout << "Done !" << std::endl;
     }
-    else {
-        std::cout << "Using and overwritting already existing file: " << path <<"...\n";
+    else if (verbose_ == true) {
+        std::cout << "Using and overwritting already existing file: " << path << std::endl;
     }
     // then opening the file
     std::error_code error;
@@ -67,8 +67,7 @@ MMatrix<T>::MMatrix(std::string path, size_t ncol, size_t nrow)
 template <typename T>
 MMatrix<T>::~MMatrix()
 {
-    //TO DEBUG
-    std::cout << "unmapping mmatrix " << path_ << "...\n";
+    if (verbose_ == true) std::cout << "Unmapping mmatrix " << path_ << std::endl;
     std::error_code error;
     if (matrix_file_.is_mapped())
     {
@@ -76,7 +75,7 @@ MMatrix<T>::~MMatrix()
         if (error)
         {
             // here no exception not to disturb the unstacking
-            std::cerr << "Failed to unsync the file: " << error.message()
+            std::cerr << "Failed to unsync the file " << path_ << ": " << error.message()
                       << '\n';
         }
         matrix_file_.unmap();
@@ -97,7 +96,6 @@ size_t MMatrix<T>::ncol() const
 template <typename T>
 std::string MMatrix<T>::path() const
 {
-    std::cout << "THIS IS THE " << path_ << "\n";
     return path_;
 }
 template <typename T>
@@ -128,6 +126,11 @@ template <typename T>
 const T &MMatrix<T>::operator()(size_t i, size_t j) const
 {
     return data_ptr_[(j * nrow_) + i];
+}
+template <typename T>
+bool MMatrix<T>::verbose() const
+{
+    return verbose_;
 }
 
 // Same as operators but safe, with bound checking.
@@ -255,9 +258,6 @@ void MMatrix<T>::create_descriptor_file()
 {
     // Generate the descriptor file name
     std::string descriptor_file_ = path_ + ".desc";
-
-    // TODO : print to debug
-    // std::cout << "path of descriptor_file " << descriptor_file_ << " \n";
 
     // Create and write to the descriptor file
     std::ofstream desc_file(descriptor_file_);
