@@ -62,7 +62,7 @@ class ROH {
 
     unsigned int lastHetIndex;  // index of last Het or NA
     double lastHetPos;          // position of last Het or NA
-    double previousIndex;       // index of Homozygous SNP just before the last Het of NA
+    unsigned int previousIndex;       // index of Homozygous SNP just before the last Het of NA
     double previousPos;         // position of Homozygous SNP just before the last Het of NA
     unsigned int het;           // nb oh heterozygous (or NAs) in current ROH
 

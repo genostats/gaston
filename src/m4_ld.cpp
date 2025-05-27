@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "Parallel.h"
+// #include "Parallel.h"
 #include <iostream>
 #include <ctime>
 #include "matrix4.h"
@@ -7,7 +7,7 @@
 #include "m4_ld.h"
 
 using namespace Rcpp;
-using namespace Parallel;
+// using namespace Parallel;
 
 /* ************
  * calcul du LD par un crossproduct sur une fenêtre des génotypes
@@ -41,7 +41,7 @@ double LD_colxx(matrix4 & A, double mu1, double mu2, double v, size_t x1, size_t
   return LD/(v*(A.ncol-1));   
 }
 
-
+/*
 // la version parallèle est plus lente (en tout cas sur mon portable)... (c'est le join ?)
 struct paraLD : public Worker {
   // input
@@ -90,7 +90,7 @@ inline double LD_colxx1(matrix4 & A, double mu1, double mu2, double v, size_t x1
   return X.LD/(v*(A.ncol-1));  
 }
 
-
+*/
 
 
 

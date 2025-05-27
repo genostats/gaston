@@ -24,7 +24,7 @@ List alleles_recoding(List L) {
     const char * a1 = CHAR(STRING_ELT(A1,i));
     const char * a2 = CHAR(STRING_ELT(A2,i));
     R(0,i) = false;
-    for(int j = 1; j < s; j++) {
+    for(int j = 1; j < s; j++) { // on parcourt les data frame @snps qui ont été fournis (en partant de j = 1 car j = 0 est la référence)
       DataFrame next = as<DataFrame> (L[j]);
       CharacterVector B1 = as<CharacterVector>(next["A1"]);
       CharacterVector B2 = as<CharacterVector>(next["A2"]);
