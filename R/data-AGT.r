@@ -1,0 +1,36 @@
+#' AGT data set
+#' @name AGT
+#' @aliases AGT AGT.gen AGT.fam AGT.bim AGT.pop
+#' @docType data
+#' 
+#' @description
+#' These data have been extracted from the 1000 Genomes data.
+#' The data set contains the genotype matrix \code{AGT.gen}, the pedigree matrix \code{AGT.fam} and a matrix \code{AGT.bim},
+#' corresponding to 503 individuals of European populations and 361 SNPs on chromosome 1, on a ~100kb segment
+#' containing the Angiotensinogen gene. There is also a factor \code{AGT.pop}, which gives the population from which each
+#' individual is drawn (CEU = Utah residents of Northern Western European ancestry, FIN = Finnish, GBR = England and Scottland,
+#' IBS = Iberian, TSI = Toscani).
+#' 
+#' @format
+#' There are three data objects in the dataset:
+#' \describe{
+#' \item{list("AGT.gen")}{ Genotype matrix }
+#' \item{list("AGT.fam")}{ Data frame containing all variables corresponding to a \code{.fam} file  }
+#' \item{list("AGT.bim")}{ Data frame containing all variables corresponding to a \code{.bim} file }
+#' \item{list("AGT.pop")}{ Factor giving the population from which each individual is drawn }
+#' }
+#' 
+#' 
+#' @references McVean et al, 2012, \emph{An integrated map of genetic variation from 1,092 human genomes}, Nature \bold{491, 56-65} doi:10.1038/nature11632
+#' 
+#' @source  The data were obtained from the 1000 Genomes project (see \url{https://www.internationalgenome.org/}).
+#' @keywords datasets
+#' @examples
+#' 
+#' data(AGT)
+#' x <- as.bed.matrix(AGT.gen, AGT.fam, AGT.bim)
+#' x
+#' 
+NULL
+
+

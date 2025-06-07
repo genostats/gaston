@@ -1,6 +1,5 @@
 ########################### cbind
 
-
 bed_cbind <- function(..., deparse.level=1) {
   L <- list(...)
   M <- lapply(L, function(x) x@bed)
@@ -33,4 +32,6 @@ bed_cbind <- function(..., deparse.level=1) {
 
 
 setGeneric("cbind", signature="...")
+
+#' @exportMethod cbind
 setMethod("cbind", signature=c(...="bed.matrix"), definition = bed_cbind)

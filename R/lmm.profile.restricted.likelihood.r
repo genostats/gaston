@@ -1,3 +1,5 @@
+#' @rdname lmm.restricted.likelihood
+#' @export
 lmm.profile.restricted.likelihood <- function(Y, X = matrix(1, nrow = length(Y)), K, h2) {
   if(any(h2 < 0) | sum(h2) > 1) return(NA)
 

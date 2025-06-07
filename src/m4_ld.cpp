@@ -347,7 +347,7 @@ void LD_chunk(matrix4 & A, bar & mu, bar & sd, int c1, int c2, int d1, int d2, l
 }
 
 // [[Rcpp::export]]
-NumericMatrix LD(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2) {
+NumericMatrix LD_(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2) {
   bar mu_(mu, Clone);
   bar sd_(sd, Clone);
   NumericMatrix LD(c2-c1+1, c2-c1+1);

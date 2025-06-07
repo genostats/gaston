@@ -36,4 +36,6 @@ bed_rbind <- function(..., deparse.level = 1) {
 }
 
 setGeneric("rbind", signature="...")
+
+#' @exportMethod rbind
 setMethod("rbind", signature=c(...="bed.matrix"), definition = bed_rbind)

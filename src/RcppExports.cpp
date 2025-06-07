@@ -953,9 +953,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// LD
-NumericMatrix LD(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2);
-RcppExport SEXP _gaston_LD(SEXP p_ASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP c1SEXP, SEXP c2SEXP) {
+// LD_
+NumericMatrix LD_(XPtr<matrix4> p_A, NumericVector mu, NumericVector sd, int c1, int c2);
+RcppExport SEXP _gaston_LD_(SEXP p_ASEXP, SEXP muSEXP, SEXP sdSEXP, SEXP c1SEXP, SEXP c2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -964,7 +964,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type sd(sdSEXP);
     Rcpp::traits::input_parameter< int >::type c1(c1SEXP);
     Rcpp::traits::input_parameter< int >::type c2(c2SEXP);
-    rcpp_result_gen = Rcpp::wrap(LD(p_A, mu, sd, c1, c2));
+    rcpp_result_gen = Rcpp::wrap(LD_(p_A, mu, sd, c1, c2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1472,7 +1472,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gaston_Kinship", (DL_FUNC) &_gaston_Kinship, 4},
     {"_gaston_Kinship_w", (DL_FUNC) &_gaston_Kinship_w, 5},
     {"_gaston_Kinship_pw", (DL_FUNC) &_gaston_Kinship_pw, 5},
-    {"_gaston_LD", (DL_FUNC) &_gaston_LD, 5},
+    {"_gaston_LD_", (DL_FUNC) &_gaston_LD_, 5},
     {"_gaston_LD_chunk", (DL_FUNC) &_gaston_LD_chunk, 7},
     {"_gaston_LD_p", (DL_FUNC) &_gaston_LD_p, 4},
     {"_gaston_LD_chunk_p", (DL_FUNC) &_gaston_LD_chunk_p, 6},

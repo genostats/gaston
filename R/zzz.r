@@ -25,3 +25,11 @@ r_check_limit_cores <- function() {
   (nchar(Rcheck[1]) > 0) & (Rcheck != "false")
 }
 
+#' @useDynLib gaston, .registration = TRUE
+#' @importFrom grDevices heat.colors dev.off pdf rgb gray
+#' @importFrom graphics contour image legend par plot polygon rect segments strheight strwidth text points axis
+#' @importFrom stats pchisq quantile rnorm kmeans glm binomial pt qbeta ppoints qnorm sd approxfun
+#' @importFrom utils read.table write.table
+#' @importFrom Rcpp evalCpp 
+#' @importFrom RcppParallel setThreadOptions
+NULL
