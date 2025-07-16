@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // pos is either positions in kb or distance from beginning in cM...
 // [[Rcpp::export]]
-List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
+List ROH_(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet) {
   size_t ncol = pA->ncol;
   std::vector<ROH<ROHsegments>> R(ncol);
 

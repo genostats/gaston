@@ -12,6 +12,26 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// ROH_
+List ROH_(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet);
+RcppExport SEXP _gaston_ROH_(SEXP pASEXP, SEXP chrSEXP, SEXP posSEXP, SEXP begSEXP, SEXP endSEXP, SEXP minNbSNPsSEXP, SEXP minROHLengthSEXP, SEXP minDistHetSEXP, SEXP maxGapLengthSEXP, SEXP NAsAreHetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pos(posSEXP);
+    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    Rcpp::traits::input_parameter< int >::type minNbSNPs(minNbSNPsSEXP);
+    Rcpp::traits::input_parameter< double >::type minROHLength(minROHLengthSEXP);
+    Rcpp::traits::input_parameter< double >::type minDistHet(minDistHetSEXP);
+    Rcpp::traits::input_parameter< double >::type maxGapLength(maxGapLengthSEXP);
+    Rcpp::traits::input_parameter< bool >::type NAsAreHet(NAsAreHetSEXP);
+    rcpp_result_gen = Rcpp::wrap(ROH_(pA, chr, pos, beg, end, minNbSNPs, minROHLength, minDistHet, maxGapLength, NAsAreHet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ROHlen
 List ROHlen(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet);
 RcppExport SEXP _gaston_ROHlen(SEXP pASEXP, SEXP chrSEXP, SEXP posSEXP, SEXP begSEXP, SEXP endSEXP, SEXP minNbSNPsSEXP, SEXP minROHLengthSEXP, SEXP minDistHetSEXP, SEXP maxGapLengthSEXP, SEXP NAsAreHetSEXP) {
@@ -29,26 +49,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type maxGapLength(maxGapLengthSEXP);
     Rcpp::traits::input_parameter< bool >::type NAsAreHet(NAsAreHetSEXP);
     rcpp_result_gen = Rcpp::wrap(ROHlen(pA, chr, pos, beg, end, minNbSNPs, minROHLength, minDistHet, maxGapLength, NAsAreHet));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ROHs
-List ROHs(XPtr<matrix4> pA, IntegerVector chr, NumericVector pos, int beg, int end, int minNbSNPs, double minROHLength, double minDistHet, double maxGapLength, bool NAsAreHet);
-RcppExport SEXP _gaston_ROHs(SEXP pASEXP, SEXP chrSEXP, SEXP posSEXP, SEXP begSEXP, SEXP endSEXP, SEXP minNbSNPsSEXP, SEXP minROHLengthSEXP, SEXP minDistHetSEXP, SEXP maxGapLengthSEXP, SEXP NAsAreHetSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<matrix4> >::type pA(pASEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type chr(chrSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pos(posSEXP);
-    Rcpp::traits::input_parameter< int >::type beg(begSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    Rcpp::traits::input_parameter< int >::type minNbSNPs(minNbSNPsSEXP);
-    Rcpp::traits::input_parameter< double >::type minROHLength(minROHLengthSEXP);
-    Rcpp::traits::input_parameter< double >::type minDistHet(minDistHetSEXP);
-    Rcpp::traits::input_parameter< double >::type maxGapLength(maxGapLengthSEXP);
-    Rcpp::traits::input_parameter< bool >::type NAsAreHet(NAsAreHetSEXP);
-    rcpp_result_gen = Rcpp::wrap(ROHs(pA, chr, pos, beg, end, minNbSNPs, minROHLength, minDistHet, maxGapLength, NAsAreHet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1294,6 +1294,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// qfc_
+Rcpp::List qfc_(Rcpp::NumericVector lambda, Rcpp::NumericVector nonCentrality, Rcpp::IntegerVector degreeOfFreedom, double sigma, double c, int lim, double accuracy);
+RcppExport SEXP _gaston_qfc_(SEXP lambdaSEXP, SEXP nonCentralitySEXP, SEXP degreeOfFreedomSEXP, SEXP sigmaSEXP, SEXP cSEXP, SEXP limSEXP, SEXP accuracySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type nonCentrality(nonCentralitySEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type degreeOfFreedom(degreeOfFreedomSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    Rcpp::traits::input_parameter< int >::type lim(limSEXP);
+    Rcpp::traits::input_parameter< double >::type accuracy(accuracySEXP);
+    rcpp_result_gen = Rcpp::wrap(qfc_(lambda, nonCentrality, degreeOfFreedom, sigma, c, lim, accuracy));
+    return rcpp_result_gen;
+END_RCPP
+}
 // random_ortho
 NumericMatrix random_ortho(int n);
 RcppExport SEXP _gaston_random_ortho(SEXP nSEXP) {
@@ -1410,11 +1427,9 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport void qfc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-
 static const R_CallMethodDef CallEntries[] = {
+    {"_gaston_ROH_", (DL_FUNC) &_gaston_ROH_, 10},
     {"_gaston_ROHlen", (DL_FUNC) &_gaston_ROHlen, 10},
-    {"_gaston_ROHs", (DL_FUNC) &_gaston_ROHs, 10},
     {"_gaston_alleles_recoding", (DL_FUNC) &_gaston_alleles_recoding, 1},
     {"_gaston_alleles_duplicated", (DL_FUNC) &_gaston_alleles_duplicated, 2},
     {"_gaston_duplicated_remove", (DL_FUNC) &_gaston_duplicated_remove, 7},
@@ -1496,6 +1511,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gaston_chol_inverse", (DL_FUNC) &_gaston_chol_inverse, 1},
     {"_gaston_pre_likelihood", (DL_FUNC) &_gaston_pre_likelihood, 4},
     {"_gaston_pre_likelihood_nofix", (DL_FUNC) &_gaston_pre_likelihood_nofix, 3},
+    {"_gaston_qfc_", (DL_FUNC) &_gaston_qfc_, 7},
     {"_gaston_random_ortho", (DL_FUNC) &_gaston_random_ortho, 1},
     {"_gaston_re_likelihood", (DL_FUNC) &_gaston_re_likelihood, 4},
     {"_gaston_re_likelihood_nofix", (DL_FUNC) &_gaston_re_likelihood_nofix, 3},
@@ -1505,7 +1521,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gaston_which_duplicated_id_chr_pos", (DL_FUNC) &_gaston_which_duplicated_id_chr_pos, 3},
     {"_gaston_which_duplicated_id_chr_pos_alleles", (DL_FUNC) &_gaston_which_duplicated_id_chr_pos_alleles, 5},
     {"_gaston_SNPmatch", (DL_FUNC) &_gaston_SNPmatch, 2},
-    {"qfc", (DL_FUNC) &qfc, 11},
     {NULL, NULL, 0}
 };
 

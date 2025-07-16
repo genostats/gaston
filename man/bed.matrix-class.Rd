@@ -51,9 +51,9 @@ Objects can be created by calls of the form \code{new("bed.matrix", ...)}.
 \describe{
 \item{[}{\code{signature(x = "bed.matrix", i = "numeric" or "logical" or "missing",}\cr\code{j = "numeric" or "logical" or "missing", drop = "missing")}:
 \cr Extract a sub-matrix (a new \code{bed.matrix}). }
-\item{%*%}{\code{signature(x = "bed.matrix", y = "matrix" or "vector")}:
+\item{\%*\%}{\code{signature(x = "bed.matrix", y = "matrix" or "vector")}:
 \cr Right matrix multiplication of the genotype matrix (possibly centered and reduced) with a \code{matrix} or a \code{vector}. }
-\item{%*%}{\code{signature(x = "matrix" or "vector", y = "bed.matrix")}:
+\item{\%*\%}{\code{signature(x = "matrix" or "vector", y = "bed.matrix")}:
 \cr Left matrix multiplication of the genotype matrix with a \code{matrix} or a \code{vector}. }
 \item{as.matrix}{\code{signature(x = "bed.matrix")}:
 \cr Convert a \code{bed.matrix} into a \code{matrix}.
