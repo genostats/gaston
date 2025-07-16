@@ -32,4 +32,6 @@ r_check_limit_cores <- function() {
 #' @importFrom utils read.table write.table
 #' @importFrom Rcpp evalCpp 
 #' @importFrom RcppParallel setThreadOptions
+#' @importFrom methods as is new validObject
+
 NULL

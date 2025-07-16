@@ -8,7 +8,7 @@ Rcpp::List qfc_(Rcpp::NumericVector lambda, Rcpp::NumericVector nonCentrality, R
   int ifault;
   double res;
   int r = lambda.size();
-  if(r != nonCentrality.size() | r != degreeOfFreedom.size())
+  if(r != nonCentrality.size() || r != degreeOfFreedom.size())
     Rcpp::stop("lambda, nonCentrality, and degreeOfFreedom should have same size\n");
 
   qfc(&lambda[0], &nonCentrality[0], &degreeOfFreedom[0], &r, &sigma, &c, &lim, &accuracy, &trace[0], &ifault, &res);
