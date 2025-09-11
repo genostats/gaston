@@ -72,14 +72,15 @@ LD.thin <- function(x, threshold, max.dist = 500e3, beg = 1L, end = ncol(x), whi
 
   dist.unit <- match.arg(dist.unit)
   if(dist.unit == "bases") {
-    pos = as.integer(x@snps$pos)
+    pos <- as.integer(x@snps$pos)
   } else if(dist.unit == "indices") {
-    pos = seq_len(ncol(x))
+    pos <- seq_len(ncol(x))
   } else { # cM = conversion en micro morgans !
+    check.dist(x) # check if 'dist' is set
     if(max.dist > 100)
       warning("max.dist value seems very high for dist.unit = \"cM\"")
-    pos = as.integer( x@snps$dist * 1e4 )
-    max.dist = as.integer(max.dist*1e4)
+    pos <- as.integer( x@snps$dist * 1e4 )
+    max.dist <- as.integer(max.dist*1e4)
   }
   if( all(x@snps$pos == x@snps$pos[1]) )
     stop("Position of SNPs must be available")

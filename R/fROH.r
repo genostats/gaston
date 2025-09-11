@@ -36,6 +36,7 @@ fROH <- function(x, dist.units = c("bases", "cM"), NAs = c("het", "hom"), minNbS
     if(missing(maxGapLength)) 
       maxGapLength <- 1e6
   } else {
+    check.dist(x) # check if dist is set
     positions <- x@snps$dist
     if(missing(minROHlength)) 
       minROHlength <- 1
