@@ -31,7 +31,7 @@ x
 
 }
 \seealso{
-\code{\link{bed.matrix-class}}
+\code{\link{bed.matrix}}
 }
 \keyword{Association}
 \keyword{Test}

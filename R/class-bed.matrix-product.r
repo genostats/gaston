@@ -1,3 +1,11 @@
+#' @rdname methods
+#'
+#' @param x,y a bed matrix, or a R matrix, depending on the method
+#'
+#' @details "%*%" allow to multiply a bed matrix by a numeric vector, to the left or to the right.
+#' Depending of the standardization of the matrix, the genotypes will be interpreted as 0, 1 or 2,
+#' or as standardized values.
+#'
 #' @exportMethod "%*%"
 setMethod("%*%", signature(x="bed.matrix",y="matrix"), 
   function(x, y) {
@@ -16,6 +24,7 @@ setMethod("%*%", signature(x="bed.matrix",y="matrix"),
   }
 );
 
+#' @rdname methods
 setMethod("%*%", signature(x="matrix",y="bed.matrix"), 
   function(x, y) {
     if(y@standardize_mu_sigma)
@@ -33,12 +42,14 @@ setMethod("%*%", signature(x="matrix",y="bed.matrix"),
   }
 );
 
+#' @rdname methods
 setMethod("%*%", signature(x="bed.matrix",y="vector"), 
   function(x, y) {
     x %*% as.matrix(y)
   }
 );
 
+#' @rdname methods
 setMethod("%*%", signature(x="vector",y="bed.matrix"), 
   function(x, y) {
     matrix(x, nrow = 1) %*% y

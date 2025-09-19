@@ -12,7 +12,7 @@
 #' 
 #' @return
 #' A bed.matrix condensing all three arguments.
-#' @seealso  \code{\link{bed.matrix-class}}
+#' @seealso  \code{\link{bed.matrix}}
 #' 
 #' @keywords  Association Test
 #' @examples

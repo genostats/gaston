@@ -35,5 +35,5 @@ To install this package, run
 
 You can then use this function with \code{set.dist(x, HumanGeneticMap::genetic.map.b36)}
 for example, for positions on the build 36. Use \code{map = HumanGeneticMap::genetic.map.b37})
-for the build 37.
+for the build 37 and \code{map = HumanGeneticMap::genetic.map.b38}) for the build 38.
 }

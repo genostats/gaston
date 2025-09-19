@@ -9,7 +9,10 @@ void_ped_stats <- function(x) {
   x[,a]
 } 
 
-#' @rdname bed.matrix-class
+#' @param i,j numeric or logical vectors of indices
+#' @details The bracket operator "[" allow to extract sub matrices pretty much as for R matrices.
+#'
+#' @rdname methods
 #' @exportMethod "["
 setMethod("[", signature(x="bed.matrix",i="numeric",j="missing", drop="missing"), 
     function( x, i, j) {
@@ -21,6 +24,7 @@ setMethod("[", signature(x="bed.matrix",i="numeric",j="missing", drop="missing")
       x
     } );
 
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="logical",j="missing", drop="missing"), 
     function( x, i, j) {
       if(any(is.na(i))) stop("NAs not allowed")   
@@ -31,6 +35,7 @@ setMethod("[", signature(x="bed.matrix",i="logical",j="missing", drop="missing")
       x
     } );
   
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="missing",j="numeric", drop="missing"), 
     function( x, i, j) {    
       if(any(j <= 0)) j <- (1:ncol(x))[j]
@@ -44,6 +49,7 @@ setMethod("[", signature(x="bed.matrix",i="missing",j="numeric", drop="missing")
       x
     } );
   
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="missing",j="logical", drop="missing"), 
     function( x, i, j) {    
       if(any(is.na(j))) stop("NAs not allowed")   
@@ -57,6 +63,7 @@ setMethod("[", signature(x="bed.matrix",i="missing",j="logical", drop="missing")
       x
     } );
   
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="logical",j="logical", drop="missing"), 
     function( x, i, j) {    
       if(any(is.na(j))) stop("NAs not allowed")   
@@ -76,6 +83,7 @@ setMethod("[", signature(x="bed.matrix",i="logical",j="logical", drop="missing")
     } );
   
 
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="logical",j="numeric", drop="missing"), 
     function( x, i, j) {    
       if(any(j <= 0)) j <- (1:ncol(x))[j]
@@ -94,6 +102,7 @@ setMethod("[", signature(x="bed.matrix",i="logical",j="numeric", drop="missing")
       x
     } );
 
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="numeric",j="logical", drop="missing"), 
     function( x, i, j) {    
       if(any(is.na(j))) stop("NAs not allowed")   
@@ -113,6 +122,7 @@ setMethod("[", signature(x="bed.matrix",i="numeric",j="logical", drop="missing")
     } );
   
 
+#' @rdname methods
 setMethod("[", signature(x="bed.matrix",i="numeric",j="numeric", drop="missing"), 
     function( x, i, j) {    
       if(any(j <= 0)) j <- (1:ncol(x))[j]
