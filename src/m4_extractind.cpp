@@ -9,7 +9,7 @@ using namespace Rcpp;
 XPtr<matrix4> extract_inds_bool(XPtr<matrix4> pA, LogicalVector w) {
   size_t ncol = sum(w);
   if(w.length() != pA->ncol) 
-    Rf_error("Length of logical vector doesn't match number of individuals");
+    stop("Length of logical vector doesn't match number of individuals");
 
   XPtr<matrix4> pB(new matrix4(pA->nrow, ncol));
   for(size_t i = 0; i < pA->nrow; i++){

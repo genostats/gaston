@@ -57,7 +57,7 @@ NumericMatrix m4_pc_to_loading_p(XPtr<matrix4> p_A, const std::vector<double> & 
 
   int n = p_A->nrow; // nb snps
   int m = p_A->ncol; // nb inds
-  if(m != v.nrow()) Rf_error("Dimensions mismatch");
+  if(m != v.nrow()) stop("Dimensions mismatch");
   int r = v.ncol();
 
   NumericMatrix R(n,r);

@@ -7,13 +7,13 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 XPtr<matrix4> bind_snps(List L) {
   int s = L.size();
-  if(s < 2) Rf_error("Can't bind less than two matrices!");
+  if(s < 2) stop("Can't bind less than two matrices!");
   XPtr<matrix4> first = as<XPtr<matrix4> >(L[0]);
   int n = first->ncol;
   int m = first->nrow;
   for(int i = 1; i < s; i++) {
     XPtr<matrix4> nxt = as<XPtr<matrix4> >(L[i]);
-    if(n != nxt->ncol) Rf_error("Dimensions mismatch");
+    if(n != nxt->ncol) stop("Dimensions mismatch");
     m += nxt->nrow;
   }
   XPtr<matrix4> r(new matrix4(m,n));

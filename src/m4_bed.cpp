@@ -62,17 +62,17 @@ uint8_t tobed[256] = {
 XPtr<matrix4> read_bed_file(CharacterVector filename, int n_ind, int n_snp) {
   std::ifstream file(filename[0], std::ifstream::binary);
   if(!file.is_open()) {
-    Rf_error("Cannot open file");
+    stop("Cannot open file");
   }
   uint8_t m1, m2, m3;
   file.read(reinterpret_cast<char *>(&m1), 1);
   file.read(reinterpret_cast<char *>(&m2), 1);
   file.read(reinterpret_cast<char *>(&m3), 1);
   if(m1 != 108 || m2 != 27) {
-    Rf_error("Not a bed file");
+    stop("Not a bed file");
   }
   if(m3 != 1) {
-    Rf_error("Not a bed file in SNP major mode");
+    stop("Not a bed file in SNP major mode");
   }
   XPtr<matrix4> p_A(new matrix4(n_snp, n_ind));
   uint8_t b;
@@ -91,7 +91,7 @@ XPtr<matrix4> read_bed_file(CharacterVector filename, int n_ind, int n_snp) {
       bordermask = 252;
       break;
     default:
-      Rf_error("Some shit hit the fan very hard");
+      stop("Some shit hit the fan very hard");
   }
   for(int i = 0; i < n_snp; i++) {
     for(int j = 0; j < p_A->true_ncol; j++) {
@@ -110,7 +110,7 @@ XPtr<matrix4> read_bed_file(CharacterVector filename, int n_ind, int n_snp) {
 void write_bed_file(XPtr<matrix4> p_A, CharacterVector filename) {
   std::ofstream file(filename[0], std::ofstream::binary);
   if(!file.is_open()) {
-    Rf_error("Cannot open file");
+    stop("Cannot open file");
   }
 
   uint8_t magic[3] = {108, 27, 1};

@@ -50,7 +50,7 @@ IntegerMatrix m4_as012(XPtr<matrix4> pA) {
 // [[Rcpp::export]]
 NumericMatrix m4_as_scaled_matrix_p(XPtr<matrix4> pA, NumericVector p) {
   if(p.length() != pA->nrow) 
-    Rf_error("Dimension mismatch");
+    stop("Dimension mismatch");
   NumericMatrix X(pA->ncol, pA->nrow);
   for(int j = 0; j < X.ncol(); j++) {
     double gg[4] = {   -2*p[j] /sqrt(2*p[j]*(1-p[j])), 
@@ -77,7 +77,7 @@ NumericMatrix m4_as_scaled_matrix_p(XPtr<matrix4> pA, NumericVector p) {
 // [[Rcpp::export]]
 NumericMatrix m4_as_scaled_matrix_mu_sigma(XPtr<matrix4> pA, NumericVector mu, NumericVector sigma) {
   if(mu.length() != pA->nrow || sigma.length() != pA->nrow) 
-    Rf_error("Dimension mismatch");
+    stop("Dimension mismatch");
   NumericMatrix X(pA->ncol, pA->nrow);
   for(int j = 0; j < X.ncol(); j++) {
     double gg[4] = { -mu[j]/sigma[j], (1-mu[j])/sigma[j], (2-mu[j])/sigma[j], NA_REAL };
